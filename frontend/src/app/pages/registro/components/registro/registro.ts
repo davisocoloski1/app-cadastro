@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 })
 export class Registro implements OnInit {
   form!: FormGroup
+  errorMsg: string = ''
 
   constructor(
     private registroService: RegistroService,
@@ -51,12 +52,21 @@ export class Registro implements OnInit {
       password: this.form.value.password
     }
 
-    this.registroService.registro(data).subscribe({
-      next: (res: any) => {
-        console.log(res)
-        this.router.navigate(["/confirmar-conta", this.form.value.email])
+    const resend = 0
+
+    this.registroService.registro(data, resend).subscribe({
+      next: () => {
+        this.router.navigate(["/confirmar-conta", this.form.value.email, this.form.value.name])
       },
-      error: (err: any) => console.log(err)
+      error: (err: any) => {
+        if (err.error.errors) {
+          this.errorMsg = err.error.errors[0].message
+        } else if (err.error) {
+          this.errorMsg = err.error.message
+        } else {
+          console.log(err)
+        }
+      }
     })
   }
 }

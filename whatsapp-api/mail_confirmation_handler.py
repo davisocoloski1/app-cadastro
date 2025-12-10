@@ -16,29 +16,39 @@ confirmation_codes = {}
 def _generate_confirmation_code(length: int = 6):
   return ''.join(str(randint(0, 9)) for _ in range(length))
 
-def send_mail(recipient: str, name: str):
+def send_mail(recipient: str, name: str, resend: int = 0):
   """ 
   :param destination: 'name@mail.com'
   :type destination: str
   :param name: sender's name
   :type name: str
+  :param resend: 0 for new account, 1 for resend confirmation code
+  :type resend: int
   """
-
-  confirmation_code = _generate_confirmation_code()
-  confirmation_codes[recipient] = confirmation_code
 
   msg = EmailMessage()
   msg["From"] = SMTP_USER
   msg["To"] = recipient
   msg["Subject"] = "Confirmação de cadastro"
-  msg.set_content(f"""Olá, {name}!
 
-  Aqui está seu código de confirmação: {confirmation_code}
+  if resend == 0:
+    confirmation_code = _generate_confirmation_code()
+    confirmation_codes[recipient] = confirmation_code
 
-  Insira-o no campo de confirmação do site.
+    msg.set_content(f"""Olá, {name}!
 
-  Se você não solicitou este cadastro, ignore este e-mail.
-  """)
+    Aqui está seu código de confirmação: {confirmation_code}
+
+    Insira-o no campo de confirmação do site.
+
+    Se você não solicitou este cadastro, ignore este e-mail.
+    """)
+
+  elif resend == 1:
+    confirmation_code = _generate_confirmation_code()
+    confirmation_codes[recipient] = confirmation_code
+
+    msg.set_content(f"Olá, {name}! Aqui está seu novo código de confirmação: {confirmation_code}.")
 
   context = ssl.create_default_context()
 

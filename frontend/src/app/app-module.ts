@@ -3,8 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { tokenInterceptor } from './pages/registro/services/token-interceptor';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,7 @@ import { RouterModule } from '@angular/router';
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient()
+    provideHttpClient(withInterceptors([tokenInterceptor]))
   ],
   bootstrap: [App]
 })

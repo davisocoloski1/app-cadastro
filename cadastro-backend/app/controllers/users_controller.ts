@@ -22,7 +22,9 @@ export default class UsersController {
         rules.required()
       ]),
       password: schema.string({}, [
-        rules.required()
+        rules.required(),
+        rules.minLength(6),
+        rules.maxLength(20)
       ])
     })
 
@@ -40,20 +42,72 @@ export default class UsersController {
         'telefone.regex': 'O formado do telefone está incorreto. Exemplo correto: 55XX9XXXXXXXX.',
         'telefone.required': 'O campo "Telefone" deve ser preenchido.',
 
-        'passoword.required': 'O campo "Senha" deve ser preenchido.'
+        'password.required': 'O campo "Senha" deve ser preenchido.',
+        'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
+        'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.'
       }
     })
 
-    const user = await User.create(data)
+    const resend = request.input('resend')
+    const resendNumber = Number(resend) || 0
+    let user
 
     try {
-      await axios.post(`${this.pythonApi}/send_mail_confirmation`, { email: data.email, name: data.name })
+      user = await User.create(data)
+    } catch (err) {
+      if (err.code === '23505') {
+        if (err.detail?.includes('email')) {
+          return response.status(400).json({ message: 'Este e-mail já está em uso.' })
+        } else if (err.detail?.includes('telefone')) {
+          return response.status(400).json({ message: 'Este telefone já está em uso.' })
+        }
+      }
+    }
+
+    try {
+      await axios.post(`${this.pythonApi}/send_mail_confirmation`, { email: data.email, name: data.name }, { params: { resend: resendNumber } })
     } catch (err: any) {
-      console.log(err)
-      return
+      console.log(err.response.data || err.message)
+      return response.status(500).json(
+        {message: 'Erro ao enviar código de confirmação'}
+      )
     }
 
     return response.created(user)
+  }
+
+  async login({ request, response }: HttpContext) {
+    const { email, password } = request.only(['email', 'password'])
+
+    try {
+      const user = await User.verifyCredentials(email, password)
+      const token = await User.accessTokens.create(user)
+
+      return response.ok({
+        user,
+        token: token.value!.release()
+      })
+    } catch {
+      return response.unauthorized({
+        message: "Credenciais inválidas."
+      })
+    }
+  }
+
+  async resendConfirmationCode({ request, response }: HttpContext) {
+    const { email, name, resend } = request.only(['email', 'name', 'resend'])
+    const resendNumber = Number(resend) || 0
+
+    try {
+      await axios.post(`${this.pythonApi}/send_mail_confirmation`, { email: email, name: name }, { params: { resend: resendNumber } })
+    } catch (err: any) {
+      console.log(err.response.data || err.message)
+      return response.status(500).json(
+        {message: 'Erro ao enviar código de confirmação'}
+      )
+    }
+
+    return response.ok({ resend: resendNumber })
   }
 
   async account_confirmation({ request, response }: HttpContext) {

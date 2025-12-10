@@ -9,9 +9,9 @@ class SendMailData(BaseModel):
   name: str
 
 @app.post('/send_mail_confirmation')
-async def send_confirmation(data: SendMailData):
+async def send_confirmation(data: SendMailData, resend: int = 0):
   try:
-    mail.send_mail(data.email, data.name)
+    mail.send_mail(data.email, data.name, resend)
     return {"ok": True}
   except Exception as e:
     print(repr(e))

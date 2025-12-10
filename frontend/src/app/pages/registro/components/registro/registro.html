@@ -1,43 +1,96 @@
-<div class="register-wrapper">
-  <form [formGroup]="form" class="register-form">
-    <div class="fields">
-      <div class="field">
-        <label>Nome</label>
-        <input type="text" formControlName="name" placeholder="Nome">
-      </div>
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+  <div class="card bg-secondary text-light shadow-lg" style="max-width: 480px; width: 100%;">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">Criar conta</h2>
 
-      <div class="field">
-        <label>E-mail</label>
-        <input type="email" formControlName="email" placeholder="E-mail">
-      </div>
+      <form [formGroup]="form" class="register-form" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Nome</label>
+          <input
+            type="text"
+            formControlName="name"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="Nome"
+          />
+        </div>
 
-      <div class="field">
-        <label>Telefone</label>
-        <input type="tel" formControlName="telefone" placeholder="Telefone">
-      </div>
+        <div class="mb-3">
+          <label class="form-label">E-mail</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="E-mail"
+          />
+        </div>
 
-      <div class="field">
-        <label>Senha</label>
-        <input type="password" formControlName="password" placeholder="Senha">
-      </div>
+        <div class="mb-3">
+          <label class="form-label">Telefone</label>
+          <input
+            type="tel"
+            formControlName="telefone"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="Telefone"
+          />
+        </div>
 
-      <div class="field">
-        <h3>Por onde deseja receber o código de confirmação?</h3>
-      </div>
+        <div class="mb-3">
+          <label class="form-label">Senha</label>
+          <input
+            type="password"
+            formControlName="password"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="Senha"
+          />
+        </div>
 
-      <div class="field field-inline">
-        <label>Email</label>
-        <input type="checkbox" formControlName="emailCheckbox">
-      </div>
+        @if (errorMsg) {
+          <div class="alert alert-danger py-2 my-2">
+            {{ errorMsg }}
+          </div>
+        }
+        
+        <div class="mb-2">
+          <h6 class="mb-0 text-muted">
+            Por onde deseja receber o código de confirmação?
+          </h6>
+        </div>
 
-      <div class="field field-inline">
-        <label>Whatsapp</label>
-        <input type="checkbox" formControlName="wppCheckbox">
-      </div>
+        <div class="mb-2 d-flex flex-column gap-1">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              formControlName="emailCheckbox"
+              id="emailCheckbox"
+            />
+            <label class="form-check-label" for="emailCheckbox">
+              E-mail
+            </label>
+          </div>
+          
 
-      <button type="button" (click)="registro()" class="submit-btn">
-        Confirmar
-      </button>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              formControlName="wppCheckbox"
+              id="wppCheckbox"
+            />
+            <label class="form-check-label" for="wppCheckbox">
+              WhatsApp
+            </label>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          (click)="registro()"
+          class="btn btn-primary w-100 mt-2"
+        >
+          Confirmar
+        </button>
+      </form>
     </div>
-  </form>
+  </div>
 </div>

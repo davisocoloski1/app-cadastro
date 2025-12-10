@@ -1,5 +1,53 @@
-<form [formGroup]="confirmationForm">
-  <label for="">Digite o código de confirmação (Ex: 000000)</label>
-  <input type="text" formControlName="code" placeholder="000000">
-  <button (click)="enviarCodigo()">Enviar</button>
-</form>
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+  <div class="card bg-secondary text-light shadow-lg" style="max-width: 420px; width: 100%;">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">Confirmar conta</h2>
+
+      <form [formGroup]="confirmationForm" novalidate>
+        <div class="mb-3">
+          <label for="code" class="form-label">
+            Digite o código de confirmação <small class="text-muted">(ex: 000000)</small>
+          </label>
+          <input
+            id="code"
+            type="text"
+            formControlName="code"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="000000"
+          />
+        </div>
+
+        <div class="d-flex gap-2 mb-3">
+          <button
+            type="button"
+            class="btn btn-primary flex-fill"
+            (click)="enviarCodigo()"
+          >
+            Enviar
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-light flex-fill"
+            (click)="reenviarCodigo()"
+            [disabled]="!canClick"
+          >
+            {{ btnText }}
+          </button>
+        </div>
+
+        @if (msg) {
+          <div class="alert alert-success py-2 mb-2">
+            {{ msg }}
+          </div>
+        }
+
+        @if (errorMsg) {
+          <div class="alert alert-danger py-2 mb-0">
+            {{ errorMsg }}
+          </div>
+        }
+      </form>
+    </div>
+  </div>
+</div>
