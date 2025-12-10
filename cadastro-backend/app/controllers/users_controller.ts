@@ -1,10 +1,10 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { schema, rules } from '@adonisjs/validator'
 import User from '#models/user'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 export default class UsersController {
-  private pythonApi = 'http://localhost:8000/send_mail_confirmation'
+  private pythonApi = 'http://localhost:8000'
 
   async store({ request, response }: HttpContext) {
     const newUser = schema.create({
@@ -47,12 +47,43 @@ export default class UsersController {
     const user = await User.create(data)
 
     try {
-      await axios.post(this.pythonApi, { email: data.email, name: data.name })
+      await axios.post(`${this.pythonApi}/send_mail_confirmation`, { email: data.email, name: data.name })
     } catch (err: any) {
       console.log(err)
       return
     }
 
     return response.created(user)
+  }
+
+  async account_confirmation({ request, response }: HttpContext) {
+    const { email, code } = request.body()
+
+    try {
+      const is_valid = await axios.get(`${this.pythonApi}/receive_confirmation_code`, {
+        params: { email, code }
+      })
+
+      if (is_valid.data) {
+        await User.query().where('email', email).update({ confirmed: true })
+        return response.ok("Código validado com sucesso!")
+      } else {
+        return response.badRequest("O código recebido é inválido.")
+      }
+    } catch (err: any) {
+      const error = err as AxiosError
+
+      if (error.response) {
+        console.log('Status', error.response.status)
+        console.log('Data:', error.response.data)
+        console.log('Headers', error.response.headers)
+      } else if (error.request) {
+        console.log('Request error', error.request)
+      } else {
+        console.log('Erro: ', error.message)
+      }
+
+      return response.internalServerError('Ocorreu um erro ao validar o código.')
+    }
   }
 }

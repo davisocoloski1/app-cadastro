@@ -3,12 +3,18 @@ import ssl
 import os
 from email.message import EmailMessage
 from dotenv import  load_dotenv
+from random import randint
 
 load_dotenv()
 SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "465"))
 SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+confirmation_codes = {}
+
+def _generate_confirmation_code(length: int = 6):
+  return ''.join(str(randint(0, 9)) for _ in range(length))
 
 def send_mail(recipient: str, name: str):
   """ 
@@ -18,11 +24,21 @@ def send_mail(recipient: str, name: str):
   :type name: str
   """
 
+  confirmation_code = _generate_confirmation_code()
+  confirmation_codes[recipient] = confirmation_code
+
   msg = EmailMessage()
   msg["From"] = SMTP_USER
   msg["To"] = recipient
   msg["Subject"] = "Confirmação de cadastro"
-  msg.set_content(f"Olá, {name}. Seu cadastro foi realizado com sucesso!")
+  msg.set_content(f"""Olá, {name}!
+
+  Aqui está seu código de confirmação: {confirmation_code}
+
+  Insira-o no campo de confirmação do site.
+
+  Se você não solicitou este cadastro, ignore este e-mail.
+  """)
 
   context = ssl.create_default_context()
 
@@ -30,6 +46,21 @@ def send_mail(recipient: str, name: str):
     server.set_debuglevel(1)
     server.login(SMTP_USER, SMTP_PASSWORD)
     server.send_message(msg)
+
+  return confirmation_code
+
+def receive_confirmation_code(email: str, code: str):
+  """
+  :param code: 6 number code (Ex: 000000)
+  :type code: int
+  """
+
+  expected_code = confirmation_codes.get(email)
+
+  if expected_code is None:
+    return False
+  
+  return code == expected_code
 
 if __name__ == "__main__":
   try:

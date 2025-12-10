@@ -1,0 +1,5 @@
+<form [formGroup]="confirmationForm">
+  <label for="">Digite o código de confirmação (Ex: 000000)</label>
+  <input type="text" formControlName="code" placeholder="000000">
+  <button (click)="enviarCodigo()">Enviar</button>
+</form>

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { RegistroService } from '../../services/registro.service';
 import { RegistroModel } from '../../models/registro.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registro',
@@ -11,9 +12,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class Registro implements OnInit {
   form!: FormGroup
+
   constructor(
     private registroService: RegistroService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required]],
@@ -22,7 +25,7 @@ export class Registro implements OnInit {
       password: ['', [Validators.required]],
 
       wppCheckbox: [false],
-      emailCheckbox: [false]
+      emailCheckbox: [true]
     })
   }
 
@@ -51,6 +54,7 @@ export class Registro implements OnInit {
     this.registroService.registro(data).subscribe({
       next: (res: any) => {
         console.log(res)
+        this.router.navigate(["/confirmar-conta", this.form.value.email])
       },
       error: (err: any) => console.log(err)
     })
