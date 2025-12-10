@@ -32,4 +32,7 @@ def send_mail(recipient: str, name: str):
     server.send_message(msg)
 
 if __name__ == "__main__":
-  pass
+  try:
+    send_mail("davisocoloski1@gmail.com", "A")
+  except Exception as e:
+    print(repr(e))

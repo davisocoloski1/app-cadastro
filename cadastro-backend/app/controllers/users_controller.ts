@@ -8,7 +8,7 @@ export default class UsersController {
 
   async store({ request, response }: HttpContext) {
     const newUser = schema.create({
-      nome: schema.string({}, [
+      name: schema.string({}, [
         rules.minLength(3),
         rules.maxLength(100),
         rules.required()
@@ -29,10 +29,10 @@ export default class UsersController {
     const data = await request.validate({
       schema: newUser,
       messages: {
-        'nome.string': 'O nome não deve possuir dígitos numéricos.',
-        'nome.minLength': 'O nome deve possuir no mínimo 3 caracteres.',
-        'nome.maxLength': 'O nome deve possuir no máximo 100 caracteres',
-        'nome.required': 'O campo "Nome" deve ser preenchido.',
+        'name.string': 'O nome não deve possuir dígitos numéricos.',
+        'name.minLength': 'O nome deve possuir no mínimo 3 caracteres.',
+        'name.maxLength': 'O nome deve possuir no máximo 100 caracteres',
+        'name.required': 'O campo "Nome" deve ser preenchido.',
 
         'email.email': 'O e-mail digitado é inválido.',
         'email.required': 'O campo "E-mail" deve ser preenchido.',
@@ -45,13 +45,14 @@ export default class UsersController {
     })
 
     const user = await User.create(data)
-    
+
     try {
-      await axios.post(this.pythonApi, { email: data.email, name: data.nome })
+      await axios.post(this.pythonApi, { email: data.email, name: data.name })
     } catch (err: any) {
       console.log(err)
+      return
     }
 
     return response.created(user)
-  } 
+  }
 }

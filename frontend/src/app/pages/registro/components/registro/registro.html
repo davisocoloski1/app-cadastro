@@ -1,0 +1,33 @@
+<div>
+  <form [formGroup]="form">
+    <div>
+      <div>
+        <label>Nome</label>
+        <input type="text" formControlName="name" placeholder="Nome">
+      </div>
+      <div>
+        <label for="">E-mail</label>
+        <input type="email" formControlName="email" placeholder="E-mail">
+      </div>
+      <div>
+        <label for="">Telefone</label>
+        <input type="tel" formControlName="telefone" placeholder="Telefone">
+      </div>
+      <div>
+        <label for="">Senha</label>
+        <input type="password" formControlName="password" placeholder="Senha">
+      </div>
+
+      <div>
+        <label for="">Whatsapp</label>
+        <input type="checkbox" formControlName="wppCheckbox">
+      </div>
+      <div>
+        <label for="">Email</label>
+        <input type="checkbox" formControlName="emailCheckbox">
+      </div>
+
+      <button (click)="registro()">Confirmar</button>
+    </div>
+  </form>
+</div>
