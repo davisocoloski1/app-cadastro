@@ -180,6 +180,23 @@ h6.text-muted {
   color: #fecaca;
 }
 
+.login-link {
+  color: $accent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+
+  &:hover {
+    color: $accent-hover;
+    text-shadow: 0 0 8px rgba($accent, 0.6);
+  }
+
+  &:active {
+    color: lighten($accent-hover, 10%);
+  }
+}
+
 // responsivo
 @media (max-width: 480px) {
   :host {

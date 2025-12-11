@@ -5,7 +5,8 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { tokenInterceptor } from './pages/registro/services/token-interceptor';
+import { tokenInterceptor } from './interceptors/token-interceptor';
+import { UsersModule } from './pages/users/users-module';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { tokenInterceptor } from './pages/registro/services/token-interceptor';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    RouterModule
+    RouterModule,
+    UsersModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

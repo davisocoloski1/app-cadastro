@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { schema, rules } from '@adonisjs/validator'
 import User from '#models/user'
 import axios, { AxiosError } from 'axios'
+import logger from '@adonisjs/core/services/logger'
 
 export default class UsersController {
   private pythonApi = 'http://localhost:8000'
@@ -139,5 +140,114 @@ export default class UsersController {
 
       return response.internalServerError('Ocorreu um erro ao validar o código.')
     }
+  }
+
+  async getUserInfo({ auth, response }: HttpContext) {
+    const user = auth.user!
+
+    try {
+      const getUser = await User.query()
+      .where('id', user.id)
+      .whereNotNull('confirmed')
+      .whereNull('deleted_at')
+      .first()
+
+      if (!user) {
+        return response.status(404).json({
+          message: "Usuário não encontrado ou não confirmado."
+        })
+      }
+
+      return response.ok({
+        id: getUser?.id,
+        name: getUser?.name,
+        email: getUser?.email,
+        telefone: getUser?.telefone,
+        password: getUser?.password,
+        confirmed: getUser?.confirmed,
+      })
+    } catch (error) {
+      console.error(error)
+      return response.status(500).json({
+        message: "Erro ao captar informações do usuário."
+      })
+    }
+  }
+
+  async update({ auth, request, response }: HttpContext) {
+    logger.info('Entrou no método update')
+    const authUser = auth.user
+
+    if (!authUser) {
+      return response.unauthorized({
+        message: 'Ação não autorizada.'
+      })
+    }
+
+    const updateUser = schema.create({
+      name: schema.string.optional({ trim: true }, [
+        rules.minLength(3),
+        rules.maxLength(100),
+      ]),
+      email: schema.string.optional({}, [
+        rules.email(),
+        rules.maxLength(254),
+      ]),
+      telefone: schema.string.optional({}, [
+        rules.regex(/^55\d{11}$/),
+      ]),
+    })
+
+    const data = await request.validate({
+      schema: updateUser,
+      messages: {
+        'name.string': 'O nome deve ser um texto válido.',
+        'name.minLength': 'O nome deve possuir no mínimo 3 caracteres.',
+        'name.maxLength': 'O nome deve possuir no máximo 100 caracteres.',
+
+        'email.email': 'O e-mail digitado é inválido.',
+        'email.maxLength': 'O e-mail deve possuir no máximo 254 caracteres.',
+
+        'telefone.regex':
+          'O formato do telefone está incorreto. Exemplo correto: 55XX9XXXXXXXX.',
+      },
+    })
+
+    const user = await User.findOrFail(authUser.id)
+
+    if (data.name !== undefined) {
+      user.name = data.name
+    }
+
+    if (data.email !== undefined) {
+      user.email = data.email
+    }
+
+    if (data.telefone !== undefined) {
+      user.telefone = data.telefone
+    }
+
+    try {
+      await user.save()
+    } catch (error: any) {
+      if (error.code === '23505') {
+        return response.status(400).json({
+          message: 'O e-mail ou telefone informado já está em uso.'
+        })
+      }
+
+      console.error(error)
+      return response.status(500).json({
+        message: 'Erro ao atualizar os dados de usuário.'
+      })
+    } 
+
+    return response.ok({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      telefone: user.telefone,
+      confirmed: user.confirmed
+    })
   }
 }

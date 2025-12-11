@@ -1,0 +1,289 @@
+// Paleta base (mesma dos outros componentes)
+$bg-body: #020617;      // quase preto (fundo do card)
+$bg-page: #020617;      // fundo da página / host
+$bg-input: #020617;     // fundo do input
+$bg-input-hover: #0f172a;
+$border-input: #1f2937;
+$border-input-focus: #38bdf8;
+$text-primary: #e5e7eb;
+$text-secondary: #9ca3af;
+$accent: #38bdf8;
+$accent-hover: #0ea5e9;
+$error: #f97373;
+
+// fundo da página / host
+:host {
+  display: block;
+  min-height: 100vh;
+  padding: 2rem;
+  background: radial-gradient(circle at top, #111827 0, #020617 45%);
+  color: $text-primary;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+// wrapper principal (já tem .d-flex.bg-dark no HTML)
+.d-flex.bg-dark {
+  background-color: transparent !important;
+}
+
+// card principal
+.card.bg-secondary {
+  background-color: rgba($bg-body, 0.92) !important;
+  border-radius: 1rem;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(148, 163, 184, 0.1);
+  backdrop-filter: blur(12px);
+  border: none;
+}
+
+.card-body {
+  padding: 2rem 2.25rem;
+}
+
+// header "Olá, nome..."
+h1 {
+  font-size: 1.4rem;
+  margin-bottom: 0.1rem;
+}
+
+p.text-muted,
+p {
+  color: $text-secondary !important;
+  font-size: 0.9rem;
+}
+
+// separador
+hr.border-secondary {
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+// labels
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $text-secondary;
+}
+
+// inputs
+.form-control.bg-dark {
+  background-color: $bg-input !important;
+  border-radius: 0.5rem;
+  border: 1px solid $border-input;
+  color: $text-primary;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.8rem;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.05s ease;
+
+  &::placeholder {
+    color: $text-secondary;
+    opacity: 0.7;
+  }
+
+  &:hover {
+    background-color: $bg-input-hover !important;
+    border-color: $border-input-focus;
+  }
+
+  &:focus {
+    background-color: $bg-input-hover !important;
+    border-color: $border-input-focus;
+    box-shadow: 0 0 0 1px rgba($accent, 0.4);
+    transform: translateY(-1px);
+  }
+}
+
+// header da label + botão "Editar/Bloquear"
+.d-flex.justify-content-between.align-items-center.mb-1 {
+  margin-bottom: 0.35rem !important;
+}
+
+// grupo de input do nome + botão "Teste"
+.input-group {
+  .form-control.bg-dark {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .btn.btn-outline-secondary {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-radius: 0.5rem;
+  }
+}
+
+// botão pequeno "Editar/Bloquear"
+.btn.btn-sm.btn-outline-light {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba($accent, 0.6);
+  color: $accent;
+  background-color: transparent;
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease,
+    color 0.12s ease;
+
+  &:hover {
+    background-color: rgba($accent, 0.12);
+    transform: translateY(-1px);
+    color: $accent-hover;
+  }
+
+  &:active {
+    transform: translateY(0);
+    background-color: rgba($accent, 0.18);
+  }
+}
+
+// botão "Teste"
+.btn.btn-outline-secondary {
+  font-size: 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  color: $text-secondary;
+  background-color: rgba(15, 23, 42, 0.9);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease;
+
+  &:hover {
+    background-color: rgba(31, 41, 55, 0.95);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// botões Reverter / Salvar
+.btn.btn-outline-light {
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid rgba($accent, 0.5);
+  color: $accent;
+  background-color: transparent;
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 1);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease;
+
+  &:hover:not(:disabled) {
+    background-color: rgba($accent, 0.12);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    background-color: rgba($accent, 0.18);
+  }
+}
+
+.btn.btn-primary {
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, $accent, $accent-hover);
+  color: #0b1120;
+  box-shadow:
+    0 14px 30px rgba(56, 189, 248, 0.3),
+    0 0 0 1px rgba(15, 23, 42, 0.8);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow:
+      0 18px 40px rgba(56, 189, 248, 0.35),
+      0 0 0 1px rgba(15, 23, 42, 0.9);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow:
+      0 10px 20px rgba(56, 189, 248, 0.25),
+      0 0 0 1px rgba(15, 23, 42, 0.9);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+// seção "Deletar conta"
+.border-top.border-secondary {
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+h2.h6.text-danger {
+  font-weight: 600;
+}
+
+.text-danger {
+  color: $error !important;
+}
+
+.btn.btn-sm.btn-outline-danger {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba($error, 0.8);
+  color: $error;
+  background-color: transparent;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease;
+
+  &:hover {
+    background-color: rgba($error, 0.18);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    background-color: rgba($error, 0.24);
+  }
+}
+
+// responsivo
+@media (max-width: 480px) {
+  :host {
+    padding: 1.25rem;
+  }
+
+  .card-body {
+    padding: 1.5rem 1.25rem;
+  }
+}
