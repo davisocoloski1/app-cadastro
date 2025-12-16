@@ -18,4 +18,12 @@ export class UsersService {
   updateUser(data: any) {
     return this.http.put(`${this.apiUrl}/users/update`, data)
   }
+
+  updatePassword(password: string, password_confirmation: string) {
+    return this.http.put(`${this.apiUrl}/users/updatePassword`, { password, password_confirmation })
+  }
+
+  deleteUser(password: string) {
+    return this.http.put(`${this.apiUrl}/users/deleteUser`, { password })
+  }
 }

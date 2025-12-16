@@ -1,0 +1,49 @@
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+  <div class="card bg-secondary text-light shadow-lg" style="max-width: 480px; width: 100%;">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">Alterar senha</h2>
+
+      @if (stateMsg) {
+        <div class="alert alert-info state-alert py-2 mb-4">
+          {{ stateMsg }}
+        </div>
+      }
+
+      @if (successMsg) {
+        <div class="alert alert-info state-alert py-2 mb-4">
+          {{ successMsg }}
+        </div>
+      }
+
+      <form [formGroup]="passwordConfirmation" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Digite sua senha</label>
+          <input
+            type="password"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="Digite sua senha"
+            formControlName="password"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Confirme sua senha</label>
+          <input
+            type="password"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="Confirme sua senha"
+            formControlName="password_confirmation"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-primary w-100 mt-2"
+          (click)="alterarSenha()"
+        >
+          Confirmar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

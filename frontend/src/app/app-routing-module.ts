@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+
   {
     path: '',
     loadChildren: () => import('./pages/auth/auth-module').then(m => m.RegistroModule)
@@ -11,6 +13,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/users/users-module').then(m => m.UsersModule)
   }
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

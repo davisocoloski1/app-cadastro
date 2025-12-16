@@ -9,5 +9,13 @@ router.post('/users/login', [() => import('#controllers/users_controller'), 'log
 
 router.group(() => {
     router.get('/users/info', [() => import('#controllers/users_controller'), 'getUserInfo']),
-    router.put('/users/update', [UsersController, 'update'])
+    router.put('/users/update', [UsersController, 'update']),
+    router.put('/users/updatePassword', [UsersController, 'updatePassword'])
+    router.put('/users/deleteUser', [UsersController, 'destroy'])
 }).use(middleware.auth())
+
+router.group(() => {
+    router.post('/enviarEmailRecuperacao', [UsersController, 'enviarRecuperacao'])
+    router.post('/validarToken', [UsersController, 'validarToken'])
+    router.post('/recuperar-senha', [UsersController, 'recuperarSenha'])
+}).prefix('/recuperar-senha')

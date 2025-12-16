@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './registro.html',
   styleUrl: './registro.scss',
 })
-export class Registro implements OnInit {
+export class Registro {
   form!: FormGroup
   errorMsg: string = ''
 
@@ -24,24 +24,7 @@ export class Registro implements OnInit {
       email: ['', [Validators.required]],
       telefone: ['', [Validators.required]],
       password: ['', [Validators.required]],
-
-      wppCheckbox: [false],
-      emailCheckbox: [true]
     })
-  }
-
-  ngOnInit(): void {
-    this.form.get('wppCheckbox')?.valueChanges.subscribe(value => {
-      if (value) {
-        this.form.get('emailCheckbox')?.patchValue(false, { emitEvent: false });
-      }
-    });
-
-    this.form.get('emailCheckbox')?.valueChanges.subscribe(value => {
-      if (value) {
-        this.form.get('wppCheckbox')?.patchValue(false, { emitEvent: false });
-      }
-    });
   }
 
   registro() {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../services/users.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from '../models/user';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-user-page',
@@ -19,10 +20,13 @@ export class MainUserPage implements OnInit {
   emailDisabled = true
   telefoneDisabled = true
   errorMsg = ''
+  stateMsg = history.state?.msg
+  showDeleteCard = false
   
   constructor(
     private usersService: UsersService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.editForm = this.fb.group({
       name: [{ value: '', disabled: true}, [Validators.required]],
@@ -33,7 +37,12 @@ export class MainUserPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getUser()
+    this.lockAllFields();
+    this.getUser();
+
+    if (this.stateMsg) {
+      setTimeout(() => { this.stateMsg = '' }, 10000);
+    }
   }
   
   getUser() {
@@ -41,7 +50,7 @@ export class MainUserPage implements OnInit {
       next: (res: any) => {
         this.user = res
 
-        this.name = this.user.name.split(/\s+/)[0]
+        this.name = this.user.name
         this.email = this.user.email,
         this.telefone = this.user.telefone
 
@@ -78,34 +87,67 @@ export class MainUserPage implements OnInit {
     }
 
     this.usersService.updateUser(payload).subscribe({
-      next: (res: any) => {
-        console.log('Atualizado:', res)
+      next: () => {
+        this.errorMsg = ''
+        this.lockAllFields()
+        window.location.reload()
       },
       error: (err) => {
-        this.errorMsg = err.error.message
-        console.log(err)
+        this.errorMsg = err.error.message ?? 'Erro ao salvar alterações.'
+        this.lockAllFields()
+        setTimeout(() => { this.errorMsg = '' }, 5000)
       },
     })
   }
 
-  toggleName() {
-    this.nameDisabled = !this.nameDisabled;
+  alterarSenhaRouter() {
+    this.router.navigate(['/alterar-senha'], {
+      state: { msg: `Olá, ${this.name = this.user.name.split(/\s+/)[0]}.\nDigite e confirme sua senha para alterá-la.` }
+    })
+  }
 
-    const control = this.editForm.get('name');
-    this.nameDisabled ? control?.disable() : control?.enable();
+  logout() {
+    localStorage.removeItem('token')
+    setTimeout(() => { this.router.navigate(['/login']) }, 1500)
+  }
+
+  private lockAllFields() {
+    this.editForm.get('name')?.disable();
+    this.editForm.get('email')?.disable();
+    this.editForm.get('telefone')?.disable();
+
+    this.nameDisabled = true;
+    this.emailDisabled = true;
+    this.telefoneDisabled = true;
+  }
+
+  private enableOnly(field: 'name' | 'email' | 'telefone') {
+    this.lockAllFields();
+
+    this.editForm.get(field)?.enable();
+
+    if (field === 'name') this.nameDisabled = false;
+    if (field === 'email') this.emailDisabled = false;
+    if (field === 'telefone') this.telefoneDisabled = false;
+  }
+
+  toggleName() {
+    if (!this.nameDisabled) this.lockAllFields();
+    else this.enableOnly('name');
   }
 
   toggleEmail() {
-    this.emailDisabled = !this.emailDisabled;
-
-    const control = this.editForm.get('email');
-    this.emailDisabled ? control?.disable() : control?.enable();
+    if (!this.emailDisabled) this.lockAllFields();
+    else this.enableOnly('email');
   }
 
   toggleTelefone() {
-    this.telefoneDisabled = !this.telefoneDisabled;
-
-    const control = this.editForm.get('telefone');
-    this.telefoneDisabled ? control?.disable() : control?.enable();
+    if (!this.telefoneDisabled) this.lockAllFields();
+    else this.enableOnly('telefone');
   }
+
+  toggleDeleteCard() {
+    this.showDeleteCard = true
+  }
+
 }

@@ -2,7 +2,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { schema, rules } from '@adonisjs/validator'
 import User from '#models/user'
 import axios, { AxiosError } from 'axios'
-import logger from '@adonisjs/core/services/logger'
+import { randomBytes } from 'crypto'
+import { DateTime } from 'luxon'
+import hash from '@adonisjs/core/services/hash'
 
 export default class UsersController {
   private pythonApi = 'http://localhost:8000'
@@ -80,19 +82,27 @@ export default class UsersController {
   async login({ request, response }: HttpContext) {
     const { email, password } = request.only(['email', 'password'])
 
-    try {
-      const user = await User.verifyCredentials(email, password)
-      const token = await User.accessTokens.create(user)
+    const user = await User.findBy('email', email)
 
-      return response.ok({
-        user,
-        token: token.value!.release()
-      })
-    } catch {
+    if (!user || user.deletedAt) {
       return response.unauthorized({
-        message: "Credenciais inválidas."
+        message: 'Credenciais inválidas.'
       })
     }
+
+    const ok = await hash.verify(user.password, password)
+    if(!ok) {
+      return response.unauthorized({
+        message: 'Credenciais inválidas.'
+      })
+    }
+
+    const token = await User.accessTokens.create(user)
+
+    return response.ok({
+      user,
+      token: token.value!.release()
+    })
   }
 
   async resendConfirmationCode({ request, response }: HttpContext) {
@@ -175,7 +185,6 @@ export default class UsersController {
   }
 
   async update({ auth, request, response }: HttpContext) {
-    logger.info('Entrou no método update')
     const authUser = auth.user
 
     if (!authUser) {
@@ -248,6 +257,211 @@ export default class UsersController {
       email: user.email,
       telefone: user.telefone,
       confirmed: user.confirmed
+    })
+  }
+
+  async updatePassword({ auth, request, response }: HttpContext) {
+    const authUser = auth.user!
+
+    if (!authUser) {
+      return response.unauthorized({
+        message: 'Ação não autorizada.'
+      })
+    }
+
+    const updatePassword = schema.create({
+      password: schema.string({}, [
+        rules.required(),
+        rules.minLength(6),
+        rules.maxLength(20),
+      ]),
+      password_confirmation: schema.string({}, [
+        rules.required(),
+        rules.confirmed('password')
+      ])
+    })
+
+    const data = await request.validate({
+      schema: updatePassword,
+      messages: {
+        'password.required': 'A senha é obrigatória.',
+        'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
+        'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.',
+        'password_confirmation.required': 'A confirmação de senha é obrigatória.',
+        'confirmed': 'As senhas não conferem.'
+      }
+    })
+
+    try {
+      const user = await User.findOrFail(authUser.id)
+
+      user.password = data.password
+      await user.save()
+    } catch (error: any) {
+      console.log(error.messages)
+      return response.status(500).json({
+        msg: 'Ocorreu um erro ao alterar a senha.'
+      })
+    }
+  }
+
+  async enviarRecuperacao({ request, response }: HttpContext) {
+    const { email } = request.only(['email'])
+    
+    const user = await User.findBy('email', email)
+    
+    if (!user) {
+      return response.status(404).notFound({
+        message: 'Email não encontrado, inválido ou não cadastrado.\nVerifique erros de digitação.'
+      })
+    }
+    
+    const existingToken = user.resetToken && user.resetExpiresAt && user.resetExpiresAt > DateTime.now()
+    
+    if (existingToken) {
+      return response.status(200).ok({
+        message: `E-mail enviado`
+      })
+    }
+    
+    const token = randomBytes(32).toString('hex')
+    user.resetToken = token
+    user.resetExpiresAt = DateTime.now().plus({ minutes: 15 })
+    await user.save()
+
+    try {
+      await axios.post(`${this.pythonApi}/send_recuperation_link`, { email, token }, { timeout: 10000 })
+      console.log("OK")
+    } catch (error) {
+      console.log('AXIOS CODE:', error.code)
+      console.log('AXIOS MESSAGE:', error.message)
+      console.log('AXIOS RESPONSE:', error.response?.status, error.response?.data)
+      return response.status(500).json({ msg: 'Erro ao enviar email.' })
+    }
+
+    return response.ok({
+      message: `E-mail enviado.`
+    })
+  }
+
+  async validarToken({ request, response }: HttpContext) {
+    const { token } = request.only(['token'])
+
+    if (!token) {
+      return response.badRequest({
+        message: 'Link inválido ou expirado.'
+      })
+    }
+
+    const user = await User.query()
+    .where('reset_token', token)
+    .where('reset_expires_at', '>', DateTime.now().toJSDate())
+    .first()
+
+    if (!user) {
+      return response.badRequest({
+        message: 'Link inválido ou expirado.'
+      })
+    }
+
+    return response.ok({ valid: true })
+  }
+
+  async recuperarSenha({ request, response }: HttpContext) {
+    const updatePassword = schema.create({
+      token: schema.string({}, [rules.required()]),
+      password: schema.string({}, [
+        rules.required(),
+        rules.minLength(6),
+        rules.maxLength(20),
+      ]),
+      password_confirmation: schema.string({}, [
+        rules.required(),
+        rules.confirmed('password')
+      ])
+    })
+
+    const data = await request.validate({
+      schema: updatePassword,
+      messages: {
+        'token.required': 'Link inválido ou expirado.',
+        'password.required': 'A senha é obrigatória.',
+        'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
+        'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.',
+        'password_confirmation.required': 'A confirmação de senha é obrigatória.',
+        'confirmed': 'As senhas não conferem.'
+      }
+    })
+
+    try {
+      const user = await User.query()
+      .where('reset_token', data.token)
+      .where('reset_expires_at', '>', DateTime.now().toJSDate())
+      .first()
+
+      if (!user) {
+        return response.status(400).json({
+          message: 'Link inválido ou expirado.'
+        })
+      }
+
+      user.password = data.password
+      user.resetExpiresAt = null
+      user.resetToken = null
+      await user.save()
+    } catch (error: any) {
+      console.log(error.messages)
+      return response.status(500).json({
+        msg: 'Ocorreu um erro ao alterar a senha.'
+      })
+    }
+
+    return response.ok({
+      message: 'Senha alterada com sucesso.'
+    })
+  }
+
+  async destroy({ auth, request, response }: HttpContext) {
+    const authUser = auth.user
+
+    if (!authUser) {
+      return response.unauthorized({
+        message: 'Acesso não autorizado.'
+      })
+    }
+
+    const { password } = request.only(['password'])
+
+    const user = await User.find(authUser.id)
+
+    if (!user) {
+      return response.notFound({
+        message: 'Usuário não encontrado.'
+      })
+    }
+
+    const ok = await hash.verify(user.password, password)
+    if (!ok) {
+      return response.unauthorized({
+        message: 'Senha inválida.'
+      })
+    }
+
+    if (!user) {
+      return response.notFound({
+        message: 'Usuário não encontrado ou inexistente. Verifique erros de digitação.'
+      })
+    }
+
+    user.deletedAt = DateTime.now()
+    user.confirmed = false
+    user.resetExpiresAt = null
+    user.resetToken = null
+
+    await user.save()
+
+    return response.ok({
+      message: 'Usuário deletado com sucesso. Redirecionando...'
     })
   }
 }

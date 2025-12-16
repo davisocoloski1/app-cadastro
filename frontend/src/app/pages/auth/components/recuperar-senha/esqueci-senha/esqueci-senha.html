@@ -1,0 +1,55 @@
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+  <div class="card bg-secondary text-light shadow-lg" style="max-width: 480px; width: 100%;">
+    <div class="card-body">
+
+      <h2 class="card-title text-center mb-2">
+        Recuperar conta
+      </h2>
+
+      <p class="text-muted text-center mb-4">
+        Digite seu e-mail para receber o código de confirmação
+      </p>
+
+      <form [formGroup]="esqueciSenhaForm" novalidate>
+
+        <div class="mb-4">
+          <label class="form-label">E-mail</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="E-mail"
+          />
+        </div>
+
+        @if (errorMsg) {
+          <div class="alert alert-danger py-2 my-2">
+            {{ errorMsg }}
+          </div>
+        } @else if (successMsg) {
+          <div class="alert alert-success py-2 mb-2">
+            {{ successMsg }}
+          </div>
+        }
+
+        <div class="mb-3">
+          <button
+            type="button"
+            class="btn btn-primary w-100"
+            (click)="enviarEmailRecuperacao()"
+          >
+            Enviar código
+          </button>
+        </div>
+
+        <div class="text-center mt-2">
+          <a routerLink="/login" class="register-link">
+            Voltar para o login
+          </a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>

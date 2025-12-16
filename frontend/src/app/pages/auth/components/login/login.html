@@ -4,7 +4,6 @@
       <h2 class="card-title text-center mb-4">Entrar na conta</h2>
 
       <form [formGroup]="loginForm" novalidate>
-        <!-- E-mail -->
         <div class="mb-3">
           <label class="form-label">E-mail</label>
           <input
@@ -15,7 +14,6 @@
           />
         </div>
 
-        <!-- Senha + botão Mostrar -->
         <div class="mb-3">
           <label class="form-label">Senha</label>
           <div class="input-group">
@@ -45,7 +43,6 @@
           }
         </div>
 
-        <!-- Botão Entrar -->
         <div class="mt-3">
           <button
             type="button"
@@ -54,6 +51,12 @@
           >
             Entrar
           </button>
+
+        <div class="text-center mt-2">
+          <a routerLink="/esqueci-senha" class="register-link">
+            Esqueci minha senha
+          </a>
+        </div>
 
         </div>
         <div class="text-center mt-3">

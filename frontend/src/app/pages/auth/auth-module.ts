@@ -6,6 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Registro } from './components/registro/registro';
 import { ConfirmarConta } from './components/confirmar-conta/confirmar-conta';
 import { Login } from './components/login/login';
+import { EsqueciSenha } from './components/recuperar-senha/esqueci-senha/esqueci-senha';
+import { RecuperarSenha } from './components/recuperar-senha/recuperar-senha/recuperar-senha';
 
 
 @NgModule({
@@ -13,6 +15,9 @@ import { Login } from './components/login/login';
     Registro,
     ConfirmarConta,
     Login,
+    EsqueciSenha,
+    RecuperarSenha,
+    RecuperarSenha,
   ],
   imports: [
     CommonModule,

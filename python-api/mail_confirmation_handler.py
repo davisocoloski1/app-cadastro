@@ -11,6 +11,8 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "465"))
 SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
+ANGULAR_URL = 'http://localhost:4200'
+
 confirmation_codes = {}
 
 def _generate_confirmation_code(length: int = 6):
@@ -50,6 +52,12 @@ def send_mail(recipient: str, name: str, resend: int = 0):
 
     msg.set_content(f"Olá, {name}! Aqui está seu novo código de confirmação: {confirmation_code}.")
 
+  elif resend == 2:
+    confirmation_code = _generate_confirmation_code()
+    confirmation_codes[recipient] = confirmation_code
+
+    msg.set_content(f"Olá, {name}! Aqui está seu código de confirmação para alteração de senha: {confirmation_code}.")
+
   context = ssl.create_default_context()
 
   with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
@@ -71,6 +79,31 @@ def receive_confirmation_code(email: str, code: str):
     return False
   
   return code == expected_code
+
+def send_password_change_mail(email: str, token: str):
+  """  
+  :param email: user's e-mail
+  :type email: str
+  """
+
+  reset_url = f"{ANGULAR_URL}/recuperar-senha?token={token}"
+
+  msg = EmailMessage()
+  msg["From"] = SMTP_USER
+  msg["To"] = email
+  msg["Subject"] = 'Formulário de esquecimento de senha'
+  msg.set_content(
+      f"Clique no link para redefinir sua senha:\n\n{reset_url}\n\n"
+      "Este link expira em 15 minutos."
+  )
+
+  context = ssl.create_default_context()
+
+  with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
+    server.set_debuglevel(1)
+    server.login(SMTP_USER, SMTP_PASSWORD)
+    server.send_message(msg)
+
 
 if __name__ == "__main__":
   try:
