@@ -60,7 +60,6 @@ export class ConfirmarConta implements OnInit {
 
     this.registroService.confirmacao(data).subscribe({
       next: (res: any) => {
-        console.log(res)
         this.router.navigate(['/login'])
       },
       error: (err: any) => {

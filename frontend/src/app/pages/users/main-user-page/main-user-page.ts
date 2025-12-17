@@ -56,7 +56,7 @@ export class MainUserPage implements OnInit {
         if (this.user.permission === 'admin') { this.isAdmin = true }
         else { this.isAdmin = false }
         
-        this.name = this.user.name
+        this.name = this.user.name.trim().split(' ')[0]
         this.email = this.user.email,
         this.telefone = this.user.telefone
         this.isUserConfirmed = this.user.confirmed!

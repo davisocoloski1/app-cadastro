@@ -42,6 +42,7 @@ export class Login implements OnInit {
         this.successMsg = 'Login realizado.'
         this.router.navigate(['/users/me'])
       }, error: (err: any) => {
+        this.successMsg = ''
         console.log(err)
         if (err.error.message) {
           this.errorMsg = err.error.message
