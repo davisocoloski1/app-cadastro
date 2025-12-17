@@ -25,7 +25,8 @@ export class EsqueciSenha {
   }
 
   enviarEmailRecuperacao() {
-    this.recuperarSenhaService.linkRecuperacao(this.esqueciSenhaForm.value.email).subscribe({
+    const msg = ''
+    this.recuperarSenhaService.linkRecuperacao(this.esqueciSenhaForm.value.email, msg).subscribe({
       next: (res: any) => {
         this.errorMsg = ''
         this.successMsg = res.message

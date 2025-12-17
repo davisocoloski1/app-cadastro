@@ -3,5 +3,6 @@ export interface RegistroModel {
   name: string;
   email: string;
   telefone: string;
-  password: string
+  password: string;
+  permission: string | 'user'
 }

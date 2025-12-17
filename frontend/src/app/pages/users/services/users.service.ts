@@ -26,4 +26,12 @@ export class UsersService {
   deleteUser(password: string) {
     return this.http.put(`${this.apiUrl}/users/deleteUser`, { password })
   }
+
+  registroAdmin(data: User): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/admin/registrarUsuario`, data)
+  }
+
+  novoCodigo(data: { email: string, name: string }, resend: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/novo_codigo`, { email: data.email, name: data.name, resend: resend })
+  }
 }

@@ -12,7 +12,7 @@
 
       <form [formGroup]="recuperarForm" novalidate>
 
-        <!-- Nova senha -->
+        
         <div class="mb-3">
           <label class="form-label">Nova senha</label>
           <input
@@ -23,7 +23,7 @@
           />
         </div>
 
-        <!-- Confirmar senha -->
+        
         <div class="mb-4">
           <label class="form-label">Confirmar senha</label>
           <input
@@ -34,7 +34,7 @@
           />
         </div>
 
-        <!-- Mensagens -->
+        
         @if (errorMsg) {
           <div class="alert alert-danger py-2 my-2">
             {{ errorMsg }}
@@ -45,7 +45,7 @@
           </div>
         }
 
-        <!-- Botão confirmar -->
+        
         <div class="mb-3">
           <button
             type="button"
@@ -56,7 +56,7 @@
           </button>
         </div>
 
-        <!-- Voltar -->
+        
         <div class="text-center mt-2">
           <a routerLink="/login" class="register-link">
             Voltar para o login

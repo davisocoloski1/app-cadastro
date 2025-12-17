@@ -56,7 +56,11 @@ def send_mail(recipient: str, name: str, resend: int = 0):
     confirmation_code = _generate_confirmation_code()
     confirmation_codes[recipient] = confirmation_code
 
-    msg.set_content(f"Olá, {name}! Aqui está seu código de confirmação para alteração de senha: {confirmation_code}.")
+    msg.set_content(f"""
+      Olá, {name}. Seu cadastro foi realizado a partir de um administrador do nosso sistema.
+
+      Aqui está seu código de confirmação: {confirmation_code}. 
+    """)
 
   context = ssl.create_default_context()
 
@@ -80,7 +84,7 @@ def receive_confirmation_code(email: str, code: str):
   
   return code == expected_code
 
-def send_password_change_mail(email: str, token: str):
+def send_password_change_mail(email: str, token: str, message: str):
   """  
   :param email: user's e-mail
   :type email: str
@@ -91,9 +95,9 @@ def send_password_change_mail(email: str, token: str):
   msg = EmailMessage()
   msg["From"] = SMTP_USER
   msg["To"] = email
-  msg["Subject"] = 'Formulário de esquecimento de senha'
+  msg["Subject"] = 'Formulário de redefinição de senha'
   msg.set_content(
-      f"Clique no link para redefinir sua senha:\n\n{reset_url}\n\n"
+      f"{message}\n\nClique no link para redefinir sua senha:\n\n{reset_url}\n\n"
       "Este link expira em 15 minutos."
   )
 

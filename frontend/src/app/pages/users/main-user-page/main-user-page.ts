@@ -16,12 +16,15 @@ export class MainUserPage implements OnInit {
   name = ''
   email = ''
   telefone = ''
+  errorMsg = ''
+  stateMsg = history.state?.msg
   nameDisabled = true
   emailDisabled = true
   telefoneDisabled = true
-  errorMsg = ''
-  stateMsg = history.state?.msg
   showDeleteCard = false
+  isAdmin = false
+  showAdminRegister = false;
+  isUserConfirmed: boolean = true
   
   constructor(
     private usersService: UsersService,
@@ -49,10 +52,14 @@ export class MainUserPage implements OnInit {
     this.usersService.getUsers().subscribe({
       next: (res: any) => {
         this.user = res
-
+        
+        if (this.user.permission === 'admin') { this.isAdmin = true }
+        else { this.isAdmin = false }
+        
         this.name = this.user.name
         this.email = this.user.email,
         this.telefone = this.user.telefone
+        this.isUserConfirmed = this.user.confirmed!
 
         this.editForm.patchValue({
           name: this.user.name,
@@ -97,6 +104,22 @@ export class MainUserPage implements OnInit {
         this.lockAllFields()
         setTimeout(() => { this.errorMsg = '' }, 5000)
       },
+    })
+  }
+
+  enviarCodigoConfirmacao() {
+    const email = this.user.email
+    const name = this.user.name
+
+    this.usersService.novoCodigo({ email, name }, 1).subscribe({
+      next: (res: any) => {
+        this.router.navigate(['/confirmar-conta', email, name], {
+          state: { message: 'Código enviado. Verifique seu e-mail.' }
+        })
+      }, error: (err: any) => {
+        this.errorMsg = err.error
+        console.log(err)
+      }
     })
   }
 

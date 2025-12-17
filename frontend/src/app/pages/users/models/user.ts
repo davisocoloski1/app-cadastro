@@ -3,5 +3,7 @@ export interface User {
   name: string,
   email: string,
   telefone: string,
-  password: string
+  password: string,
+  permission: string,
+  confirmed?: boolean
 }

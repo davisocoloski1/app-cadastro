@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MainUserPage } from './main-user-page/main-user-page';
 import { AlterarSenha } from './alterar-senha/alterar-senha';
 import { DeletarUserCard } from './deletar-user-card/deletar-user-card';
+import { AdminRegistro } from './main-user-page/admin-registro/admin-registro';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { DeletarUserCard } from './deletar-user-card/deletar-user-card';
   
     MainUserPage,
        AlterarSenha,
-       DeletarUserCard
+       DeletarUserCard,
+       AdminRegistro
   ],
   imports: [
     CommonModule,
