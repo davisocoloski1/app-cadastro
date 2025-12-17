@@ -35,6 +35,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column.dateTime()
   declare resetExpiresAt: DateTime | null
 
+  @column()
+  declare permission: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

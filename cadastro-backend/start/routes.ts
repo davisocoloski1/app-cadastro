@@ -19,3 +19,5 @@ router.group(() => {
     router.post('/validarToken', [UsersController, 'validarToken'])
     router.post('/recuperar-senha', [UsersController, 'recuperarSenha'])
 }).prefix('/recuperar-senha')
+
+router.post('/admin/registrarUsuario', [UsersController, 'adminStore']).use(middleware.auth())

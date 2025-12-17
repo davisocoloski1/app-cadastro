@@ -28,6 +28,9 @@ export default class UsersController {
         rules.required(),
         rules.minLength(6),
         rules.maxLength(20)
+      ]),
+      permission: schema.enum(['user', 'admin'], [
+        rules.required()
       ])
     })
 
@@ -47,7 +50,7 @@ export default class UsersController {
 
         'password.required': 'O campo "Senha" deve ser preenchido.',
         'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
-        'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.'
+        'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.',
       }
     })
 
@@ -57,6 +60,10 @@ export default class UsersController {
 
     try {
       user = await User.create(data)
+      if (user.id === 1) {
+        user.permission = 'admin'
+        await user.save()
+      }
     } catch (err) {
       if (err.code === '23505') {
         if (err.detail?.includes('email')) {
@@ -64,6 +71,8 @@ export default class UsersController {
         } else if (err.detail?.includes('telefone')) {
           return response.status(400).json({ message: 'Este telefone já está em uso.' })
         }
+      } else {
+        throw err
       }
     }
 
@@ -77,6 +86,78 @@ export default class UsersController {
     }
 
     return response.created(user)
+  }
+
+  async adminStore({ auth, request, response }: HttpContext) {
+    const admin = auth.user!.permission
+
+    if (admin !== 'admin') {
+      return response.unauthorized({
+        message: 'Você não possui a permissão necessária para realizar essa ação.'
+      })
+    }
+
+    const createUser = schema.create({
+      name: schema.string({}, [
+        rules.required(),
+        rules.minLength(3),
+        rules.maxLength(100),
+      ]),
+      email: schema.string({}, [
+        rules.required(),
+        rules.email()
+      ]),
+      telefone: schema.string({}, [
+        rules.required(),
+        rules.regex(/^55\d{11}$/)
+      ]),
+      password: schema.string({}, [
+        rules.required(),
+        rules.minLength(6),
+        rules.maxLength(20)
+      ]),
+      permission: schema.enum(['user', 'admin'], [
+        rules.required(),
+      ])
+    })
+
+    const data = await request.validate({
+      schema: createUser,
+      messages: {
+        'name.string': 'O nome não deve possuir dígitos numéricos.',
+        'name.minLength': 'O nome deve possuir no mínimo 3 caracteres.',
+        'name.maxLength': 'O nome deve possuir no máximo 100 caracteres',
+        'name.required': 'O campo "Nome" deve ser preenchido.',
+
+        'email.email': 'O e-mail digitado é inválido.',
+        'email.required': 'O campo "E-mail" deve ser preenchido.',
+
+        'telefone.regex': 'O formado do telefone está incorreto. Exemplo correto: 55XX9XXXXXXXX.',
+        'telefone.required': 'O campo "Telefone" deve ser preenchido.',
+
+        'password.required': 'O campo "Senha" deve ser preenchido.',
+        'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
+        'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.',
+
+        'permission.enum': 'A categoria do usuário deve ser selecionada como "Usuário" ou "Admin"',
+        'permission.required': 'A categoria do usuário é um campo obrigatório.'
+      }
+    })
+
+    try {
+      const user = await User.create(data)
+      return response.created(user)
+    } catch (error) {
+      if (error.code === '23505') {
+        if (error.detail?.includes('email')) {
+          return response.status(400).json({ message: 'Este e-mail já está em uso.' })
+        } else if (error.detail?.includes('telefone')) {
+          return response.status(400).json({ message: 'Este telefone já está em uso.' })
+        }
+      } else {
+        console.log(error)
+      }
+    }
   }
 
   async login({ request, response }: HttpContext) {
@@ -174,6 +255,7 @@ export default class UsersController {
         email: getUser?.email,
         telefone: getUser?.telefone,
         password: getUser?.password,
+        permission: getUser?.permission,
         confirmed: getUser?.confirmed,
       })
     } catch (error) {
@@ -190,6 +272,12 @@ export default class UsersController {
     if (!authUser) {
       return response.unauthorized({
         message: 'Ação não autorizada.'
+      })
+    }
+
+    if (!authUser.confirmed) {
+      return response.unauthorized({
+        message: 'Você precisa verificar sua conta para editar as informações.'
       })
     }
 
@@ -306,7 +394,7 @@ export default class UsersController {
   }
 
   async enviarRecuperacao({ request, response }: HttpContext) {
-    const { email } = request.only(['email'])
+    const { email, msg } = request.only(['email', 'msg'])
     
     const user = await User.findBy('email', email)
     
@@ -330,7 +418,7 @@ export default class UsersController {
     await user.save()
 
     try {
-      await axios.post(`${this.pythonApi}/send_recuperation_link`, { email, token }, { timeout: 10000 })
+      await axios.post(`${this.pythonApi}/send_recuperation_link`, { email, token, msg }, { timeout: 10000 })
       console.log("OK")
     } catch (error) {
       console.log('AXIOS CODE:', error.code)
