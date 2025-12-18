@@ -1,5 +1,4 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import hash from '@adonisjs/core/services/hash'
 import env from '#start/env'
 import User from '#models/user'
 
@@ -17,7 +16,7 @@ export default class extends BaseSeeder {
       name,
       email,
       telefone,
-      password: await hash.make(password!),
+      password: String(password),
       confirmed: true,
       resetToken: null,
       resetExpiresAt: null,
