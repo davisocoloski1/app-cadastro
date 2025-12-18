@@ -16,6 +16,7 @@ npm install
 ni .env # touch .env for Linux/macOS
 Copy-Item .env.example .env # cp .env.example .env for Linux/macOS
 node ace generate:key
+npm run migration
 ```
 
 After copy the .env.example into your .env file, insert your informations (database credentials), make sure to create a database manually before trying to run with `npm num dev`.
