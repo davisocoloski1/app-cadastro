@@ -41,7 +41,7 @@ export class Registro {
 
     this.registroService.registro(data, resend).subscribe({
       next: () => {
-        this.router.navigate(["/confirmar-conta", this.form.value.email, this.form.value.name])
+        this.router.navigate(["auth/confirmar-conta", this.form.value.email, this.form.value.name])
       },
       error: (err: any) => {
         console.log(err)

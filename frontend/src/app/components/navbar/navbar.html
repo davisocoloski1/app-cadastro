@@ -1,0 +1,37 @@
+<header class="navbar navbar-expand-md navbar-dark admin-header sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" routerLink="">
+      <span class="admin-mark"></span>
+      AuthSystem
+    </a>
+
+    <button
+      class="navbar-toggler border-0 shadow-none"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNav"
+      aria-controls="mainNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <nav class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto gap-md-1 align-items-md-center">
+        <li class="nav-item">
+          <a class="nav-link admin-link active" routerLink="">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link admin-link" [routerLink]="router1">{{ button1 }}</a>
+        </li>
+        <li class="nav-item ms-md-2">
+          @if (isLogged) {
+            <a class="btn btn-outline-info admin-cta" [routerLink]="router2" (click)="logout()">{{ button2 }}</a>
+          } @else {
+            <a class="btn btn-outline-info admin-cta" [routerLink]="router2">{{ button2 }}</a>
+          }
+      </ul>
+    </nav>
+  </div>
+</header>

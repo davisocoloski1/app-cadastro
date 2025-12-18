@@ -32,7 +32,7 @@ export class DeletarUserCard {
         this.successMsg = res.message
         if (localStorage.getItem('token')) localStorage.removeItem('token');
 
-        setTimeout(() => { this.router.navigate(['/login']) }, 2000)
+        setTimeout(() => { this.router.navigate(['auth/login']) }, 2000)
       },
       error: (err: any) => {
         this.successMsg = ''

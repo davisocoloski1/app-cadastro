@@ -6,22 +6,22 @@ import { Login } from './components/login/login';
 import { authGuard } from '../../guards/auth-guard';
 import { EsqueciSenha } from './components/recuperar-senha/esqueci-senha/esqueci-senha';
 import { RecuperarSenha } from './components/recuperar-senha/recuperar-senha/recuperar-senha';
+import { publicGuard } from '../../guards/public-guard';
 
 const routes: Routes = [
   {
     path: 'registro',
     component: Registro,
-    canActivate: [authGuard]
+    canActivate: [publicGuard]
   },
   {
     path: 'confirmar-conta/:email/:name',
     component: ConfirmarConta,
-    canActivate: [authGuard]
   },
   {
     path: 'login',
     component: Login,
-    canActivate: [authGuard]
+    canActivate: [publicGuard]
   },
   {
     path: 'esqueci-senha',
@@ -37,4 +37,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class RegistroRoutingModule { }
+export class AuthRoutingModule { }

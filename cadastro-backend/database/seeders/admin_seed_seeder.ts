@@ -5,10 +5,10 @@ import User from '#models/user'
 
 export default class extends BaseSeeder {
   async run() {
-    const email = env.get('ADMIN_EMAIL')
-    const password = env.get('ADMIN_PASSWORD')
-    const name = env.get('ADMIN_NAME')
-    const telefone = env.get('ADMIN_PHONE')
+    const email = String(env.get('ADMIN_EMAIL'))
+    const password = String(env.get('ADMIN_PASSWORD'))
+    const name = String(env.get('ADMIN_NAME'))
+    const telefone = String(env.get('ADMIN_PHONE'))
 
     const existing = await User.query().where('email', email!).first()
     if (existing) return

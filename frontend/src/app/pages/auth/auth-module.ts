@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { RegistroRoutingModule } from './auth-routing-module';
+import { AuthRoutingModule } from './auth-routing-module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Registro } from './components/registro/registro';
 import { ConfirmarConta } from './components/confirmar-conta/confirmar-conta';
@@ -17,12 +17,11 @@ import { RecuperarSenha } from './components/recuperar-senha/recuperar-senha/rec
     Login,
     EsqueciSenha,
     RecuperarSenha,
-    RecuperarSenha,
   ],
   imports: [
     CommonModule,
-    RegistroRoutingModule,
+    AuthRoutingModule,
     ReactiveFormsModule
   ]
 })
-export class RegistroModule { }
+export class AuthModule { }

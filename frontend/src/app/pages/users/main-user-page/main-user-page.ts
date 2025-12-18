@@ -71,7 +71,7 @@ export class MainUserPage implements OnInit {
         if (err.status === 401) {
           if (localStorage.getItem('token')) { 
             localStorage.removeItem('token')
-            this.router.navigate(['/login'], {
+            this.router.navigate(['auth/login'], {
               state: { msg: 'Faça login para utilizar nossos serviços.' }
             })
           }
@@ -118,7 +118,7 @@ export class MainUserPage implements OnInit {
 
     this.usersService.novoCodigo({ email, name }, 1).subscribe({
       next: (res: any) => {
-        this.router.navigate(['/confirmar-conta', email, name], {
+        this.router.navigate(['auth/confirmar-conta', email, name], {
           state: { message: 'Código enviado. Verifique seu e-mail.' }
         })
       }, error: (err: any) => {
@@ -129,14 +129,14 @@ export class MainUserPage implements OnInit {
   }
 
   alterarSenhaRouter() {
-    this.router.navigate(['/alterar-senha'], {
+    this.router.navigate(['auth/alterar-senha'], {
       state: { msg: `Olá, ${this.name = this.user.name.split(/\s+/)[0]}.\nDigite e confirme sua senha para alterá-la.` }
     })
   }
 
   logout() {
     localStorage.removeItem('token')
-    setTimeout(() => { this.router.navigate(['/login']) }, 1500)
+    setTimeout(() => { this.router.navigate(['auth/login']) }, 1500)
   }
 
   private lockAllFields() {

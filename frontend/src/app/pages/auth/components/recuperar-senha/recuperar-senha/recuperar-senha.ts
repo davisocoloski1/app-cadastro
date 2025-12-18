@@ -56,7 +56,7 @@ export class RecuperarSenha {
       next: (res: any) => {
         this.errorMsg = ''
         this.successMsg = res.message
-        setTimeout(() => {this.router.navigate(['/login'])}, 1500)
+        setTimeout(() => {this.router.navigate(['auth/login'])}, 1500)
       },
       error: (err: any) => {
         this.successMsg = ''

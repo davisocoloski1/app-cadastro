@@ -4,9 +4,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
 import { tokenInterceptor } from './interceptors/token-interceptor';
-import { UsersModule } from './pages/users/users-module';
+import { RouterModule } from '@angular/router';
+import { Navbar } from './components/navbar/navbar';
 
 @NgModule({
   declarations: [
@@ -16,8 +16,8 @@ import { UsersModule } from './pages/users/users-module';
     BrowserModule,
     AppRoutingModule,
     RouterModule,
-    UsersModule
-  ],
+    Navbar
+],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors([tokenInterceptor]))
