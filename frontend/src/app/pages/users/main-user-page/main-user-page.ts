@@ -69,7 +69,12 @@ export class MainUserPage implements OnInit {
       }, error: (err: any) => {
         console.log(err)
         if (err.status === 401) {
-          if (localStorage.getItem('token')) { localStorage.removeItem('token') }
+          if (localStorage.getItem('token')) { 
+            localStorage.removeItem('token')
+            this.router.navigate(['/login'], {
+              state: { msg: 'Faça login para utilizar nossos serviços.' }
+            })
+          }
         }
       }
     })

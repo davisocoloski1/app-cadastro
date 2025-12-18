@@ -12,7 +12,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "migration": "node ace migration:run --force"
+    "migration": "node ace migration:run --force",
+    "seed": "node ace db:seed",
+    "db-key": "node ace generate:key"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",

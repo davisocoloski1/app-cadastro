@@ -15,11 +15,25 @@ cd cadastro-backend
 npm install
 ni .env # touch .env for Linux/macOS
 Copy-Item .env.example .env # cp .env.example .env for Linux/macOS
-node ace generate:key
+npm run db-key
 npm run migration
 ```
 
-After copy the .env.example into your .env file, insert your informations (database credentials), make sure to create a database manually before trying to run with `npm num dev`.
+Before runing `npm run dev`, insert into your .env file the following variables for creating a admin user for your system (they are in the .env.example, make sure to replace their values).
+
+```
+ADMIN_EMAIL=youradmin@gmail.com
+ADMIN_PASSWORD=your_admin_password # example: 12345678
+ADMIN_NAME=Admin
+ADMIN_PHONE=your_admin_phone_number # example: 55XX9XXXXXXXX
+```
+
+Then, you will have to create a PostgreSQL database manually (use pgAdmin 4, Dbeaver or other), change your db credentials at .env file and run:
+
+```
+npm run seed
+npm run dev
+```
 
 Now open a second terminal and run:
 

@@ -84,7 +84,7 @@ def receive_confirmation_code(email: str, code: str):
   
   return code == expected_code
 
-def send_password_change_mail(email: str, token: str, message: str):
+def send_password_change_mail(email: str, token: str):
   """  
   :param email: user's e-mail
   :type email: str
@@ -97,7 +97,7 @@ def send_password_change_mail(email: str, token: str, message: str):
   msg["To"] = email
   msg["Subject"] = 'Formulário de redefinição de senha'
   msg.set_content(
-      f"{message}\n\nClique no link para redefinir sua senha:\n\n{reset_url}\n\n"
+      f"Clique no link para redefinir sua senha:\n\n{reset_url}\n\n"
       "Este link expira em 15 minutos."
   )
 

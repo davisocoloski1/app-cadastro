@@ -10,8 +10,8 @@ export class RecuperarSenhaService {
   apiUrl = environment.adonisUrl
   constructor(private http: HttpClient) {}
 
-  linkRecuperacao(email: string, msg: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/recuperar-senha/enviarEmailRecuperacao`, { email, msg })
+  linkRecuperacao(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/recuperar-senha/enviarEmailRecuperacao`, { email })
   }
 
   validarToken(token: string): Observable<any> {

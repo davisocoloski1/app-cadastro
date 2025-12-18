@@ -394,7 +394,7 @@ export default class UsersController {
   }
 
   async enviarRecuperacao({ request, response }: HttpContext) {
-    const { email, msg } = request.only(['email', 'msg'])
+    const { email } = request.only(['email'])
     
     const user = await User.findBy('email', email)
     
@@ -418,7 +418,7 @@ export default class UsersController {
     await user.save()
 
     try {
-      await axios.post(`${this.pythonApi}/send_recuperation_link`, { email, token, msg }, { timeout: 10000 })
+      await axios.post(`${this.pythonApi}/send_recuperation_link`, { email, token }, { timeout: 10000 })
       console.log("OK")
     } catch (error) {
       console.log('AXIOS CODE:', error.code)

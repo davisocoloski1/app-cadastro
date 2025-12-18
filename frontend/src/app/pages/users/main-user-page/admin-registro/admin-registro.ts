@@ -45,7 +45,7 @@ export class AdminRegistro {
     this.usersService.registroAdmin(data).subscribe({
       next: (res: any) => {
         console.log(res)
-        this.recuperacaoService.linkRecuperacao(data.email, msg).subscribe({
+        this.recuperacaoService.linkRecuperacao(data.email).subscribe({
           next: (res: any) => {
             console.log(res)
           }, error: (err: any) => {
