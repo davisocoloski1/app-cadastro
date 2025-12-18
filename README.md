@@ -3,17 +3,40 @@ An application for managing accounts with code confirmation sent via email, acco
 How to run: select a directory on your computer, open cmd and type the command below.
 ```
 git clone https://github.com/davisocoloski1/app-cadastro.git
+cd app-cadastro
 ```
 
 After that, you will need 3 terminals (cmd pages). One to run the frontend (Angular), another to run the website's backend (AdonisJS), and the last to run the email manager (Python). 
 
-In the AdonisJS terminal (cadastro-backend), type the command `ni .env` if you are using Windows; if you are using Linux/macOS, type and run `touch .env`. Do the same in the Python terminal (python-api). 
+In the first terminal, run:
 
-After that, run the command `Copy-Item .env.example .env` if you are using Windows. If you are using Linux/macOS, run `cp .env.example .env`. This command must be run in both `cadastro-backend` and `python-api`.
+```
+cd cadastro-backend
+npm install
+ni .env # touch .env for Linux/macOS
+Copy-Item .env.example .env # cp .env.example .env for Linux/macOS
+node ace generate:key
+```
 
-Now that you have the .env files, open the AdonisJS terminal and run `node ace generate:key`.
+After copy the .env.example into your .env file, insert your informations (database credentials), make sure to create a database manually before trying to run with `npm num dev`.
 
-You will need a Google App Key for the Python one to work. If you don't know how to generate one, watch the video https://www.youtube.com/watch?v=GsXyF5Zb5UY. After generating an app key, place it in the .env file of the python-api, in the SMTP_PASSWORD variable. The SMPT_USER variable should be your gmail.
+Now open a second terminal and run:
+
+```
+cd frontend
+npm install
+ng serve
+```
+
+Now open a third terminal and run:
+
+```
+cd python-api
+ni .env # touch .env for Linux/macOS
+Copy-Item .env.example .env # cp .env.example .env for Linux/macOS
+```
+
+You will need a Google App Key for the Python .env file to work. If you don't know how to generate one, watch the video https://www.youtube.com/watch?v=GsXyF5Zb5UY. After generating an app key, place it in the .env file of the python-api, in the SMTP_PASSWORD variable. The SMPT_USER variable should be your gmail.
 
 To finalize the configuration, run the commands below in PowerShell (Windows):
 
@@ -31,7 +54,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-After having all 3 terminals open, run the commands (separately):
+After having all 3 terminals open, run the commands (separately, if they are not running yet):
 
 ```
 ng serve // at frontend (Angular) terminal/cmd
