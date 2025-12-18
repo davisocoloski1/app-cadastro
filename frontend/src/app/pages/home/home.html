@@ -15,15 +15,24 @@
         de conta. Administradores podem criar novos usuários.
       </p>
 
-      <div class="d-flex justify-content-center gap-2 flex-wrap mb-5">
-        <button type="button" class="btn btn-primary" routerLink="auth/registro">
-          Criar Conta
-        </button>
+      @if (isLogged) {
+        <div class="d-flex justify-content-center gap-2 flex-wrap mb-5">
+          <button type="button" class="btn btn-primary" routerLink="/users/me">
+            Minha conta
+          </button>
+        </div> 
+      } @else {
+        <div class="d-flex justify-content-center gap-2 flex-wrap mb-5">
+          <button type="button" class="btn btn-primary" routerLink="auth/registro">
+            Criar Conta
+          </button>
+  
+          <button type="button" class="btn btn-outline-primary" routerLink="/auth/login">
+            Fazer Login
+          </button>
+        </div>
+      }
 
-        <button type="button" class="btn btn-outline-primary" routerLink="/auth/login">
-          Fazer Login
-        </button>
-      </div>
     </section>
 
     <section class="mt-4">

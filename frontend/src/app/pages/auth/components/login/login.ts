@@ -40,7 +40,11 @@ export class Login implements OnInit {
         localStorage.setItem('token', res.token)
         this.errorMsg = ''
         this.successMsg = 'Login realizado.'
-        this.router.navigate(['/users/me'])
+        
+        setTimeout(() => {
+          this.router.navigate(['/users/me'])
+          window.location.reload()
+        }, 1000)
       }, error: (err: any) => {
         this.successMsg = ''
         console.log(err)
