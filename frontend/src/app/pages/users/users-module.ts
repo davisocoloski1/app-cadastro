@@ -7,6 +7,7 @@ import { MainUserPage } from './main-user-page/main-user-page';
 import { AlterarSenha } from './alterar-senha/alterar-senha';
 import { DeletarUserCard } from './deletar-user-card/deletar-user-card';
 import { AdminRegistro } from './main-user-page/admin-registro/admin-registro';
+import { AdminRegistroPage } from './admin-registro-page/admin-registro-page';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { AdminRegistro } from './main-user-page/admin-registro/admin-registro';
     MainUserPage,
        AlterarSenha,
        DeletarUserCard,
-       AdminRegistro
+       AdminRegistro,
+       AdminRegistroPage
   ],
   imports: [
     CommonModule,

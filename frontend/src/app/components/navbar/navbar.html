@@ -28,6 +28,14 @@
         <li class="nav-item ms-md-2">
           @if (isLogged) {
             <a class="btn btn-outline-info admin-cta" [routerLink]="router2" (click)="logout()">{{ button2 }}</a>
+            @if (isAdmin) {
+              <a
+                class="btn btn-outline-info admin-cta ms-md-1"
+                routerLink="/users/admin"
+              >
+                Admin
+              </a>
+            }
           } @else {
             <a class="btn btn-outline-info admin-cta" [routerLink]="router2">{{ button2 }}</a>
           }
