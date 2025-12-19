@@ -1,0 +1,75 @@
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+  <div class="card bg-secondary text-light shadow-lg" style="max-width: 900px; width: 100%;">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h1 class="h4 mb-1">Usuários</h1>
+          <p class="text-muted mb-0">Lista de usuários cadastrados no sistema.</p>
+        </div>
+        <button
+          type="button"
+          class="btn btn-outline-info btn-register-user"
+          routerLink="/users/admin/registro"
+        >
+          Registrar usuário
+        </button>
+      </div>
+
+      <hr class="border-secondary" />
+
+      <div class="users-list mt-3">
+        <div class="users-row users-header">
+          <div class="col name">Nome</div>
+          <div class="col email">E-mail</div>
+          <div class="col confirmed">Confirmado</div>
+          <div class="col permission">Permissão</div>
+          <div class="col actions">Ações</div>
+        </div>
+
+        <div class="users-row" *ngFor="let user of users; trackBy: trackById">
+          <div class="col name">{{ user.name }}</div>
+          <div class="col email">{{ user.email }}</div>
+
+          <div class="col confirmed">
+            <span
+              class="badge"
+              [class.badge-success]="user.confirmed"
+              [class.badge-danger]="!user.confirmed"
+            >
+              {{ user.confirmed ? 'Sim' : 'Não' }}
+            </span>
+          </div>
+
+          <div class="col permission">
+            <span
+              class="badge"
+              [class.badge-admin]="user.permission === 'admin'"
+              [class.badge-user]="user.permission === 'user'"
+            >
+              {{ user.permission }}
+            </span>
+          </div>
+
+          <div class="col actions">
+            <button
+              type="button"
+              class="btn-action btn-edit"
+              
+            >
+              ✎
+            </button>
+
+            <button
+              type="button"
+              class="btn-action btn-delete"
+              
+            >
+              🗑
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

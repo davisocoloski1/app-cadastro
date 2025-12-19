@@ -266,6 +266,37 @@ export default class UsersController {
     }
   }
 
+  async index({ auth, response }: HttpContext) {
+    const user = auth.user
+
+    if (!user) {
+      return response.unauthorized({
+        message: 'Você precisa está logado para acessar.'
+      })
+    }
+
+    const admin = auth.user.permission === 'admin'
+
+    if (!admin) {
+      return response.unauthorized({
+        message: 'Acesso restrito a administradores.'
+      })
+    }
+
+    const users = await User.query()
+    .whereNull('deleted_at')
+    .select(
+      'id',
+      'name',
+      'email',
+      'telefone',
+      'permission',
+      'confirmed',
+    )
+
+    return users
+  }
+
   async update({ auth, request, response }: HttpContext) {
     const authUser = auth.user
 

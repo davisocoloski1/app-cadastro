@@ -34,4 +34,8 @@ export class UsersService {
   novoCodigo(data: { email: string, name: string }, resend: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/novo_codigo`, { email: data.email, name: data.name, resend: resend })
   }
+
+  index(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users/getUsers`)
+  }
 }
