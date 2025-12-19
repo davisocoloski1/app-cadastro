@@ -129,14 +129,15 @@ export class MainUserPage implements OnInit {
   }
 
   alterarSenhaRouter() {
-    this.router.navigate(['auth/alterar-senha'], {
+    this.router.navigate(['users/alterar-senha'], {
       state: { msg: `Olá, ${this.name = this.user.name.split(/\s+/)[0]}.\nDigite e confirme sua senha para alterá-la.` }
     })
   }
 
   logout() {
     localStorage.removeItem('token')
-    setTimeout(() => { this.router.navigate(['auth/login']) }, 1500)
+    this.router.navigate(['auth/login'])
+    setTimeout(() => { window.location.reload() }, 500)
   }
 
   private lockAllFields() {

@@ -4,6 +4,7 @@ import { UsersService } from '../../services/users.service';
 import { RecuperarSenhaService } from '../../../auth/components/recuperar-senha/services/recuperar-senha.service';
 import { Router } from '@angular/router';
 import { User } from '../../models/user';
+import { switchMap, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-admin-registro',
@@ -14,6 +15,8 @@ import { User } from '../../models/user';
 export class AdminRegistro {
   adminRegistroForm!: FormGroup
   errorMsg = ''
+  successMsg = ''
+  isLoading = false
 
   constructor(
     private fb: FormBuilder,
@@ -31,8 +34,13 @@ export class AdminRegistro {
   }
 
   registrarUsuario() {
+    if (this.adminRegistroForm.invalid || this.isLoading) return;
+
+    this.isLoading = true;
+    this.errorMsg = '';
+    this.successMsg = '';
+
     const raw = this.adminRegistroForm.getRawValue()
-    let msg = 'Um administrador do nosso sistema realizou o seu cadastro. Segue o link para alteração de senha.'
 
     const data: User = {
       name: raw.name,
@@ -42,23 +50,29 @@ export class AdminRegistro {
       permission: raw.permission
     }
 
-    this.usersService.registroAdmin(data).subscribe({
-      next: (res: any) => {
-        console.log(res)
-        this.recuperacaoService.linkRecuperacao(data.email).subscribe({
-          next: (res: any) => {
-            console.log(res)
-          }, error: (err: any) => {
-            console.log(err)
-          }
-        })
-      }, error: (err: any) => {
-        console.log(err)
-        if (err.error.errors[0].message) {
-          this.errorMsg = err.error.errors[0].message
+    this.usersService.registroAdmin(data).pipe(
+      switchMap(() => this.recuperacaoService.linkRecuperacao(data.email)),
+      finalize(() => (this.isLoading = false))
+      ).subscribe({
+      next: (res) => {
+        this.errorMsg = ''
+        this.successMsg = 'Usuário criado. E-mail de verificação enviado.'
+        console.log(res);
+      },
+      error: (err: any) => {
+        this.successMsg = ''
+        if (err?.error?.errors?.[0]?.message) {
+          this.errorMsg = err.error.errors[0].message;
+          return;
         }
-        console.log(this.errorMsg)
+
+        if (err?.error?.message) {
+          this.errorMsg = err.error.message;
+          return;
+        }
+
+        this.errorMsg = err?.message ?? 'Erro inesperado';
       }
-    })
+    });
   }
 }

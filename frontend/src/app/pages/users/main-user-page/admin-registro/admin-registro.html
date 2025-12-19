@@ -82,6 +82,14 @@
       </small>
     </div>
 
+    @if (successMsg) {
+    <div class="d-flex justify-content-center mt-3 px-0">
+      <div class="alert alert-success py-2 mb-0 w-100">
+        {{ successMsg }}
+      </div>
+    </div>
+  }
+
     <div class="col-12 pt-2">
       <button
         type="button"
@@ -89,7 +97,10 @@
         (click)="registrarUsuario()"
         [disabled]="adminRegistroForm.invalid"
       >
-        Registrar usuário
+      @if (isLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        }
+        {{ isLoading ? 'Registrando...' : 'Registrar usuário' }}
       </button>
     </div>
   </div>

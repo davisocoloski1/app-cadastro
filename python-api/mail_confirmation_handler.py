@@ -90,7 +90,7 @@ def send_password_change_mail(email: str, token: str):
   :type email: str
   """
 
-  reset_url = f"{ANGULAR_URL}/recuperar-senha?token={token}"
+  reset_url = f"{ANGULAR_URL}/auth/recuperar-senha?token={token}"
 
   msg = EmailMessage()
   msg["From"] = SMTP_USER

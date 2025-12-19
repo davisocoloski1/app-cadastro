@@ -67,10 +67,10 @@ export class Navbar implements OnInit {
 
   logout() {
     localStorage.removeItem('token')
+    this.router.navigate([''])
 
     setTimeout(() => { 
-      this.router.navigate([''])
       window.location.reload()
-     }, 1000)
+     }, 500)
   }
 }
