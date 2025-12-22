@@ -13,6 +13,7 @@ export class DeletarUserCard {
   deleteForm!: FormGroup
   errorMsg = ''
   successMsg = ''
+  isLoading = false
   @Output() hideCard = new EventEmitter<boolean>()
 
   constructor(
@@ -26,16 +27,22 @@ export class DeletarUserCard {
   }
 
   deletarUsuario() {
-    this.userService.deleteUser(this.deleteForm.value.password).subscribe({
+    if (this.deleteForm.invalid || this.isLoading) return;
+
+    this.isLoading = true
+
+    this.userService.deleteUser({ password: this.deleteForm.value.password }).subscribe({
       next: (res: any) => {
         this.errorMsg = ''
         this.successMsg = res.message
         if (localStorage.getItem('token')) localStorage.removeItem('token');
+        this.isLoading = false
 
         setTimeout(() => { this.router.navigate(['auth/login']) }, 2000)
       },
       error: (err: any) => {
         this.successMsg = ''
+        this.isLoading = false
         if (err.error.message) {
           this.errorMsg = err.error.message
         } else {

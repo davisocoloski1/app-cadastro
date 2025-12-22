@@ -11,6 +11,11 @@ import { User } from '../models/user';
 })
 export class AdminUsersView implements OnInit {
   users: User[] = []
+  deleteUserConfirmation = false
+  userToDelete: User | null = null
+  loggedUser!: User
+  errorMsg = ''
+  successMsg = ''
 
   constructor(
     private usersService: UsersService,
@@ -18,6 +23,14 @@ export class AdminUsersView implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.usersService.getUsers().subscribe({
+      next: (res: any) => {
+        this.loggedUser = res
+      }, error: (err: any) => {
+        console.log(err)
+      }
+    })
+
     this.usersService.index().subscribe({
       next: (res: any) => {
         this.users = res
@@ -32,5 +45,25 @@ export class AdminUsersView implements OnInit {
 
   getOneUser(user: User) {
     this.router.navigate(['/users/admin/editar', user.id])
+  }
+
+  delete(user: User) {  
+    this.usersService.deleteUser({ id: user.id }).subscribe({
+      next: () => {
+        this.errorMsg = ''
+        this.users = this.users.filter(u => u.id !== user.id)
+        this.userToDelete = null
+        this.successMsg = 'Usuário deletado.'
+      }, error: (err: any) => {
+        this.successMsg = ''
+        if (err.error.message) {
+          this.errorMsg = err.error.message
+        } else {
+          this.errorMsg = err.error
+        }
+        console.log(err)
+        this.userToDelete = null
+      }
+    })
   }
 }

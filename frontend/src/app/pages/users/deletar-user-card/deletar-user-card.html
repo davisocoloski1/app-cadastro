@@ -47,7 +47,10 @@
         class="btn btn-outline-danger w-100"
         (click)="deletarUsuario()"
       >
-        Confirmar ação
+        @if (isLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        }
+        {{ isLoading ? 'Deletando...' : 'Confirmar ação' }}
       </button>
 
     </form>

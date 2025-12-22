@@ -60,14 +60,51 @@
             </button>
 
             <button
+              *ngIf="user.id !== loggedUser.id"
               type="button"
               class="btn-action btn-delete"
-              
+              (click)="userToDelete = user"
             >
               🗑
             </button>
           </div>
         </div>
+
+        @if (userToDelete) {
+          <div class="delete-confirmation mt-3">
+            <p>
+              Tem certeza de que deseja deletar o usuário
+              <strong>{{ userToDelete.name }}</strong>?
+            </p>
+
+            <div class="d-flex gap-2">
+              <button
+                class="btn btn-danger"
+                (click)="delete(userToDelete)"
+              >
+                Deletar
+              </button>
+
+              <button
+                class="btn btn-outline-light"
+                (click)="userToDelete = null"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        }
+        @if (successMsg) {
+        <div class="alert alert-success py-2 mt-2 mb-0">
+          {{ successMsg }}
+        </div>
+        }
+
+        @if (errorMsg) {
+          <div class="alert alert-danger py-2 mt-2 mb-0">
+            {{ errorMsg }}
+          </div>
+        } 
       </div>
 
     </div>

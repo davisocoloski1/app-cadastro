@@ -19,16 +19,18 @@ export class UsersService {
     return this.http.get<User>(`${this.apiUrl}/users/getUserById`, { params: { id: id } })
   }
 
-  updateUser(data: any) {
-    return this.http.put(`${this.apiUrl}/users/update`, data)
+  updateUser(userId: number, data: any) {
+    return this.http.put(`${this.apiUrl}/users/update`, {
+      id: userId, ...data
+    })
   }
 
   updatePassword(password: string, password_confirmation: string) {
     return this.http.put(`${this.apiUrl}/users/updatePassword`, { password, password_confirmation })
   }
 
-  deleteUser(password: string) {
-    return this.http.put(`${this.apiUrl}/users/deleteUser`, { password })
+  deleteUser(data: { id?: number, password?: number}) {
+    return this.http.put(`${this.apiUrl}/users/deleteUser`, data)
   }
 
   registroAdmin(data: User): Observable<User> {

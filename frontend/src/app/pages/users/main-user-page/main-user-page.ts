@@ -25,6 +25,7 @@ export class MainUserPage implements OnInit {
   isAdmin = false
   showAdminRegister = false;
   isUserConfirmed: boolean = true
+  saveLoading = false
   
   constructor(
     private usersService: UsersService,
@@ -81,6 +82,10 @@ export class MainUserPage implements OnInit {
   }
 
   salvarAlteracoes() {
+    if (this.editForm.invalid || this.saveLoading) return;
+
+    this.saveLoading = true
+
     this.errorMsg = ''
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched()
@@ -95,18 +100,21 @@ export class MainUserPage implements OnInit {
       this.user.telefone === this.editForm.value.telefone
     ) {
       this.errorMsg = 'Nenhum campo alterado.'
+      this.saveLoading = false
       return
     }
 
-    this.usersService.updateUser(payload).subscribe({
+    this.usersService.updateUser(this.user.id!, payload).subscribe({
       next: () => {
         this.errorMsg = ''
         this.lockAllFields()
+        this.saveLoading = false
         window.location.reload()
       },
       error: (err) => {
         this.errorMsg = err.error.message ?? 'Erro ao salvar alterações.'
         this.lockAllFields()
+        this.saveLoading = false
         setTimeout(() => { this.errorMsg = '' }, 5000)
       },
     })

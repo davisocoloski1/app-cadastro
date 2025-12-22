@@ -14,6 +14,7 @@ export class AlterarSenha {
   errorMsg = ''
   successMsg = ''
   passwordConfirmation!: FormGroup
+  isLoading = false
 
   constructor(
     private fb: FormBuilder,
@@ -27,6 +28,9 @@ export class AlterarSenha {
   }
 
   alterarSenha() {
+    if (this.passwordConfirmation.invalid || this.isLoading) return;
+
+    this.isLoading = true
     let password = this.passwordConfirmation.value.password
     let password_confirmation = this.passwordConfirmation.value.password_confirmation
 
@@ -35,6 +39,7 @@ export class AlterarSenha {
         this.successMsg = 'Senha atualizada. Redirecionando...'
         setTimeout(() => { this.router.navigate(['/users/me']) }, 2000)
       }, error: (err: any) => {
+        this.isLoading = false
         this.errorMsg = err.error.errors[0].message
       }
     })

@@ -316,6 +316,7 @@ export default class UsersController {
 
   async update({ auth, request, response }: HttpContext) {
     const authUser = auth.user
+    const idFromRequest = request.input('id')
 
     if (!authUser) {
       return response.unauthorized({
@@ -358,7 +359,18 @@ export default class UsersController {
       },
     })
 
-    const user = await User.findOrFail(authUser.id)
+    let userIdToUpdate: number
+
+    if (authUser.permission === 'admin') {
+      if (!idFromRequest) {
+        return response.badRequest({ message: 'ID do usuário é obrigatório.' })
+      }
+      userIdToUpdate = idFromRequest
+    } else {
+      userIdToUpdate = authUser.id
+    }
+
+    const user = await User.findOrFail(userIdToUpdate)
 
     if (data.name !== undefined) {
       user.name = data.name
@@ -373,14 +385,34 @@ export default class UsersController {
     }
 
     try {
-      await user.save()
-    } catch (error: any) {
-      if (error.code === '23505') {
-        return response.status(400).json({
-          message: 'O e-mail ou telefone informado já está em uso.'
-        })
+      if (data.email) {
+        const emailExists = await User.query()
+        .where('email', data.email)
+        .whereNot('id', user.id)
+        .first()
+
+        if (emailExists) {
+          return response.badRequest({
+            message: 'O e-mail informado já está em uso.'
+          })
+        }
       }
 
+      if (data.telefone) {
+        const telefoneExists = await User.query()
+        .where('telefone', data.telefone)
+        .whereNot('id', user.id)
+        .first()
+
+        if (telefoneExists) {
+          return response.badRequest({
+            message: 'O e-mail informado já está em uso.'
+          })
+        }
+      }
+
+      await user.save()
+    } catch (error: any) {
       console.error(error)
       return response.status(500).json({
         message: 'Erro ao atualizar os dados de usuário.'
@@ -559,6 +591,8 @@ export default class UsersController {
 
   async destroy({ auth, request, response }: HttpContext) {
     const authUser = auth.user
+    const password = request.input('password')
+    const idFromRequest = request.input('id')
 
     if (!authUser) {
       return response.unauthorized({
@@ -566,38 +600,60 @@ export default class UsersController {
       })
     }
 
-    const { password } = request.only(['password'])
-
-    const user = await User.find(authUser.id)
-
-    if (!user) {
-      return response.notFound({
-        message: 'Usuário não encontrado.'
+    if (authUser.id === idFromRequest) {
+      return response.forbidden({
+        message: 'Você não pode deletar sua própria conta.'
       })
     }
 
-    const ok = await hash.verify(user.password, password)
-    if (!ok) {
-      return response.unauthorized({
-        message: 'Senha inválida.'
-      })
+    let userToDelete: User | null = null
+
+    if (authUser.permission === 'admin') {
+      if (!idFromRequest) {
+        return response.badRequest({
+          message: 'ID do usuário é obrigatório.'
+        })
+      }
+
+      userToDelete = await User.find(idFromRequest)
+
+      if (!userToDelete) {
+        return response.notFound({
+          message: 'Usuário não encontrado.'
+        })
+      }
+    } else {
+      if (!password) {
+        return response.badRequest({
+          message: 'Senha obrigatória para excluir a conta.'
+        })
+      }
+
+      userToDelete = await User.find(authUser.id)
+
+      if (!userToDelete) {
+        return response.notFound({
+          message: 'Usuário não encontrado.'
+        })
+      }
+
+      const ok = await hash.verify(userToDelete.password, password)
+      if (!ok) {
+        return response.unauthorized({
+          message: 'Senha inválida.'
+        })
+      }
     }
 
-    if (!user) {
-      return response.notFound({
-        message: 'Usuário não encontrado ou inexistente. Verifique erros de digitação.'
-      })
-    }
+    userToDelete.deletedAt = DateTime.now()
+    userToDelete.confirmed = false
+    userToDelete.resetToken = null
+    userToDelete.resetExpiresAt = null
 
-    user.deletedAt = DateTime.now()
-    user.confirmed = false
-    user.resetExpiresAt = null
-    user.resetToken = null
-
-    await user.save()
+    await userToDelete.save()
 
     return response.ok({
-      message: 'Usuário deletado com sucesso. Redirecionando...'
+      message: 'Usuário deletado com sucesso.'
     })
   }
 }

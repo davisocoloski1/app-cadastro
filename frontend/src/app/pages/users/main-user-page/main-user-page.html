@@ -159,7 +159,10 @@
           class="btn btn-primary flex-fill"
           (click)="salvarAlteracoes()"
         >
-          Salvar
+          @if (saveLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        }
+        {{ saveLoading ? 'Salvando...' : 'Salvar' }}
         </button>
       </div>
       </form>

@@ -13,14 +13,18 @@ import { User } from '../models/user';
 export class AdminEditUser implements OnInit {
   editForm!: FormGroup
   user!: User
+  admin!: User
 
   errorMsg = ''
   successMsg = ''
 
+  adminName = ''
   name = ''
   email = ''
   telefone = ''
 
+  saveLoading = false
+  alterarSenhaLoading = false
   nameDisabled = true
   emailDisabled = true
   telefoneDisabled = true
@@ -43,14 +47,15 @@ export class AdminEditUser implements OnInit {
     this.lockAllFields()
     const id = Number(this.route.snapshot.paramMap.get('id'))
     this.getUserById(id)
+    this.getUser()
   }
 
   getUserById(id: number) {
     this.usersService.getUserById(id).subscribe({
       next: (res: any) => {
-        this.user = res
+        this.user = res[0]
         
-        this.name = this.user.name.trim().split(' ')[0]
+        this.name = this.user.name
         this.email = this.user.email,
         this.telefone = this.user.telefone
         this.isUserConfirmed = this.user.confirmed!
@@ -65,8 +70,32 @@ export class AdminEditUser implements OnInit {
     })
   }
 
-salvarAlteracoes() {
+  getUser() {
+    this.usersService.getUsers().subscribe({
+      next: (res: any) => {
+        this.admin = res
+        this.adminName = res.name
+      }, error: (err: any) => {
+        console.log(err)
+        if (err.status === 401) {
+          if (localStorage.getItem('token')) { 
+            localStorage.removeItem('token')
+            this.router.navigate(['auth/login'], {
+              state: { msg: 'Faça login para utilizar nossos serviços.' }
+            })
+          }
+        } 
+        console.log(err)
+      }
+    })
+  }
+
+  salvarAlteracoes() {
+    if (this.editForm.invalid || this.saveLoading) return;
+
+    this.saveLoading = true
     this.errorMsg = ''
+    const id = Number(this.route.snapshot.paramMap.get('id'))
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched()
       return
@@ -80,27 +109,38 @@ salvarAlteracoes() {
       this.user.telefone === this.editForm.value.telefone
     ) {
       this.errorMsg = 'Nenhum campo alterado.'
+      this.saveLoading = false
       return
     }
 
-    this.usersService.updateUser(payload).subscribe({
+    this.usersService.updateUser(id, payload).subscribe({
       next: () => {
         this.errorMsg = ''
         this.lockAllFields()
+        this.saveLoading = false
         window.location.reload()
       },
       error: (err) => {
         this.errorMsg = err.error.message ?? 'Erro ao salvar alterações.'
         this.lockAllFields()
+        this.saveLoading = false
         setTimeout(() => { this.errorMsg = '' }, 5000)
       },
     })
   }
 
   enviarAlteracaoSenha() {
-    this.usersService.enviarRecuperacao(this.email).subscribe({
-      next: () => this.successMsg = 'Email enviado.',
+    if (this.editForm.invalid || this.alterarSenhaLoading) return;
+    this.alterarSenhaLoading = true
+
+    this.usersService.enviarRecuperacao(this.user.email).subscribe({
+      next: () => {
+        this.successMsg = 'Email enviado.'
+        this.alterarSenhaLoading = false
+      },
       error: (err: any) => {
+        this.alterarSenhaLoading = false
+        this.errorMsg = 'Erro ao enviar email.'
         console.log(err)
       }
     })

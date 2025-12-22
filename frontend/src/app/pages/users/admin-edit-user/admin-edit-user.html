@@ -1,1 +1,141 @@
-<p>admin-edit-user works!</p>
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+  <div class="card bg-secondary text-light shadow-lg" style="max-width: 640px; width: 100%;">
+    <div>
+      <h2>Olá, <strong>{{ adminName }}</strong></h2>
+      <h5>Você está editando a conta de <strong>{{ name }}</strong></h5>
+    </div>
+
+      <hr class="border-secondary" />
+
+      @if (errorMsg) {
+        <div class="d-flex justify-content-center mt-3 px-3">
+          <div
+            class="alert alert-danger state-alert-error py-2 mb-0"
+            style="max-width: 640px; width: 100%;"
+          >
+            {{ errorMsg }}
+          </div>
+        </div>
+      }
+
+      <form [formGroup]="editForm" novalidate class="mt-3">
+
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="form-label mb-0">Seu nome</label>
+
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-light"
+              (click)="toggleName()"
+            >
+              {{ nameDisabled ? 'Editar' : 'Bloquear' }}
+            </button>
+          </div>
+
+          <div class="input-group">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control bg-dark text-light border-0 border-bottom"
+              placeholder="Seu nome"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="form-label mb-0">Seu e-mail</label>
+
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-light"
+              (click)="toggleEmail()"
+            >
+              {{ emailDisabled ? 'Editar' : 'Bloquear' }}
+            </button>
+          </div>
+
+          <input
+            type="email"
+            formControlName="email"
+            class="form-control bg-dark text-light border-0 border-bottom"
+            placeholder="Seu e-mail"
+          />
+        </div>
+
+        
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="form-label mb-0">Seu telefone</label>
+            
+            <button
+            type="button"
+            class="btn btn-sm btn-outline-light"
+            (click)="toggleTelefone()"
+            >
+            {{ telefoneDisabled ? 'Editar' : 'Bloquear' }}
+          </button>
+        </div>
+        
+        <input
+        type="tel"
+        formControlName="telefone"
+        class="form-control bg-dark text-light border-0 border-bottom"
+        placeholder="Seu telefone"
+        />
+      </div>
+
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label mb-0">Senha</label>
+          <span class="text-muted" style="font-size: 0.85rem;">Um e-mail de confirmação será enviado para {{ name }}</span>
+        </div>
+
+        @if (successMsg) {
+          <div class="d-flex justify-content-center mt-2">
+            <div
+              class="alert state-alert-success py-2 mb-2 w-100 text-center"
+              style="max-width: 640px;"
+            >
+              {{ successMsg }}
+            </div>
+          </div>
+        }
+
+
+        <button
+          type="button"
+          class="btn btn-outline-light w-100"
+          (click)="enviarAlteracaoSenha()"
+        >
+          @if (alterarSenhaLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        }
+        {{ alterarSenhaLoading ? 'Enviando email...' : 'Alterar senha' }}
+        </button>
+      </div>
+
+      <div class="d-flex gap-2 mb-3">
+        <button
+          type="button"
+          class="btn btn-outline-light flex-fill"
+          (click)="getUserById(user.id!)"
+        >
+          Reverter
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary flex-fill"
+          (click)="salvarAlteracoes()"
+        >
+          @if (saveLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        }
+        {{ saveLoading ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+      </form>
+    </div>
+  </div>
