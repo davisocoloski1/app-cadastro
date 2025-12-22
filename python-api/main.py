@@ -2,7 +2,9 @@ from fastapi import FastAPI, HTTPException
 import mail_confirmation_handler as mail
 from pydantic import BaseModel
 
+
 app = FastAPI()
+
 
 class SendMailData(BaseModel):
   email: str
@@ -18,8 +20,9 @@ async def send_confirmation(data: SendMailData, resend: int = 0):
     mail.send_mail(data.email, data.name, resend)
     return {"ok": True}
   except Exception as e:
-    print(repr(e))
-    raise HTTPException(status_code=500, detail="Erro ao enviar email.")
+    print("------- ERROR -------")
+    print(e)
+    # raise HTTPException(status_code=500, detail="Erro ao enviar email.")
   
 @app.post('/send_recuperation_link')
 async def send_recuperation_link(payload: RecuperationData):
@@ -28,8 +31,9 @@ async def send_recuperation_link(payload: RecuperationData):
     print("OK\n\n")
     return {"ok": True}
   except Exception as e:
-    print(repr(f'\033[31m{e}\033[m'))
-    raise HTTPException(status_code=500, detail='Erro ao enviar email.')
+    print("------- ERROR -------")
+    print(f'\033[31m{e}\033[m')
+    # raise HTTPException(status_code=500, detail='Erro ao enviar email.')
   
 @app.get('/receive_confirmation_code')
 async def receive_code(email: str, code: str):

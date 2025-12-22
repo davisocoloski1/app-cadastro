@@ -28,5 +28,9 @@ export class AdminUsersView implements OnInit {
 
   trackById(index: number, user: any) {
     return user.id;
-}
+  }
+
+  getOneUser(user: User) {
+    this.router.navigate(['/users/admin/editar', user.id])
+  }
 }

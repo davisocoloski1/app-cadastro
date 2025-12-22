@@ -9,6 +9,7 @@ import { DeletarUserCard } from './deletar-user-card/deletar-user-card';
 import { AdminRegistro } from './main-user-page/admin-registro/admin-registro';
 import { AdminRegistroPage } from './admin-registro-page/admin-registro-page';
 import { AdminUsersView } from './admin-users-view/admin-users-view';
+import { AdminEditUser } from './admin-edit-user/admin-edit-user';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { AdminUsersView } from './admin-users-view/admin-users-view';
        DeletarUserCard,
        AdminRegistro,
        AdminRegistroPage,
-       AdminUsersView
+       AdminUsersView,
+       AdminEditUser
   ],
   imports: [
     CommonModule,

@@ -15,6 +15,10 @@ export class UsersService {
     return this.http.get<User>(`${this.apiUrl}/users/info`)
   }
 
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/users/getUserById`, { params: { id: id } })
+  }
+
   updateUser(data: any) {
     return this.http.put(`${this.apiUrl}/users/update`, data)
   }
@@ -33,6 +37,10 @@ export class UsersService {
 
   novoCodigo(data: { email: string, name: string }, resend: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/novo_codigo`, { email: data.email, name: data.name, resend: resend })
+  }
+
+  enviarRecuperacao(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/recuperar-senha/enviarEmailRecuperacao`, { email })
   }
 
   index(): Observable<any> {

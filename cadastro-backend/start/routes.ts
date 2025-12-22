@@ -13,6 +13,7 @@ router.group(() => {
     router.put('/users/updatePassword', [UsersController, 'updatePassword'])
     router.put('/users/deleteUser', [UsersController, 'destroy'])
     router.get('/users/getUsers', [UsersController, 'index'])
+    router.get('users/getUserById', [UsersController, 'getUserById'])
 }).use(middleware.auth())
 
 router.group(() => {

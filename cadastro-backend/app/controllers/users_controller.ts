@@ -297,6 +297,23 @@ export default class UsersController {
     return users
   }
 
+  async getUserById({ request }: HttpContext) {
+    const { id } = request.only(['id'])
+
+    const getUser = await User.query()
+    .where('id', id)
+    .select(
+      'id',
+      'name',
+      'email',
+      'telefone',
+      'permission',
+      'confirmed',
+    )
+
+    return getUser
+  }
+
   async update({ auth, request, response }: HttpContext) {
     const authUser = auth.user
 
