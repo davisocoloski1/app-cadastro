@@ -1,6 +1,9 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 import UsersController from '#controllers/users_controller'
+// import ClientesController from '#controllers/clientes_controller'
+// import ValidationsController from '#controllers/validations_controller'
+import ClientesController from '#controllers/clientes_controller'
 
 router.post('/users/registro', [() => import('#controllers/users_controller'), 'store'])
 router.post('/users/confirmar_conta', [() => import('#controllers/users_controller'), 'account_confirmation'])
@@ -23,3 +26,9 @@ router.group(() => {
 }).prefix('/recuperar-senha')
 
 router.post('/admin/registrarUsuario', [UsersController, 'adminStore']).use(middleware.auth())
+
+// Controle e rotas de clientes (email, telefone e endereço incluídos)
+
+router.group(() => {
+    router.post('/registrarCliente', [ClientesController, 'store'])
+}).prefix('/clientes').use(middleware.auth())
