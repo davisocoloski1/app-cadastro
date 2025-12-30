@@ -32,6 +32,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare resetToken: string | null
 
+  @column()
+  declare unconfirmedEmail: string | null
+
   @column.dateTime()
   declare resetExpiresAt: DateTime | null
 

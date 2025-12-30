@@ -48,4 +48,12 @@ export class UsersService {
   index(): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/getUsers`)
   }
+
+  confirmarTrocaEmail(token: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/confirm-email-update`, { token: token })
+  }
+
+  pesquisarUsuario(query: string) {
+    return this.http.post(`${this.apiUrl}/users/searchUser`, { query: query })
+  }
 }

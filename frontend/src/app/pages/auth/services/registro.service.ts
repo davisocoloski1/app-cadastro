@@ -12,8 +12,8 @@ export class RegistroService {
 
   constructor(private http: HttpClient) { }
 
-  registro(data: RegistroModel, resend: number): Observable<RegistroModel> {
-    return this.http.post<RegistroModel>(`${this.apiUrl}/users/registro`, { ...data, resend })
+  registro(data: RegistroModel): Observable<RegistroModel> {
+    return this.http.post<RegistroModel>(`${this.apiUrl}/users/registro`, data)
   }
 
   registroAdmin(data: RegistroModel): Observable<RegistroModel> {

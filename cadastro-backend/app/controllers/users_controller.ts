@@ -21,13 +21,14 @@ export default class UsersController {
         rules.required()
       ]),
       telefone: schema.string({}, [
-        rules.regex(/^55\d{11}$/),
+        rules.regex(/^[1-9]{2}9\d{8}$/),
         rules.required()
       ]),
       password: schema.string({}, [
         rules.required(),
-        rules.minLength(6),
-        rules.maxLength(20)
+        rules.minLength(8),
+        rules.maxLength(32),
+        rules.regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])^[\x21-\x7e]{8,32}$/)
       ]),
       permission: schema.enum(['user', 'admin'], [
         rules.required()
@@ -45,17 +46,21 @@ export default class UsersController {
         'email.email': 'O e-mail digitado é inválido.',
         'email.required': 'O campo "E-mail" deve ser preenchido.',
 
-        'telefone.regex': 'O formado do telefone está incorreto. Exemplo correto: 55XX9XXXXXXXX.',
+        'telefone.regex': 'O formado do telefone está incorreto. Exemplo correto: XX9XXXXXXXX.',
         'telefone.required': 'O campo "Telefone" deve ser preenchido.',
 
         'password.required': 'O campo "Senha" deve ser preenchido.',
-        'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
-        'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.',
+        'password.minLength': 'A senha deve possuir no mínimo 8 caracteres.',
+        'password.maxLength': 'A senha deve possuir no máximo 32 caracteres.',
+        'password.regex': `A senha deve possuir: 
+        - Pelo menos 1 letra maiúscula
+        - Pelo menos 1 letra minúscula
+        - Pelo menos um digito numérico
+        - Pelo menos um caractere especial
+        - Entre 8 e 32 caracteres`
       }
     })
 
-    const resend = request.input('resend')
-    const resendNumber = Number(resend) || 0
     let user
 
     try {
@@ -74,15 +79,6 @@ export default class UsersController {
       } else {
         throw err
       }
-    }
-
-    try {
-      await axios.post(`${this.pythonApi}/send_mail_confirmation`, { email: data.email, name: data.name }, { params: { resend: resendNumber } })
-    } catch (err: any) {
-      console.log(err.response.data || err.message)
-      return response.status(500).json(
-        {message: 'Erro ao enviar código de confirmação'}
-      )
     }
 
     return response.created(user)
@@ -160,29 +156,38 @@ export default class UsersController {
     }
   }
 
-  async login({ request, response }: HttpContext) {
+  async login({ auth, request, response }: HttpContext) {
     const { email, password } = request.only(['email', 'password'])
 
-    const user = await User.findBy('email', email)
+    try {
+      const user = await User.verifyCredentials(email, password)
 
-    if (!user || user.deletedAt) {
+      if (!user || user.deletedAt) {
+        return response.unauthorized({
+          message: 'Credenciais inválidas.'
+        })
+      }
+
+      const token = await auth.use('api').createToken(user, [], { expiresIn: '6h' })
+
+      return response.ok({
+        user,
+        token: token.value!.release(),
+        expiresAt: token.expiresAt?.toISOString()
+      })
+    } catch (error) {
       return response.unauthorized({
-        message: 'Credenciais inválidas.'
+        message: 'Credenciais inválidas.',
+        error: error
       })
     }
+  }
 
-    const ok = await hash.verify(user.password, password)
-    if(!ok) {
-      return response.unauthorized({
-        message: 'Credenciais inválidas.'
-      })
-    }
-
-    const token = await User.accessTokens.create(user)
+  async logout({ auth, response }: HttpContext) {
+    await auth.use('api').invalidateToken()
 
     return response.ok({
-      user,
-      token: token.value!.release()
+      message: 'Logout realizado com sucesso.'
     })
   }
 
@@ -314,6 +319,22 @@ export default class UsersController {
     return getUser
   }
 
+  async searchUser({ request, response }: HttpContext) {
+    const { query } = request.only(['query'])
+
+    const userFound = await User.query()
+    .whereILike('email', `%${query}%`)
+    .orWhereILike('name', `%${query}%`)
+
+    if (!userFound) {
+      return response.notFound({
+        message: 'Usuário não encontrado ou inexistente.'
+      })
+    }
+
+    return response.ok(userFound)
+  }
+
   async update({ auth, request, response }: HttpContext) {
     const authUser = auth.user
     const idFromRequest = request.input('id')
@@ -340,7 +361,7 @@ export default class UsersController {
         rules.maxLength(254),
       ]),
       telefone: schema.string.optional({}, [
-        rules.regex(/^55\d{11}$/),
+        rules.regex(/^[1-9]{2}9\d{8}$/),
       ]),
     })
 
@@ -355,7 +376,7 @@ export default class UsersController {
         'email.maxLength': 'O e-mail deve possuir no máximo 254 caracteres.',
 
         'telefone.regex':
-          'O formato do telefone está incorreto. Exemplo correto: 55XX9XXXXXXXX.',
+          'O formato do telefone está incorreto. Exemplo correto: XX9XXXXXXXX.',
       },
     })
 
@@ -365,7 +386,7 @@ export default class UsersController {
       if (!idFromRequest) {
         return response.badRequest({ message: 'ID do usuário é obrigatório.' })
       }
-      userIdToUpdate = idFromRequest
+      userIdToUpdate = Number(idFromRequest)
     } else {
       userIdToUpdate = authUser.id
     }
@@ -376,10 +397,6 @@ export default class UsersController {
       user.name = data.name
     }
 
-    if (data.email !== undefined) {
-      user.email = data.email
-    }
-
     if (data.telefone !== undefined) {
       user.telefone = data.telefone
     }
@@ -388,10 +405,11 @@ export default class UsersController {
       if (data.email) {
         const emailExists = await User.query()
         .where('email', data.email)
+        .orWhere('unconfirmed_email', data.email)
         .whereNot('id', user.id)
         .first()
 
-        if (emailExists) {
+        if (emailExists && !(user.email === data.email)) {
           return response.badRequest({
             message: 'O e-mail informado já está em uso.'
           })
@@ -406,8 +424,29 @@ export default class UsersController {
 
         if (telefoneExists) {
           return response.badRequest({
-            message: 'O e-mail informado já está em uso.'
+            message: 'O telefone informado já está em uso.'
           })
+        }
+      }
+
+      if (data.email && user.email !== data.email) {
+        const existingToken = user.resetToken && user.resetExpiresAt && user.resetExpiresAt > DateTime.now()
+    
+        if (existingToken) {
+          return response.status(200).ok({
+            message: `Um link de confirmação já foi enviado para o e-mail.`
+          })
+        }
+        
+        const token = randomBytes(32).toString('hex')
+        user.unconfirmedEmail = data.email
+        user.resetToken = token
+        user.resetExpiresAt = DateTime.now().plus({ minutes: 15 })
+        
+        try {
+          await axios.post(`${this.pythonApi}/send_change_mail_link`, { email: data.email, token: token })
+        } catch (error) {
+          console.log(error)
         }
       }
 
@@ -426,6 +465,40 @@ export default class UsersController {
       telefone: user.telefone,
       confirmed: user.confirmed
     })
+  }
+
+  async confirmEmailUpdate({ request, response }: HttpContext) {
+    const confirmEmailSchema = schema.create({
+      token: schema.string({}, [rules.required()]),
+    })
+
+    const { token } = await request.validate({
+      schema: confirmEmailSchema,
+      messages: {
+        'token.required': 'Link inválido ou expirado.',
+      },
+    })
+
+    const user = await User.query()
+      .where('reset_token', token)
+      .where('reset_expires_at', '>', DateTime.now().toISO())
+      .first()
+
+    if (!user) {
+      return response.badRequest({ message: 'Link inválido ou expirado.' })
+    }
+
+    if (user.unconfirmedEmail) {
+      user.email = user.unconfirmedEmail
+      user.unconfirmedEmail = null
+      user.resetToken = null
+      user.resetExpiresAt = null
+      await user.save()
+
+      return response.ok({ message: 'E-mail alterado com sucesso.' })
+    }
+
+    return response.badRequest({ message: 'Nenhuma alteração de e-mail pendente.' })
   }
 
   async updatePassword({ auth, request, response }: HttpContext) {

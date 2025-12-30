@@ -7,6 +7,7 @@ import { AdminRegistroPage } from './admin-registro-page/admin-registro-page';
 import { adminGuard } from './guards/admin-guard';
 import { AdminUsersView } from './admin-users-view/admin-users-view';
 import { AdminEditUser } from './admin-edit-user/admin-edit-user';
+import { ConfirmarTrocaEmail } from './confirmar-troca-email/confirmar-troca-email';
 
 const routes: Routes = [
   {
@@ -33,6 +34,11 @@ const routes: Routes = [
     path: 'admin/editar/:id',
     component: AdminEditUser,
     canActivate: [adminGuard]
+  },
+  {
+    path: 'confirmar-troca-email',
+    component: ConfirmarTrocaEmail,
+    canActivate: [authGuard]
   }
 ];
 

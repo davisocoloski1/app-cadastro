@@ -38,6 +38,7 @@ export class Login implements OnInit {
     this.registroService.login({ email: this.loginForm.value.email, password: this.loginForm.value.password }).subscribe({
       next: (res: any) => {
         localStorage.setItem('token', res.token)
+        localStorage.setItem('expiresAt', res.expiresAt)
         this.errorMsg = ''
         this.successMsg = 'Login realizado.'
         

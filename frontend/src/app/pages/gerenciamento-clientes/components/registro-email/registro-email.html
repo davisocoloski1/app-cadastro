@@ -1,0 +1,27 @@
+<div>
+  <div>
+    <h5>Informações de contato via e-mail</h5>
+  </div>
+  <div [formGroup]="emailForm">
+    <div>
+      <label for="">E-mail do cliente</label>
+      <input type="email">
+    </div>
+    <div>
+      <label for="">Tipo</label>
+      <select name="tipoEmail" id="tipoEmail" formControlName="tipoEmail">
+        <option value="pessoal">Pessoal</option>
+        <option value="profissional">Profissional</option>
+        <option value="comercial">Comercial</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+    <div>
+      <label for="">Principal</label>
+      <select name="principal" id="principal" formControlName="principal">
+        <option value="yes">Sim</option>
+        <option value="no">Não</option>
+      </select>
+    </div>
+  </div>
+</div>

@@ -37,11 +37,11 @@ export class Registro {
       permission: 'user'
     }
 
-    const resend = 0
-
-    this.registroService.registro(data, resend).subscribe({
+    this.registroService.registro(data).subscribe({
       next: () => {
-        this.router.navigate(["auth/confirmar-conta", this.form.value.email, this.form.value.name])
+        this.router.navigate(["/auth/login"], {
+          state: { msg: 'Cadastro realizado! Faça login para utilizar nossos serviços.' }
+        })
       },
       error: (err: any) => {
         console.log(err)

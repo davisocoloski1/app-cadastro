@@ -7,6 +7,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { tokenInterceptor } from './interceptors/token-interceptor';
 import { RouterModule } from '@angular/router';
 import { Navbar } from './components/navbar/navbar';
+import { GerenciamentoClientesModule } from './pages/gerenciamento-clientes/gerenciamento-clientes-module';
+import { RegistroClientes } from './pages/gerenciamento-clientes/components/registro-clientes/registro-clientes';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,8 @@ import { Navbar } from './components/navbar/navbar';
     BrowserModule,
     AppRoutingModule,
     RouterModule,
-    Navbar
+    Navbar,
+    GerenciamentoClientesModule
 ],
   providers: [
     provideBrowserGlobalErrorListeners(),

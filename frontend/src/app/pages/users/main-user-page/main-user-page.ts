@@ -26,6 +26,7 @@ export class MainUserPage implements OnInit {
   showAdminRegister = false;
   isUserConfirmed: boolean = true
   saveLoading = false
+  verifyLoading = false
   
   constructor(
     private usersService: UsersService,
@@ -105,31 +106,43 @@ export class MainUserPage implements OnInit {
     }
 
     this.usersService.updateUser(this.user.id!, payload).subscribe({
-      next: () => {
+      next: (updatedUser: any) => {
         this.errorMsg = ''
+
+        if (this.editForm.value.email !== this.user.email) {
+          this.stateMsg = 'Um código de confirmação foi enviado ao seu email'
+        }
+
+        this.user = updatedUser
+        this.editForm.patchValue(updatedUser)
+        this.editForm.markAsPristine()
+
         this.lockAllFields()
         this.saveLoading = false
-        window.location.reload()
       },
       error: (err) => {
-        this.errorMsg = err.error.message ?? 'Erro ao salvar alterações.'
-        this.lockAllFields()
         this.saveLoading = false
+        console.log(err)
+        this.errorMsg = err.error.errors[0].message ?? 'Erro ao salvar alterações.'
+        this.lockAllFields()
         setTimeout(() => { this.errorMsg = '' }, 5000)
       },
     })
   }
 
   enviarCodigoConfirmacao() {
+    this.verifyLoading = true
     const email = this.user.email
     const name = this.user.name
 
     this.usersService.novoCodigo({ email, name }, 1).subscribe({
       next: (res: any) => {
+        this.verifyLoading = false
         this.router.navigate(['auth/confirmar-conta', email, name], {
           state: { message: 'Código enviado. Verifique seu e-mail.' }
         })
       }, error: (err: any) => {
+        this.verifyLoading = false
         this.errorMsg = err.error
         console.log(err)
       }

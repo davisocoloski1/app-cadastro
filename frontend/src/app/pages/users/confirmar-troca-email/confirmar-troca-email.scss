@@ -1,0 +1,92 @@
+$bg-body: #020617;
+$bg-card: rgba(15, 23, 42, 0.85);
+$border-soft: rgba(148, 163, 184, 0.18);
+
+$text-primary: #e5e7eb;
+$text-secondary: #9ca3af;
+
+$accent: #38bdf8;
+$accent-hover: #0ea5e9;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #111827 0%, #020617 45%);
+  color: $text-primary;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+main {
+  padding-bottom: 3rem;
+}
+
+.badge {
+  background-color: rgba($accent, 0.12);
+  color: $accent;
+  border: 1px solid rgba($accent, 0.45);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.15;
+
+  span {
+    color: $accent;
+  }
+}
+
+p {
+  color: $text-secondary;
+}
+
+.btn.btn-primary {
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  background: linear-gradient(135deg, $accent, $accent-hover);
+  color: #0b1120;
+  border: none;
+
+  box-shadow:
+    0 14px 30px rgba(56, 189, 248, 0.3),
+    0 0 0 1px rgba(15, 23, 42, 0.8);
+
+  transition: transform 0.1s, filter 0.12s;
+
+  &:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+  }
+}
+
+footer {
+  background: linear-gradient(
+    to right,
+    rgba(2, 6, 23, 0.95),
+    rgba(15, 23, 42, 0.95)
+  );
+  border-top: 1px solid $border-soft;
+}
+
+footer p {
+  font-size: 0.8rem;
+  color: $text-secondary;
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 1.8rem; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.6rem; }
+  p { font-size: 0.9rem; }
+}

@@ -33,7 +33,10 @@
                   class="btn btn-sm btn-outline-warning"
                   (click)="enviarCodigoConfirmacao()"
                 >
-                  Verificar
+                  @if (verifyLoading) {
+                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                }
+                {{ verifyLoading ? '' : 'Verificar' }}
                 </button>
               </div>
             </div>

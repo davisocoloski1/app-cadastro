@@ -59,18 +59,17 @@ export class Navbar implements OnInit {
         this.router1 = '/auth/login'
         this.button2 = 'Cadastro'
         this.router2 = '/auth/registro'
-
-        console.log(err)
       }
     })
   }
 
   logout() {
-    localStorage.removeItem('token')
-    this.router.navigate([''])
-
-    setTimeout(() => { 
-      window.location.reload()
-     }, 500)
+    this.navbarService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token')
+        this.router.navigate([''])
+        window.location.reload()
+      }
+    })
   }
 }

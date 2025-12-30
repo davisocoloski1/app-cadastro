@@ -108,6 +108,23 @@ def send_password_change_mail(email: str, token: str):
     server.login(SMTP_USER, SMTP_PASSWORD)
     server.send_message(msg)
 
+def send_change_mail_link(email: str, token: str):
+  change_mail_url = f"{ANGULAR_URL}/users/confirmar-troca-email?token={token}"
+
+  msg = EmailMessage()
+  msg["From"] = SMTP_USER
+  msg["To"] = email
+  msg["Subject"] = 'Confirmação de e-mail'
+  msg.set_content(
+    f"Clique no link para confirmar seu novo e-mail:\n\n{change_mail_url}\n\n"
+  )
+
+  context = ssl.create_default_context()
+
+  with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
+    server.set_debuglevel(1)
+    server.login(SMTP_USER, SMTP_PASSWORD)
+    server.send_message(msg)
 
 if __name__ == "__main__":
   try:

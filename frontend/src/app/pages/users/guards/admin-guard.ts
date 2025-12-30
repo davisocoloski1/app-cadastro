@@ -6,6 +6,27 @@ import { catchError, map, of } from 'rxjs';
 export const adminGuard: CanActivateFn = () => {
   const usersService = inject(UsersService);
   const router = inject(Router);
+  const expiresAt = localStorage.getItem('expiresAt')
+
+  if (!expiresAt) {
+    router.navigate(['/auth/login'], {
+      state: { msg: 'Acesso não autorizado ou usuário desconectado. Faça login novamente.' }
+    })
+    return false
+  }
+
+  const exp = new Date(expiresAt!).getTime()
+  const now = Date.now()
+
+  if (now >= exp) {
+    localStorage.removeItem('expiresAt')
+    localStorage.removeItem('token')
+
+    router.navigate(['/auth/login'], {
+      state: { msg: 'Sessão expirada. Faça login novamente.'}
+    })
+    return false
+  }
 
   return usersService.getUsers().pipe(
     map((res: any) => {

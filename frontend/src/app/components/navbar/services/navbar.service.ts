@@ -13,4 +13,8 @@ export class NavbarService {
   getUser(): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/info`)
   }
+
+  logout() {
+    return this.http.delete(`${this.apiUrl}/users/logout`)
+  }
 }

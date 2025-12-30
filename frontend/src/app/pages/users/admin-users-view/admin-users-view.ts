@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../services/users.service';
 import { Router } from '@angular/router';
 import { User } from '../models/user';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-users-view',
@@ -16,6 +17,8 @@ export class AdminUsersView implements OnInit {
   loggedUser!: User
   errorMsg = ''
   successMsg = ''
+  searchBar = new FormControl('');
+  searchBarPlaceholder = 'Buscar por e-mail/nome'
 
   constructor(
     private usersService: UsersService,
@@ -41,6 +44,35 @@ export class AdminUsersView implements OnInit {
 
   trackById(index: number, user: any) {
     return user.id;
+  }
+
+  searchUser() {
+    const query = this.searchBar.value
+
+    if (!query) {
+      this.searchBarPlaceholder = 'Nada para pesquisar...'
+      this.usersService.index().subscribe({
+        next: (res: any) => {
+          this.errorMsg = ''
+          this.users = res
+        },
+        error: (err: any) => console.log(err)
+      })
+      setTimeout(() => { this.searchBarPlaceholder = 'Buscar por e-mail/nome' }, 3500)
+      return
+    }
+
+    this.usersService.pesquisarUsuario(query!).subscribe({
+      next: (res: any) => {
+        this.errorMsg = ''
+        this.users = res
+        if (this.users.length === 0) {
+          this.errorMsg = 'Nenhum usuário encontrado.'
+        }
+      }, error: (err: any) => {
+        console.log(err)
+      }
+    })
   }
 
   getOneUser(user: User) {

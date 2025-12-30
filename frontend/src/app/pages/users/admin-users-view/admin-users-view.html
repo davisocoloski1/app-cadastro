@@ -1,19 +1,40 @@
 <div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
   <div class="card bg-secondary text-light shadow-lg" style="max-width: 900px; width: 100%;">
     <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h1 class="h4 mb-1">Usuários</h1>
-          <p class="text-muted mb-0">Lista de usuários cadastrados no sistema.</p>
-        </div>
+      <div class="d-flex">
         <button
           type="button"
-          class="btn btn-outline-info btn-register-user"
-          routerLink="/users/admin/registro"
+          class="btn btn-outline-info btn-register-user ms-auto"
+          routerLink=""
         >
-          Registrar usuário
+          Voltar
         </button>
       </div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h1 class="h4 mb-1">
+            Usuários
+          </h1>
+          <p class="text-muted mb-0">Lista de usuários cadastrados no sistema.</p>
+        </div>
+        <input
+        type="text"
+        [placeholder]="searchBarPlaceholder"
+        [formControl]="searchBar"
+        class="search-input"
+        />
+        
+        <button class="search-btn" (click)="searchUser()">
+          Buscar
+        </button>
+        <button
+        type="button"
+        class="btn btn-outline-info btn-register-user"
+        routerLink="/users/admin/registro"
+        >
+        Registrar usuário
+      </button>
+    </div>
 
       <hr class="border-secondary" />
 

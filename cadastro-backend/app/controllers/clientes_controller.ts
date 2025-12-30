@@ -21,7 +21,8 @@ export default class ClientesController {
       cpf_cnpj: schema.string({}, [
         rules.minLength(11),
         rules.maxLength(14),
-        rules.required()
+        rules.required(),
+        rules.regex(/^\d{11}$|^\d{14}$/)
       ]),
       origem: schema.string({}, [
         rules.maxLength(100),
@@ -40,9 +41,10 @@ export default class ClientesController {
         'nome.maxLength': 'O campo "nome" deve possuir no máximo 150 caracteres.',
         'nome.required': 'O campo "nome" deve ser preenchido.',
 
-        'cpf_cnpf.minLength': 'O campo "CPF/CNPJ" deve possuir no mínimo 11 dígitos.',
-        'cpf_cnpf.maxLength': 'O campo "CPF/CNPJ" deve possuir no máximo 14 dígitos.',
-        'cpf_cnpf.required': 'O campo "CPF/CNPJ" deve ser preenchido.',
+        'cpf_cnpj.minLength': 'O campo "CPF/CNPJ" deve possuir no mínimo 11 dígitos.',
+        'cpf_cnpj.maxLength': 'O campo "CPF/CNPJ" deve possuir no máximo 14 dígitos.',
+        'cpf_cnpj.required': 'O campo "CPF/CNPJ" deve ser preenchido.',
+        'cpf_cnpj.regex': 'Formato inválido. O formato deve ser 000.000.000-00 ou 00.000.000/0000-00',
 
         'origem.maxLength': 'O campo "Origem" deve possuir no máximo 100 caracteres.',
         'origem.required': 'O campo "Origem" deve ser preenchido.',

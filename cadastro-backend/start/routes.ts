@@ -4,11 +4,15 @@ import UsersController from '#controllers/users_controller'
 // import ClientesController from '#controllers/clientes_controller'
 // import ValidationsController from '#controllers/validations_controller'
 import ClientesController from '#controllers/clientes_controller'
+import EmailsController from '#controllers/emails_controller'
+import TelefonesController from '#controllers/telefones_controller'
+import EnderecosController from '#controllers/enderecos_controller'
 
 router.post('/users/registro', [() => import('#controllers/users_controller'), 'store'])
 router.post('/users/confirmar_conta', [() => import('#controllers/users_controller'), 'account_confirmation'])
 router.post('/users/novo_codigo', [() => import('#controllers/users_controller'), 'resendConfirmationCode'])
 router.post('/users/login', [() => import('#controllers/users_controller'), 'login'])
+router.delete('/users/logout', [UsersController, 'logout'])
 
 router.group(() => {
     router.get('/users/info', [() => import('#controllers/users_controller'), 'getUserInfo']),
@@ -17,6 +21,8 @@ router.group(() => {
     router.put('/users/deleteUser', [UsersController, 'destroy'])
     router.get('/users/getUsers', [UsersController, 'index'])
     router.get('users/getUserById', [UsersController, 'getUserById'])
+    router.post('/users/confirm-email-update', [UsersController, 'confirmEmailUpdate'])
+    router.post('/users/searchUser', [UsersController, 'searchUser'])
 }).use(middleware.auth())
 
 router.group(() => {
@@ -31,4 +37,7 @@ router.post('/admin/registrarUsuario', [UsersController, 'adminStore']).use(midd
 
 router.group(() => {
     router.post('/registrarCliente', [ClientesController, 'store'])
-}).prefix('/clientes').use(middleware.auth())
+    router.post('/registrarEmail', [EmailsController, 'store'])
+    router.post('/registrarTelefone', [TelefonesController, 'store'])
+    router.post('/registrarEndereco', [EnderecosController, 'store'])
+}).prefix('/clientes/registro').use(middleware.auth())
