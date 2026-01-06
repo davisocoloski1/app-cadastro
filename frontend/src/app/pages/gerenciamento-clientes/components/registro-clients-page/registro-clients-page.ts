@@ -7,5 +7,17 @@ import { Component } from '@angular/core';
   styleUrl: './registro-clients-page.scss',
 })
 export class RegistroClientsPage {
-  formCompleto = false
+  formLiberado = true
+  clienteFormPreenchido = false
+  contatoFormPreenchido = false
+  enderecoFormPreenchido = false
+  step = 1
+
+  next() {
+    if (this.step < 5) this.step++
+  }
+
+  back() {
+    if (this.step > 1) this.step--
+  }
 }

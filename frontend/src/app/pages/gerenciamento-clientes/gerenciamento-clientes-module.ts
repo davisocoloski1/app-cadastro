@@ -6,14 +6,16 @@ import { RegistroClientes } from './components/registro-clientes/registro-client
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { RegistroClientsPage } from './components/registro-clients-page/registro-clients-page';
-import { RegistroEmail } from './components/registro-email/registro-email';
+import { RegistroContato } from './components/registro-contato/registro-contato';
+import { RegistroEndereco } from './components/registro-endereco/registro-endereco';
 
 
 @NgModule({
   declarations: [
     RegistroClientes,
     RegistroClientsPage,
-    RegistroEmail,
+    RegistroContato,
+    RegistroEndereco,
   ],
   imports: [
     CommonModule,

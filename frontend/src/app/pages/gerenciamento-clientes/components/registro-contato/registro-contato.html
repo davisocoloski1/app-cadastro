@@ -1,0 +1,111 @@
+<div class="card address-card shadow-sm mt-3">
+  <div class="card-body">
+
+    <h5 class="card-title mb-2 text-center">Informações de Contato</h5>
+
+    <p class="text-muted text-center mb-4">
+      Preencha os dados de contato do cliente
+    </p>
+
+    <form [formGroup]="emailForm" class="row g-3" novalidate>
+
+      <div class="col-md-6">
+        <label class="form-label">E-mail do cliente</label>
+        <input
+          type="email"
+          formControlName="email"
+          class="form-control"
+          placeholder="email@exemplo.com"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Tipo</label>
+        <select formControlName="tipo" class="form-select">
+          <option value="pessoal">Pessoal</option>
+          <option value="profissional">Profissional</option>
+          <option value="comercial">Comercial</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Principal</label>
+        <select formControlName="principal" class="form-select">
+          <option [value]="true">Sim</option>
+          <option [value]="false">Não</option>
+        </select>
+      </div>
+    </form>
+
+    @if (emailSuccessMsg) {
+      <div class="alert alert-success py-2 mt-3 mb-0">
+        {{ emailSuccessMsg }}
+      </div>
+    }
+
+    @if (emailErrorMsg) {
+      <div class="alert alert-danger py-2 mt-3 mb-0">
+        {{ emailErrorMsg }}
+      </div>
+    }
+
+    <hr class="my-4">
+
+    <form [formGroup]="telefoneForm" class="row g-3" novalidate>
+
+      <div class="col-md-6">
+        <label class="form-label">Telefone do cliente</label>
+        <input
+          type="text"
+          formControlName="telefone"
+          class="form-control"
+          placeholder="(00) 0 0000-0000"
+          mask="(00) 00000-0000"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Tipo</label>
+        <select formControlName="tipo" class="form-select">
+          <option value="celular">Celular</option>
+          <option value="residencial">Residencial</option>
+          <option value="comercial">Comercial</option>
+          <option value="recado">Recado</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Principal</label>
+        <select formControlName="principal" class="form-select">
+          <option [value]="true">Sim</option>
+          <option [value]="false">Não</option>
+        </select>
+      </div>
+    </form>
+
+    @if (telefoneSuccessMsg) {
+      <div class="alert alert-success py-2 mt-3 mb-0">
+        {{ telefoneSuccessMsg }}
+      </div>
+    }
+
+    @if (telefoneErrorMsg) {
+      <div class="alert alert-danger py-2 mt-3 mb-0">
+        {{ telefoneErrorMsg }}
+      </div>
+    }
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button class="btn btn-outline-secondary" (click)="limpar()">
+        Limpar campos
+      </button>
+
+      <button class="btn btn-primary" (click)="registrar()">
+        Registrar
+      </button>
+    </div>
+
+  </div>
+</div>

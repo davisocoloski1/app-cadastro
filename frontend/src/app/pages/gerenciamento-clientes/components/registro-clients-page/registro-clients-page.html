@@ -1,1 +1,68 @@
-<app-registro-clientes (liberarForm)="formCompleto = $event"></app-registro-clientes>
+<div class="wizard-wrapper">
+
+  <button
+    class="nav-btn left"
+    (click)="back()"
+    [disabled]="step === 1">
+    ‹
+  </button>
+
+  <div class="wizard-content">
+    
+    <div class="stepper-container">
+      <div class="stepper">
+        <div class="step" [class.active]="step >= 1">
+          <span class="number">1</span>
+          <span class="label">Informações do Cliente</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="step" [class.active]="step >= 2">
+          <span class="number">2</span>
+          <span class="label">Informações de Contato</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="step" [class.active]="step >= 3">
+          <span class="number">3</span>
+          <span class="label">Informações de Endereço</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="step" [class.active]="step >= 4">
+          <span class="number">4</span>
+          <span class="label">Finalizar cadastro</span>
+        </div>
+      </div>
+    </div>
+
+    @if (step === 1) {
+      <app-registro-clientes (liberarEmail)="formLiberado = $event" (preenchido)="clienteFormPreenchido = $event"></app-registro-clientes>
+    }
+
+    @if (step === 2) {
+      <app-registro-contato (preenchido)="contatoFormPreenchido = $event"></app-registro-contato>
+    }
+
+    @if (step === 3) {
+      <app-registro-endereco (preenchido)="enderecoFormPreenchido = $event"></app-registro-endereco>
+    }
+
+  </div>
+
+  <button
+    class="nav-btn right"
+    (click)="next()"
+    [disabled]="step === 4 || 
+                !formLiberado || 
+                (step === 3 && 
+                (!clienteFormPreenchido || 
+                !enderecoFormPreenchido || 
+                !contatoFormPreenchido))">
+    ›
+  </button>
+
+</div>

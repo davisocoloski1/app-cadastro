@@ -7,6 +7,7 @@ import ClientesController from '#controllers/clientes_controller'
 import EmailsController from '#controllers/emails_controller'
 import TelefonesController from '#controllers/telefones_controller'
 import EnderecosController from '#controllers/enderecos_controller'
+import ValidationsController from '#controllers/validations_controller'
 
 router.post('/users/registro', [() => import('#controllers/users_controller'), 'store'])
 router.post('/users/confirmar_conta', [() => import('#controllers/users_controller'), 'account_confirmation'])
@@ -41,3 +42,9 @@ router.group(() => {
     router.post('/registrarTelefone', [TelefonesController, 'store'])
     router.post('/registrarEndereco', [EnderecosController, 'store'])
 }).prefix('/clientes/registro').use(middleware.auth())
+
+// Rotas de validação 
+router.group(() => {
+    router.post('/validarCpf', [ValidationsController, 'validarCpf'])
+    router.post('/validarCnpj', [ValidationsController, 'validarCpnj'])
+}).prefix('/validations')

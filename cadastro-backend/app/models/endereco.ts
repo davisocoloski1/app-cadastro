@@ -30,7 +30,7 @@ export default class Endereco extends BaseModel {
   declare cep: string | null
 
   @column()
-  declare pais: string
+  declare pais: string | 'Brasil'
 
   @column()
   declare tipo: string | null

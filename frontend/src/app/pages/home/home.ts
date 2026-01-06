@@ -12,6 +12,9 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     if (this.token) this.isLogged = true
-    else this.isLogged = false
+    else {
+      this.isLogged = false
+      window.location.reload
+    }
   }
 }

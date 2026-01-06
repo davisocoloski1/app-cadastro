@@ -1,63 +1,77 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
-  <div class="card bg-secondary text-light shadow-lg" style="max-width: 520px; width: 100%;">
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4">Registro de Clientes</h2>
+<div class="card address-card shadow-sm mt-3">
+  <div class="card-body">
 
-      <p class="text-muted text-center mb-4">
-        Digite as informações primárias do cliente para liberar o cadastro completo
-      </p>
+    <h5 class="card-title text-center mb-2">Registro de Clientes</h5>
 
-      <form [formGroup]="clientForm" class="client-form" novalidate>
-        <div class="mb-3">
-          <label class="form-label">Nome</label>
-          <input
-            type="text"
-            formControlName="nome"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="Nome"
-          />
+    <p class="text-muted text-center mb-4">
+      Digite as informações primárias do cliente
+    </p>
+
+    <form [formGroup]="clientForm" class="row g-3" novalidate>
+
+      <div class="col-md-6">
+        <label class="form-label">Nome</label>
+        <input
+          type="text"
+          formControlName="nome"
+          class="form-control"
+          placeholder="Nome"
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">CPF/CNPJ</label>
+        <input
+          type="text"
+          formControlName="cpf_cnpj"
+          class="form-control"
+          placeholder="000.000.000-00 | 00.000.000/0000-00"
+          mask="CPF_CNPJ"
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Origem</label>
+        <input
+          type="text"
+          formControlName="origem"
+          class="form-control"
+          placeholder="Origem"
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Segmento</label>
+        <input
+          type="text"
+          formControlName="segmento"
+          class="form-control"
+          placeholder="Segmento"
+        />
+      </div>
+
+      @if (successMsg) {
+        <div class="alert alert-success py-2 mt-2 mb-0">
+          {{ successMsg }}
         </div>
+      }
 
-        <div class="mb-3">
-          <label class="form-label">CPF/CNPJ</label>
-          <input
-            type="text"
-            formControlName="cpf_cnpj"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="000.000.000-00 | 00.000.000/0000-00"
-            mask="CPF_CNPJ"
-          />
+      @if (errorMsg) {
+        <div class="alert alert-danger py-2 mt-2 mb-0">
+          {{ errorMsg }}
         </div>
+      }
 
-        <div class="mb-3">
-          <label class="form-label">Origem</label>
-          <input
-            type="text"
-            formControlName="origem"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="Origem"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Segmento</label>
-          <input
-            type="text"
-            formControlName="segmento"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="Segmento"
-          />
-        </div>
-
-        <button type="button" class="btn btn-primary w-100 mt-3" (click)="registrar()">
-          Registrar
-        </button>
-
-        <button type="button" class="btn btn-outline-primary w-100 mt-2" (click)="limpar()">
+      <div class="d-flex justify-content-end gap-2 mt-3">
+        <button type="button" class="btn btn-outline-secondary" (click)="limpar()">
           Limpar campos
         </button>
 
-      </form>
-    </div>
+        <button type="button" class="btn btn-primary" (click)="registrar()">
+          Registrar
+        </button>
+      </div>
+
+    </form>
   </div>
 </div>

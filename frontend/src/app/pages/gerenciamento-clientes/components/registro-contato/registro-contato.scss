@@ -1,4 +1,6 @@
-// .client-card {
+// .contact-card {
+//   width: 100%;
+//   max-width: 900px;
 //   background-color: #ffffff;
 //   border-radius: 1rem;
 //   border: 1px solid rgba(226, 232, 240, 0.9);
@@ -7,28 +9,28 @@
 //     0 0 0 1px rgba(226, 232, 240, 0.8);
 // }
 
-// .client-card .card-body {
+// .contact-card .card-body {
 //   padding: 2rem 2.25rem;
 // }
 
-// .client-card .card-title {
+// .contact-card .card-title {
 //   font-weight: 700;
 //   letter-spacing: 0.02em;
 //   color: #0f172a;
 // }
 
-// .client-card .card-subtitle {
+// .contact-card .card-subtitle {
 //   color: #6b7280;
 //   font-size: 0.9rem;
 // }
 
-// .client-card .form-label {
+// .contact-card .form-label {
 //   font-size: 0.85rem;
 //   font-weight: 600;
 //   color: #6b7280;
 // }
 
-// .client-card .form-control {
+// .contact-card .form-control {
 //   background-color: #f9fafb;
 //   border-radius: 0.55rem;
 //   border: 1px solid #e5e7eb;
@@ -42,18 +44,18 @@
 //     transform .05s ease;
 // }
 
-// .client-card .form-control:hover {
+// .contact-card .form-control:hover {
 //   background-color: #f3f4f6;
 // }
 
-// .client-card .form-control:focus {
+// .contact-card .form-control:focus {
 //   background-color: #fff;
 //   border-color: #3b82f6;
 //   box-shadow: 0 0 0 2px rgba(59, 130, 246, .25);
 //   transform: translateY(-1px);
 // }
 
-// .client-card .btn.btn-primary {
+// .contact-card .btn.btn-primary {
 //   border: none;
 //   border-radius: 999px;
 //   padding: 0.75rem;
@@ -67,7 +69,7 @@
 //     0 0 0 1px rgba(226, 232, 240, .9);
 // }
 
-// .client-card .btn.btn-outline-primary {
+// .contact-card .btn.btn-outline-primary {
 //   border-radius: 999px;
 //   padding: 0.65rem;
 //   font-size: 0.85rem;
@@ -77,18 +79,17 @@
 //   background: white;
 // }
 
-// .client-card .alert {
+// .contact-card .alert {
 //   border-radius: .6rem;
 //   font-size: .9rem;
 // }
-
 
 // @media (max-width: 520px) {
 //   :host {
 //     padding: 1.25rem;
 //   }
 
-//   .card-body {
+//   .contact-card .card-body {
 //     padding: 1.5rem 1.25rem;
 //   }
 // }

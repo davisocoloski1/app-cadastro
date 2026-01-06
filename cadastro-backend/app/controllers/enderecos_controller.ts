@@ -41,11 +41,7 @@ export default class EnderecosController {
       cep: schema.string({}, [
         rules.required(),
         rules.maxLength(15),
-        rules.regex(/^\d+$/)
-      ]),
-      pais: schema.string({}, [
-        rules.required(),
-        rules.maxLength(100)
+        rules.regex(/^\d{8}$/)
       ]),
       tipo: schema.string({}, [
         rules.required(),

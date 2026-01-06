@@ -22,7 +22,7 @@ export default class ClientesController {
         rules.minLength(11),
         rules.maxLength(14),
         rules.required(),
-        rules.regex(/^\d{11}$|^\d{14}$/)
+        rules.regex(/^\d{11}$|^\[A-Z\d]{12}\d{2}$/)
       ]),
       origem: schema.string({}, [
         rules.maxLength(100),

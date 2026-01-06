@@ -1,0 +1,89 @@
+<div class="card address-card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-2 text-center">Informações de Endereço</h5>
+
+    <p class="text-muted text-center mb-4">
+      Preencha os dados de endereço do cliente
+    </p>
+
+    <form [formGroup]="enderecoForm" class="row g-3">
+
+      <div class="col-md-8">
+        <label class="form-label">Logradouro</label>
+        <input type="text" class="form-control" placeholder="Logradouro" formControlName="logradouro">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Número</label>
+        <input type="text" class="form-control" placeholder="Número" formControlName="numero">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Complemento</label>
+        <input type="text" class="form-control" placeholder="Complemento" formControlName="complemento">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Bairro</label>
+        <input type="text" class="form-control" placeholder="Bairro" formControlName="bairro">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Cidade</label>
+        <input type="text" class="form-control" placeholder="Cidade" formControlName="cidade">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Estado</label>
+        <input type="text" class="form-control" placeholder="Estado" formControlName="estado">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">CEP</label>
+        <input type="text" class="form-control" placeholder="00000-000" mask="00000-000" formControlName="cep">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" formControlName="tipoEndereco">
+          <option value="residencial" selected>Residencial</option>
+          <option value="comercial">Comercial</option>
+          <option value="entrega">Entrega</option>
+          <option value="cobranca">Cobrança</option>
+          <option value="correspondencia">Correspondência</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Principal</label>
+        <select class="form-select" formControlName="principalEndereco">
+          <option value="yes" selected>Sim</option>
+          <option value="no">Não</option>
+        </select>
+      </div>
+
+      @if (successMsg) {
+        <div class="alert alert-success py-2 mt-3 mb-0">
+          {{ successMsg }}
+        </div>
+      }
+
+      @if (errorMsg) {
+        <div class="alert alert-danger py-2 mt-3 mb-0">
+          {{ errorMsg }}
+        </div>
+      }
+
+      <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+        <button type="button" class="btn btn-outline-secondary" (click)="limpar()">
+          Limpar Campos
+        </button>
+
+        <button type="submit" class="btn btn-primary" (click)="registrar()">
+          Registrar
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
