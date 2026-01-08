@@ -38,10 +38,16 @@ router.post('/admin/registrarUsuario', [UsersController, 'adminStore']).use(midd
 
 router.group(() => {
     router.post('/registrarCliente', [ClientesController, 'store'])
-    router.post('/registrarEmail', [EmailsController, 'store'])
-    router.post('/registrarTelefone', [TelefonesController, 'store'])
-    router.post('/registrarEndereco', [EnderecosController, 'store'])
+    router.post('/registrarEmail/:id', [EmailsController, 'store'])
+    router.post('/registrarTelefone/:id', [TelefonesController, 'store'])
+    router.post('/registrarEndereco/:id', [EnderecosController, 'store'])
 }).prefix('/clientes/registro').use(middleware.auth())
+
+router.group(() => {
+    router.get('/listagemClientes', [ClientesController, 'index'])
+    router.get('/pesquisarClientes', [ClientesController, 'searchCliente'])
+    router.get('/listarInfoCliente/:id', [ClientesController, 'getById'])
+}).prefix('/clientes/listagem').use(middleware.auth())
 
 // Rotas de validação 
 router.group(() => {

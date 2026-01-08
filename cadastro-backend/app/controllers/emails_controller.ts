@@ -12,6 +12,13 @@ export default class EmailsController {
       })
     }
 
+    const clienteId = request.param('id')
+    if (!clienteId) {
+      return response.notFound({
+        message: 'ID do cliente inexistente ou não encontrado.'
+      })
+    }
+
     const emailSchema = schema.create({
       email: schema.string({}, [
         rules.required(),
@@ -27,7 +34,7 @@ export default class EmailsController {
       ])
     })
 
-    const data = await request.validate({
+    const payload = await request.validate({
       schema: emailSchema,
       messages: {
         'email.required': 'O campo "E-mail" deve ser preenchido.',
@@ -40,6 +47,8 @@ export default class EmailsController {
         'principal.required': 'O campo "principal" deve ser preenchido',
       }
     })
+
+    const data = { ...payload, id_cliente: clienteId }
 
     try {
       const existingEmail = await Email.query()
@@ -60,6 +69,10 @@ export default class EmailsController {
 
     try {
       const email = Email.create(data)
+      // await Email.query()
+      // .whereIn('cliente_id', clienteId)
+      // .update({ principal: false })
+
       return response.created(email)
     } catch (error) {
       return response.status(500).json({

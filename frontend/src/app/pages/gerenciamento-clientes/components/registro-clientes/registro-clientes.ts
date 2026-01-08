@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClienteService } from '../../services/cliente.service';
@@ -11,12 +11,15 @@ import { StepperService } from '../../services/stepper.service';
   templateUrl: './registro-clientes.html',
   styleUrl: './registro-clientes.scss',
 })
-export class RegistroClientes implements OnInit {
+export class RegistroClientes implements OnInit, OnDestroy {
   clientForm!: FormGroup
   errorMsg = ''
   successMsg = ''
+  fieldsBlocked = true
+  private _clienteToEdit: any
   @Output() liberarEmail = new EventEmitter<boolean>();
   @Output() preenchido = new EventEmitter<boolean>();
+  @Output() clienteBody = new EventEmitter<Cliente>();
   
   constructor(
     private fb: FormBuilder,
@@ -31,7 +34,33 @@ export class RegistroClientes implements OnInit {
     })
   }
   
-  ngOnInit(): void {
+  @Input() isEditing!: boolean
+  @Input() set clienteToEdit(value: any) {
+    this._clienteToEdit = value
+
+    if (this.clientForm && value && Object.keys(value).length > 0) {
+      this.clientForm.patchValue({
+        nome: value[0].nome,
+        cpf_cnpj: value[0].cpfCnpj || value.cpf_cnpj,
+        origem: value[0].origem,
+        segmento: value[0].segmento
+      })
+    }
+  }
+
+  get clienteToEdit() {
+    return this._clienteToEdit
+  }
+  
+  ngOnDestroy(): void {
+    // this.clientForm.reset()
+  }
+
+  ngOnInit(): void {    
+    if (this.isEditing) {
+      this.clientForm.disable()
+    }
+
     this.clientForm.patchValue(this.stepper.value.cliente)
     this.clientForm.valueChanges.subscribe(value => { this.stepper.update('cliente', value) })
   }
@@ -47,26 +76,48 @@ export class RegistroClientes implements OnInit {
       cpf_cnpj: this.clientForm.value.cpf_cnpj.replace(/\D/g, '')
     }
 
+    console.log(data)
+
     const isCnpj = data.cpf_cnpj.length > 11
     const tipo = isCnpj ? 'cnpj' : 'cpf'
 
     this.validarDocumento(tipo, data.cpf_cnpj, () => {
       this.clienteService.registrarCliente(data).subscribe({
         next: (res: any) => {
+          this.errorMsg = ''
           this.successMsg = 'Cliente registrado. Finalize as informações no formulário abaixo.'
+          console.log(res)
           this.liberarEmail.emit(true)
           this.preenchido.emit(true)
+          this.clienteBody.emit(res)
           this.clientForm.disable()
         }, error: (err: any) => {
           this.preenchido.emit(false)
+          this.successMsg = ''
           if (err.error.errors) {
             this.errorMsg = err.error.errors[0].message
+          } else if (err.error.message) {
+            this.errorMsg = err.error.message
           } else {
-            console.error(err)
+            console.log(err)
           }
         }
       })
     })
+  }
+
+  editar() {
+
+  }
+
+  toggleBloquearCampos() {
+    if (this.fieldsBlocked) {
+      this.clientForm.enable()
+    } else {
+      this.clientForm.disable()
+    }
+
+    this.fieldsBlocked = !this.fieldsBlocked
   }
 
   private validarDocumento(tipo: string, documento: string, onSuccess: () => void) {

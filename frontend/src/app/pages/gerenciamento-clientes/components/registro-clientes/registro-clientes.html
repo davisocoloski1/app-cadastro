@@ -1,10 +1,12 @@
 <div class="card address-card shadow-sm mt-3">
   <div class="card-body">
 
-    <h5 class="card-title text-center mb-2">Registro de Clientes</h5>
+    <h5 class="card-title text-center mb-2">
+      {{ isEditing ? 'Editar informações padrão' : 'Registrar Cliente'}}
+    </h5>
 
     <p class="text-muted text-center mb-4">
-      Digite as informações primárias do cliente
+      {{ isEditing? 'Edite as informações básicas/padrão do cliente' : 'Digite as informações primárias do cliente'}}
     </p>
 
     <form [formGroup]="clientForm" class="row g-3" novalidate>
@@ -63,13 +65,25 @@
       }
 
       <div class="d-flex justify-content-end gap-2 mt-3">
-        <button type="button" class="btn btn-outline-secondary" (click)="limpar()">
-          Limpar campos
-        </button>
-
-        <button type="button" class="btn btn-primary" (click)="registrar()">
-          Registrar
-        </button>
+        
+        @if (isEditing) {
+          <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
+            {{ fieldsBlocked ? 'Desbloquear campos' : 'Bloquear campos' }}
+          </button>
+          <button type="button" class="btn btn-outline-danger" (click)="limpar()">
+            Limpar campos
+          </button>
+          <button type="button" class="btn btn-primary" (click)="editar()">
+            Editar
+          </button>
+        } @else {
+          <button type="button" class="btn btn-outline-secondary" (click)="limpar()">
+            Limpar campos
+          </button>
+          <button type="button" class="btn btn-primary" (click)="registrar()">
+            Registrar
+          </button>
+        }
       </div>
 
     </form>

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Cliente } from '../models/cliente';
 import { environment } from '../../../environments/environment';
@@ -28,17 +28,34 @@ export class ClienteService {
     return this.http.post(`${this.apiUrl}/clientes/registro/registrarCliente`, cliente)
   }
 
-  // Controle de email e telefone (contato)
-  registrarEmail(data: Email): Observable<Email> {
-    return this.http.post<Email>(`${this.apiUrl}/clientes/registro/registrarEmail`, data)
+  indexClientes() {
+    return this.http.get<Cliente[]>(`${this.apiUrl}/clientes/listagem/listagemClientes`)
   }
 
-  registrarTelefone(data: Telefone): Observable<Telefone> {
-    return this.http.post<Telefone>(`${this.apiUrl}/clientes/registro/registrarTelefone`, data)
+  pesquisarClientes(termo?: string) {
+    let params = new HttpParams()
+    if (termo) {
+      params = params.set('query', termo)
+    }
+
+    return this.http.get(`${this.apiUrl}/clientes/listagem/pesquisarClientes`, { params })
+  }
+
+  getClienteById(id: number) {
+    return this.http.get(`${this.apiUrl}/clientes/listagem/listarInfoCliente/${id}`)
+  }
+
+  // Controle de email e telefone (contato)
+  registrarEmail(data: Email, id: number): Observable<Email> {
+    return this.http.post<Email>(`${this.apiUrl}/clientes/registro/registrarEmail/${id}`, data)
+  }
+
+  registrarTelefone(data: Telefone, id: number): Observable<Telefone> {
+    return this.http.post<Telefone>(`${this.apiUrl}/clientes/registro/registrarTelefone/${id}`, data)
   }
 
   // Controle de endereços
-  registrarEndereco(data: Endereco): Observable<Endereco> {
-    return this.http.post<Endereco>(`${this.apiUrl}/clientes/registro/registrarEndereco`, data)
+  registrarEndereco(data: Endereco, id: number): Observable<Endereco> {
+    return this.http.post<Endereco>(`${this.apiUrl}/clientes/registro/registrarEndereco/${id}`, data)
   }
 }

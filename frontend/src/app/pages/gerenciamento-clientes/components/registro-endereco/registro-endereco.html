@@ -1,9 +1,11 @@
 <div class="card address-card shadow-sm">
   <div class="card-body">
-    <h5 class="card-title mb-2 text-center">Informações de Endereço</h5>
+    <h5 class="card-title mb-2 text-center">
+      {{ isEditing ? 'Editar informações de endereço' : 'Informações de endereço'}}
+    </h5>
 
     <p class="text-muted text-center mb-4">
-      Preencha os dados de endereço do cliente
+      {{ isEditing ? 'Edite os dados de endereço do cliente' : 'Preencha os dados de endereço do cliente'}}
     </p>
 
     <form [formGroup]="enderecoForm" class="row g-3">
@@ -45,7 +47,7 @@
 
       <div class="col-md-6">
         <label class="form-label">Tipo</label>
-        <select class="form-select" formControlName="tipoEndereco">
+        <select class="form-select" formControlName="tipo">
           <option value="residencial" selected>Residencial</option>
           <option value="comercial">Comercial</option>
           <option value="entrega">Entrega</option>
@@ -56,9 +58,9 @@
 
       <div class="col-md-6">
         <label class="form-label">Principal</label>
-        <select class="form-select" formControlName="principalEndereco">
-          <option value="yes" selected>Sim</option>
-          <option value="no">Não</option>
+        <select class="form-select" formControlName="principal">
+          <option [value]="true" selected>Sim</option>
+          <option [value]="false">Não</option>
         </select>
       </div>
 
@@ -75,13 +77,27 @@
       }
 
       <div class="col-12 d-flex justify-content-end gap-2 mt-3">
-        <button type="button" class="btn btn-outline-secondary" (click)="limpar()">
-          Limpar Campos
-        </button>
+        @if (isEditing) {
+          <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
+            {{ fieldsBlocked ? 'Desbloquear campos' : 'Bloquear campos' }}
+          </button>
 
-        <button type="submit" class="btn btn-primary" (click)="registrar()">
-          Registrar
-        </button>
+          <button class="btn btn-outline-danger" (click)="limpar()">
+            Limpar campos
+          </button>
+    
+          <button class="btn btn-primary" (click)="editar()">
+            Editar
+          </button>
+        } @else {
+          <button type="button" class="btn btn-outline-secondary" (click)="limpar()">
+            Limpar Campos
+          </button>
+  
+          <button type="submit" class="btn btn-primary" (click)="registrar()">
+            Registrar
+          </button>
+        }
       </div>
 
     </form>

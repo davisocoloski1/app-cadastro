@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClienteService } from '../../services/cliente.service';
 import { Endereco } from '../../models/endereco';
@@ -10,9 +10,12 @@ import { StepperService } from '../../services/stepper.service';
   templateUrl: './registro-endereco.html',
   styleUrl: './registro-endereco.scss',
 })
-export class RegistroEndereco implements OnInit {
+export class RegistroEndereco implements OnInit, OnDestroy {
   enderecoForm!: FormGroup
   @Output() preenchido = new EventEmitter<boolean>()
+  @Input() userId!: number
+  private _enderecoToEdit: any
+  fieldsBlocked = true
   errorMsg = ''
   successMsg = ''
 
@@ -29,12 +32,40 @@ export class RegistroEndereco implements OnInit {
       cidade: ['', [Validators.required]],
       estado: ['', [Validators.required]],
       cep: ['', [Validators.required]],
-      tipoEndereco: ['residencial', [Validators.required]],
-      principal: ['yes', [Validators.required]]
+      tipo: ['residencial', [Validators.required]],
+      principal: [true, [Validators.required]]
     })
   }
 
+  @Input() isEditing = false
+  @Input() set enderecoToEdit(value: any) {
+    this._enderecoToEdit = value
+    console.log(value)
+
+    if (this.enderecoForm && value && Object.keys(value).length > 0) {
+      this.enderecoForm.patchValue({
+        logradouro: value.enderecos[0].logradouro,
+        numero: value.enderecos[0].numero,
+        complemento: value.enderecos[0].complemento,
+        bairro: value.enderecos[0].bairro,
+        cidade: value.enderecos[0].cidade,
+        estado: value.enderecos[0].estado,
+        cep: value.enderecos[0].cep,
+        tipo: value.enderecos[0].tipo,
+        principal: value.enderecos[0].principal
+      })
+    }
+  }
+
+  ngOnDestroy(): void {
+    // this.enderecoForm.reset()
+  }
+
   ngOnInit(): void {
+    if (this.isEditing) {
+      this.enderecoForm.disable()
+    }
+
     this.enderecoForm.patchValue(this.stepper.value.endereco)
     this.enderecoForm.valueChanges.subscribe(value => { this.stepper.update('endereco', value) })
   }
@@ -51,7 +82,7 @@ export class RegistroEndereco implements OnInit {
       ...this.enderecoForm.value
     }
 
-    this.clienteService.registrarEndereco(enderecoData).subscribe({
+    this.clienteService.registrarEndereco(enderecoData, this.userId).subscribe({
       next: (res: any) => {
         console.log(res)
         this.errorMsg = ''
@@ -66,6 +97,20 @@ export class RegistroEndereco implements OnInit {
     })
   }
 
+  editar() {
+
+  }
+
+  toggleBloquearCampos() {
+    if (this.fieldsBlocked) {
+      this.enderecoForm.enable()
+    } else {
+      this.enderecoForm.disable()
+    }
+
+    this.fieldsBlocked = !this.fieldsBlocked
+  }
+
   limpar() {
     this.enderecoForm.patchValue({
       logradouro: '',
@@ -75,8 +120,7 @@ export class RegistroEndereco implements OnInit {
       cidade: '',
       estado: '',
       cep: '',
-      pais: '',
-      tipoEndereco: 'residencial',
+      tipo: 'residencial',
       principal: 'yes'
     })
   }

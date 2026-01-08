@@ -1,57 +1,24 @@
-$bg-input: #020617;
-$bg-input-hover: #0f172a;
-$border-input: #1f2937;
-$border-input-focus: #38bdf8;
-$text-primary: #e5e7eb;
-$text-secondary: #9ca3af;
-$accent: #38bdf8;
-$accent-hover: #0ea5e9;
+.admin-sidebar {
+  width: 280px;
+  min-width: 280px;
+  z-index: 1000;
+}
 
-.admin-header {
-  background: rgba(2, 6, 23, 0.85); // #020617 com transparência
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+.admin-link {
+  transition: 0.3s;
+}
 
-  .navbar-brand {
-    color: $text-primary !important;
-    letter-spacing: 0.2px;
+.admin-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 80px;
+    min-width: 80px;
+    padding: 10px !important;
   }
-
-  .admin-mark {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    background: $accent;
-    box-shadow: 0 0 0 3px rgba($accent, 0.18);
-    display: inline-block;
-  }
-
-  .admin-link {
-    color: rgba($text-primary, 0.85) !important;
-    border-radius: 0.6rem;
-    padding: 0.45rem 0.7rem;
-    transition: background-color 0.15s ease, color 0.15s ease;
-
-    &:hover {
-      color: $text-primary !important;
-      background: rgba(15, 23, 42, 0.6);
-    }
-
-    &.active {
-      color: $accent !important;
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba($accent, 0.25);
-    }
-  }
-
-  .admin-cta {
-    border-color: rgba($accent, 0.45) !important;
-    color: $accent !important;
-
-    &:hover {
-      background: rgba($accent, 0.12) !important;
-      border-color: rgba($accent, 0.7) !important;
-      color: $text-primary !important;
-    }
+  .admin-sidebar span, .admin-sidebar .btn {
+    display: none; /* Esconde texto em telas muito pequenas (opcional) */
   }
 }

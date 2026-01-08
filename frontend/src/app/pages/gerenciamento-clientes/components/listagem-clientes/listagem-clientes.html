@@ -1,0 +1,114 @@
+<div class="page-wrapper">
+  <div class="container card shadow-sm clients-card">
+
+    <div class="card-body">
+
+      <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+          <h1 class="h4 mb-1">Clientes</h1>
+          <p class="text-muted mb-0">
+            Consulte e gerencie os clientes cadastrados.
+          </p>
+        </div>
+
+        <button
+          class="btn btn-primary col-md-2"
+          routerLink="/clientes/registro"
+        >
+          Novo cliente
+        </button>
+      </div>
+
+      <div class="d-flex gap-2 mb-3 col-md-12">
+        <input
+          type="text"
+          class="form-control"
+          [placeholder]="searchPlaceholder"
+          [formControl]="searchBar"
+        />
+
+        <button class="btn btn-outline-primary col-md-3" (click)="search()">
+          Buscar
+        </button>
+        <button class="btn btn-outline-secondary col-md-2" (click)="resetarBusca()">
+          Resetar
+        </button>
+      </div>
+
+      <hr />
+
+      <div class="list-row list-header">
+        <div class="col name">Nome</div>
+        <div class="col email">E-mail</div>
+        <div class="col document">Documento</div>
+        <div class="col tel">Telefone</div>
+        <div class="col status">Status</div>
+        <div class="col actions text-end">Ações</div>
+      </div>
+
+      <div
+        class="list-row"
+        *ngFor="let cliente of clientes"
+      >
+        <div class="col name">{{ cliente.nome }}</div>
+        <div class="col email">{{ cliente.emails[0]?.email || 'Sem email' }}</div>
+        <div class="col document">{{ cliente.cpfCnpj | masks: 'doc'}}</div>
+        <div class="col tel">{{ cliente.telefones[0]?.numero || 'Sem telefone' | masks: 'tel'}}</div>
+
+        <div class="col status">
+          <span
+            class="badge"
+            [class.badge-active]="cliente.ativo"
+            [class.badge-inactive]="!cliente.ativo"
+          >
+            {{ cliente.ativo ? 'Ativo' : 'Inativo' }}
+          </span>
+        </div>
+
+        <div class="col actions text-end">
+          <button
+            class="btn btn-sm btn-outline-primary me-1"
+            (click)="editar(cliente.id)"
+          >
+            Editar
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="confirmarExclusao(cliente)"
+          >
+            Remover
+          </button>
+        </div>
+      </div>
+
+      @if (clienteToDelete) {
+        <div class="alert alert-warning mt-3">
+          Tem certeza de que deseja remover
+          <strong>{{ clienteToDelete.nome }}</strong>?
+
+          <div class="mt-2 d-flex gap-2">
+            <button class="btn btn-danger" (click)="deletar(clienteToDelete)">
+              Remover
+            </button>
+
+            <button
+              class="btn btn-outline-secondary"
+              (click)="clienteToDelete = null"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (successMsg) {
+        <div class="alert alert-success mt-3">{{ successMsg }}</div>
+      }
+
+      @if (errorMsg) {
+        <div class="alert alert-danger mt-3">{{ errorMsg }}</div>
+      }
+    </div>
+  </div>
+</div>

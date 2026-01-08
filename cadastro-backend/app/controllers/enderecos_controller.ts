@@ -12,6 +12,13 @@ export default class EnderecosController {
       })
     }
 
+    const clienteId = request.param('id')
+    if (!clienteId) {
+      return response.notFound({
+        message: 'ID do cliente inexistente ou não encontrado.'
+      })
+    }
+
     const enderecoSchema = schema.create({
       logradouro: schema.string({}, [
         rules.required(),
@@ -52,10 +59,12 @@ export default class EnderecosController {
       ])
     })
 
-    const data = await request.validate({
+    const payload = await request.validate({
       schema: enderecoSchema,
       messages: {}
     })
+
+    const data = { ...payload, id_cliente: clienteId }
 
     try {
       const endereco = await Endereco.create(data)

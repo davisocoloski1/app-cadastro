@@ -11,26 +11,35 @@ export default class TelefonesController {
         message: 'Você precisa fazer login para realizar essa ação.'
       })
     }
+    
+    const clienteId = request.param('id')
+    if (!clienteId) {
+      return response.notFound({
+        message: 'ID do cliente inexistente ou não encontrado.'
+      })
+    }
 
     const telefoneSchema = schema.create({
       numero: schema.string({}, [
         rules.required(),
         rules.regex(/^[1-9]{2}\d{9}$/),
-        rules.maxLength(20)
+        rules.maxLength(11)
       ]),
       tipo: schema.string({}, [
         rules.required(),
         rules.maxLength(30)
       ]),
       principal: schema.boolean([
-        rules.required
+        rules.required()
       ])
     })
 
-    const data = await request.validate({
+    const payload = await request.validate({
       schema: telefoneSchema,
       messages: {}
     })
+
+    const data = { ...payload, id_cliente: clienteId }
 
     try {
       const existingTelefone = await Telefone.query().where('numero', data.numero).where('ativo', true).first()

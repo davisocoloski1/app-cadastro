@@ -25,4 +25,13 @@ export class StepperService {
   get value() {
     return this.state.value
   }
+
+  clear() {
+    this.state.next({
+      cliente: null,
+      email: null,
+      telefone: null,
+      endereco: null
+    })
+  }
 }

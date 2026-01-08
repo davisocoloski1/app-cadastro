@@ -1,10 +1,12 @@
-<div class="card address-card shadow-sm mt-3">
+<div class="card address-card shadow-sm mt-3 mb-3">
   <div class="card-body">
 
-    <h5 class="card-title mb-2 text-center">Informações de Contato</h5>
+    <h5 class="card-title mb-2 text-center">
+      {{ isEditing ? 'Editar informações de contato' : 'Informações de contato' }}
+    </h5>
 
     <p class="text-muted text-center mb-4">
-      Preencha os dados de contato do cliente
+      {{ isEditing ? 'Edite as informações de e-mail e telefone do cliente' : 'Preencha os dados de contato do cliente' }}
     </p>
 
     <form [formGroup]="emailForm" class="row g-3" novalidate>
@@ -58,7 +60,7 @@
         <label class="form-label">Telefone do cliente</label>
         <input
           type="text"
-          formControlName="telefone"
+          formControlName="numero"
           class="form-control"
           placeholder="(00) 0 0000-0000"
           mask="(00) 00000-0000"
@@ -98,13 +100,27 @@
     }
 
     <div class="d-flex justify-content-end gap-2 mt-4">
-      <button class="btn btn-outline-secondary" (click)="limpar()">
-        Limpar campos
-      </button>
+      @if (isEditing) {
+        <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
+            {{ fieldsBlocked ? 'Desbloquear campos' : 'Bloquear campos' }}
+        </button>
 
-      <button class="btn btn-primary" (click)="registrar()">
-        Registrar
-      </button>
+        <button class="btn btn-outline-danger" (click)="limpar()">
+          Limpar campos
+        </button>
+  
+        <button class="btn btn-primary" (click)="editar()">
+          Editar
+        </button>
+      } @else {
+        <button class="btn btn-outline-secondary" (click)="limpar()">
+          Limpar campos
+        </button>
+  
+        <button class="btn btn-primary" (click)="registrar()">
+          Registrar
+        </button>
+      }
     </div>
 
   </div>

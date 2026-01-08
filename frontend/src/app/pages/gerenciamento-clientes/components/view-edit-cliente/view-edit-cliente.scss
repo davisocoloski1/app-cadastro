@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+app-registro-clientes, 
+app-registro-contato, 
+app-registro-endereco {
+  display: block; /* Necessário porque componentes customizados são inline por padrão */
+  width: 100%;
+}
+
+.card {
+  max-width: 1100px;
+  margin: 0 auto 20px auto; /* cima, horizontal-auto, baixo, horizontal-auto */
+}

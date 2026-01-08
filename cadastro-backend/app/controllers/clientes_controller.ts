@@ -22,7 +22,7 @@ export default class ClientesController {
         rules.minLength(11),
         rules.maxLength(14),
         rules.required(),
-        rules.regex(/^\d{11}$|^\[A-Z\d]{12}\d{2}$/)
+        rules.regex(/^\d{11}$|^[A-Z\d]{12}\d{2}$/)
       ]),
       origem: schema.string({}, [
         rules.maxLength(100),
@@ -44,7 +44,7 @@ export default class ClientesController {
         'cpf_cnpj.minLength': 'O campo "CPF/CNPJ" deve possuir no mínimo 11 dígitos.',
         'cpf_cnpj.maxLength': 'O campo "CPF/CNPJ" deve possuir no máximo 14 dígitos.',
         'cpf_cnpj.required': 'O campo "CPF/CNPJ" deve ser preenchido.',
-        'cpf_cnpj.regex': 'Formato inválido. O formato deve ser 000.000.000-00 ou 00.000.000/0000-00',
+        'cpf_cnpj.regex': 'O formato do CPF/CNPJ deve ser 000.000.000-00 ou 00.000.000/0000-00',
 
         'origem.maxLength': 'O campo "Origem" deve possuir no máximo 100 caracteres.',
         'origem.required': 'O campo "Origem" deve ser preenchido.',
@@ -73,7 +73,7 @@ export default class ClientesController {
 
     try {
       const cliente = await Cliente.create(data)
-      return response.created(cliente)
+      return response.created({ cliente: cliente, cliente_id: cliente.id})
     } catch (error) {
       return response.status(500).json({
         message: error
@@ -81,37 +81,85 @@ export default class ClientesController {
     }
   }
 
-  async validarCpf({ request, response }: HttpContext) {
-    const cpfLimpo: string[] = request.input('cpf').replace(/\D/g, '').split('')
+  async index({ auth, response }: HttpContext) {
+    const user = auth.user
 
-    if (cpfLimpo.every(d => d === cpfLimpo[0])) {
-      return response.badRequest({
-        message: 'CPF inválido.'
+    if (!user) {
+      return response.unauthorized({
+        message: 'Acesso não autorizado. Faça login para utilizar nossos serviços.'
       })
     }
+
+    const clientes = await Cliente.query()
+    .where('ativo', true) 
+    .preload('emails')
+    .preload('telefones')
+    .preload('enderecos')
+
+    return clientes
+  }
+
+  async searchCliente({ auth, request, response }: HttpContext) {
+    const user = auth.user
+
+    if (!user) {
+      return response.unauthorized({
+        message: 'Acesso não autorizado. Faça login para utilizar nossos serviços.'
+      })
+    }
+
+    const { query: searchTerm } = request.only(['query'])
+
+    const clientes = await Cliente.query()
+    .where((mainQuery) => {
+      mainQuery
+        .whereILike('nome', `%${searchTerm}%`)
+        .orWhereILike('cpf_cnpj', `%${searchTerm}%`)
+
+      mainQuery.orWhereHas('emails', (query) => {
+        query.whereILike('email', `%${searchTerm}%`)
+      })
+
+      mainQuery.orWhereHas('telefones', (query) => {
+        query.whereILike('numero', `%${searchTerm}%`)
+      })
+    })
+    .preload('emails')
+    .preload('telefones')
+    .preload('enderecos')
+
+    if (clientes.length === 0) {
+      return response.notFound({
+        message: 'Cliente não encontrado ou inexistente.'
+      })
+    }
+
+    return clientes
+  }
+
+  async getById({ auth, request, response }: HttpContext) {
+    const user = auth.user
+
+    if (!user) {
+      return response.unauthorized({
+        message: 'Acesso não autorizado. Faça login para utilizar nossos serviços.'
+      })
+    }
+
+    const id  = request.param('id')
+
+    if (!id) {
+      return response.conflict({
+        message: 'O ID do usuário deve ser indicado.'
+      })
+    }
+
+    const cliente = await Cliente.query()
+    .where('id', id)
+    .preload('emails')
+    .preload('telefones')
+    .preload('enderecos')
     
-    let soma1 = 0
-    for (let i = 0, peso = 10; peso >= 2; peso--, i++) {
-      soma1 += Number(cpfLimpo[i]) * peso
-    }
-
-    let digito1 = (soma1 * 10) % 11
-    if (digito1 === 10) digito1 = 0
-    
-    let soma2 = 0
-    for (let i = 0, peso = 11; peso >= 2; peso--, i++) {
-      soma2 += Number(cpfLimpo[i]) * peso
-    }
-
-    let digito2 = (soma2 * 10) % 11
-    if (digito2 === 10) digito2 = 0
-
-    const [dv1, dv2] = cpfLimpo.slice(-2).map(Number)
-
-    if (digito1 === dv1 && digito2 === dv2) {
-      return response.status(200).json({ valido: true })
-    }
-
-    return response.badRequest({ valido: false })
+    return cliente
   }
 }

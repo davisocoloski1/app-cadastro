@@ -38,17 +38,38 @@
         </div>
       </div>
     </div>
+    
+    @if (stateMsg) {
+      <div class="alert alert-info state-alert py-2 mb-4">
+        {{ stateMsg }}
+      </div>
+    }
 
     @if (step === 1) {
-      <app-registro-clientes (liberarEmail)="formLiberado = $event" (preenchido)="clienteFormPreenchido = $event"></app-registro-clientes>
+      <app-registro-clientes 
+      (liberarEmail)="formLiberado = $event" 
+      (preenchido)="clienteFormPreenchido = $event;"
+      (clienteBody)="onClienteRegistrado($event)"
+      [isEditing]="false"
+      [clienteToEdit]="null"></app-registro-clientes>
     }
 
-    @if (step === 2) {
-      <app-registro-contato (preenchido)="contatoFormPreenchido = $event"></app-registro-contato>
+    @if (step === 2 && idCliente) {
+      <app-registro-contato 
+      (preenchido)="contatoFormPreenchido = $event"
+      [userId]="idCliente"
+      [isEditing]="false"
+      [contatoToEdit]="null"></app-registro-contato>
     }
 
-    @if (step === 3) {
-      <app-registro-endereco (preenchido)="enderecoFormPreenchido = $event"></app-registro-endereco>
+    @if (step === 3 && idCliente) {
+      <app-registro-endereco 
+      (preenchido)="enderecoFormPreenchido = $event"
+      [userId]="idCliente"></app-registro-endereco>
+    }
+
+    @if (step === 4) {
+      <app-finalizar-registro></app-finalizar-registro>
     }
 
   </div>

@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { Navbar } from './components/navbar/navbar';
 import { GerenciamentoClientesModule } from './pages/gerenciamento-clientes/gerenciamento-clientes-module';
 import { RegistroClientes } from './pages/gerenciamento-clientes/components/registro-clientes/registro-clientes';
+import { MasksPipe } from './pipes/masks-pipe';
 
 @NgModule({
   declarations: [

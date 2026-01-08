@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClienteService } from '../../services/cliente.service';
 import { Email } from '../../models/email';
@@ -11,10 +11,13 @@ import { StepperService } from '../../services/stepper.service';
   templateUrl: './registro-contato.html',
   styleUrl: './registro-contato.scss',
 })
-export class RegistroContato implements OnInit {
+export class RegistroContato implements OnInit, OnDestroy {
   emailForm!: FormGroup
   telefoneForm!: FormGroup
   @Output() preenchido = new EventEmitter<boolean>()
+  @Input() userId!: number
+  private _contatoToEdit: any
+  fieldsBlocked = true
   telefoneErrorMsg = ''
   telefoneSuccessMsg = ''
   emailErrorMsg = ''
@@ -31,13 +34,44 @@ export class RegistroContato implements OnInit {
       principal: [true, [Validators.required]]
     });
     this.telefoneForm = this.fb.group({
-      telefone: ['', [Validators.required]],
+      numero: ['', [Validators.required]],
       tipo: ['celular', [Validators.required]],
       principal: [true, [Validators.required]]
     })
   }
 
+  @Input() isEditing = false
+  @Input() set contatoToEdit(value: any) {
+    this._contatoToEdit = value
+
+    if (this.emailForm && value && Object.keys(value).length > 0) {
+      this.emailForm.patchValue({
+        email: value.emails[0]?.email ?? '',
+        tipo: value.emails[0].tipo,
+        principal: value.emails[0].principal
+      })
+    }
+
+    if (this.telefoneForm && value && Object.keys(value).length > 0) {
+      this.telefoneForm.patchValue({
+        numero: value.telefones[0]?.numero ?? '',
+        tipo: value.telefones[0].tipo,
+        principal: value.telefones[0].principal
+      })
+    }
+  }
+
+  ngOnDestroy(): void {
+    // this.telefoneForm.reset()
+    // this.emailForm.reset()
+  }
+
   ngOnInit(): void {
+    if (this.isEditing) {
+      this.emailForm.disable()
+      this.telefoneForm.disable()
+    }
+
     this.telefoneForm.patchValue(this.stepper.value.telefone)
     this.emailForm.patchValue(this.stepper.value.email)
     this.telefoneForm.valueChanges.subscribe(value => { this.stepper.update('telefone', value) })
@@ -50,7 +84,7 @@ export class RegistroContato implements OnInit {
       return
     }
 
-    this.telefoneForm.patchValue({ telefone: this.telefoneForm.value.telefone.replace(/\D/g, '')})
+    this.telefoneForm.patchValue({ numero: this.telefoneForm.value.numero.replace(/\D/g, '')})
 
     const emailData: Email = {
       ...this.emailForm.value
@@ -60,7 +94,7 @@ export class RegistroContato implements OnInit {
       ...this.telefoneForm.value
     }
 
-    this.clienteService.registrarEmail(emailData).subscribe({
+    this.clienteService.registrarEmail(emailData, this.userId).subscribe({
       next: (res: any) => {
         console.log(res)
         this.emailErrorMsg = ''
@@ -75,7 +109,7 @@ export class RegistroContato implements OnInit {
       }
     })
 
-    this.clienteService.registrarTelefone(telefoneData).subscribe({
+    this.clienteService.registrarTelefone(telefoneData, this.userId).subscribe({
       next: (res: any) => {
         console.log(res)
         this.telefoneErrorMsg = ''
@@ -91,13 +125,29 @@ export class RegistroContato implements OnInit {
 
     this.preenchido.emit(true)
   }
+
+  editar() {
+
+  }
+
+  toggleBloquearCampos() {
+    if (this.fieldsBlocked) {
+      this.emailForm.enable()
+      this.telefoneForm.enable()
+    } else {
+      this.emailForm.disable()
+      this.telefoneForm.disable()
+    }
+
+    this.fieldsBlocked = !this.fieldsBlocked
+  }
   
   limpar() {
     this.emailForm.patchValue({
       email: '',
     });
     this.telefoneForm.patchValue({
-      telefone: '',
+      numero: '',
     })
   }
 }
