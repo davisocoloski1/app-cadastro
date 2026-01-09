@@ -11,10 +11,11 @@ import { StepperService } from '../../services/stepper.service';
   templateUrl: './registro-contato.html',
   styleUrl: './registro-contato.scss',
 })
-export class RegistroContato implements OnInit, OnDestroy {
+export class RegistroContato implements OnInit {
   emailForm!: FormGroup
   telefoneForm!: FormGroup
   @Output() preenchido = new EventEmitter<boolean>()
+  @Output() modoChange = new EventEmitter<'edit' | 'create'>()
   @Input() userId!: number
   private _contatoToEdit: any
   fieldsBlocked = true
@@ -31,39 +32,17 @@ export class RegistroContato implements OnInit, OnDestroy {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required]],
       tipo: ['pessoal', [Validators.required]],
-      principal: [true, [Validators.required]]
     });
     this.telefoneForm = this.fb.group({
       numero: ['', [Validators.required]],
       tipo: ['celular', [Validators.required]],
-      principal: [true, [Validators.required]]
     })
   }
 
   @Input() isEditing = false
   @Input() set contatoToEdit(value: any) {
     this._contatoToEdit = value
-
-    if (this.emailForm && value && Object.keys(value).length > 0) {
-      this.emailForm.patchValue({
-        email: value.emails[0]?.email ?? '',
-        tipo: value.emails[0].tipo,
-        principal: value.emails[0].principal
-      })
-    }
-
-    if (this.telefoneForm && value && Object.keys(value).length > 0) {
-      this.telefoneForm.patchValue({
-        numero: value.telefones[0]?.numero ?? '',
-        tipo: value.telefones[0].tipo,
-        principal: value.telefones[0].principal
-      })
-    }
-  }
-
-  ngOnDestroy(): void {
-    // this.telefoneForm.reset()
-    // this.emailForm.reset()
+    this.preencherForms(value)
   }
 
   ngOnInit(): void {
@@ -141,6 +120,29 @@ export class RegistroContato implements OnInit, OnDestroy {
 
     this.fieldsBlocked = !this.fieldsBlocked
   }
+
+  toggleBotaoAcao() {
+    this.isEditing = !this.isEditing
+    
+    if (!this.isEditing) {
+      this.emailForm.enable()
+      this.telefoneForm.enable()
+
+      this.emailForm.reset({
+        tipo: 'pessoal',
+        principal: true
+      })
+      this.telefoneForm.reset({
+        tipo: 'celular',
+        principal: true
+      })
+    } else {
+      this.emailForm.disable()
+      this.telefoneForm.disable()
+
+      this.preencherForms(this._contatoToEdit)
+    }
+  }
   
   limpar() {
     this.emailForm.patchValue({
@@ -149,5 +151,29 @@ export class RegistroContato implements OnInit, OnDestroy {
     this.telefoneForm.patchValue({
       numero: '',
     })
+  }
+
+  private preencherForms(value: any) {
+    if (!value) return
+
+    if (!value.emails[0] || !value.telefones[0]) {
+      this.telefoneErrorMsg = 'Informações de contato incompletas.'
+    }
+
+    if (this.emailForm && value && Object.keys(value).length > 0) {
+      this.emailForm.patchValue({
+        email: value.emails[0]?.email ?? '',
+        tipo: value.emails[0]?.tipo ?? 'pessoal',
+        principal: value.emails[0]?.principal ?? true
+      })
+    }
+
+    if (this.telefoneForm && value && Object.keys(value).length > 0) {
+      this.telefoneForm.patchValue({
+        numero: value.telefones[0]?.numero ?? '',
+        tipo: value.telefones[0]?.tipo ?? 'celular',
+        principal: value.telefones[0]?.principal ?? true
+      })
+    }
   }
 }

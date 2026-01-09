@@ -12,6 +12,7 @@ import { FinalizarRegistro } from './components/finalizar-registro/finalizar-reg
 import { ListagemClientes } from './components/listagem-clientes/listagem-clientes';
 import { MasksPipe } from '../../pipes/masks-pipe';
 import { ViewEditCliente } from './components/view-edit-cliente/view-edit-cliente';
+import { EditClientePage } from './components/edit-cliente-page/edit-cliente-page';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ViewEditCliente } from './components/view-edit-cliente/view-edit-client
     FinalizarRegistro,
     ListagemClientes,
     MasksPipe,
-    ViewEditCliente
+    ViewEditCliente,
+    EditClientePage
   ],
   imports: [
     CommonModule,

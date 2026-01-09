@@ -1,5 +1,9 @@
 import Cliente from '#models/cliente'
+import Email from '#models/email'
+import Endereco from '#models/endereco'
+import Telefone from '#models/telefone'
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 import { rules, schema } from '@adonisjs/validator'
 
 export default class ClientesController {
@@ -91,7 +95,6 @@ export default class ClientesController {
     }
 
     const clientes = await Cliente.query()
-    .where('ativo', true) 
     .preload('emails')
     .preload('telefones')
     .preload('enderecos')
@@ -161,5 +164,49 @@ export default class ClientesController {
     .preload('enderecos')
     
     return cliente
+  }
+
+  async deactivate({ auth, request, response }: HttpContext) {
+    const user = auth.user
+
+    if (!user) {
+      return response.unauthorized({
+        message: 'Acesso não autorizado. Faça login para utilizar nossos serviços.'
+      })
+    }
+
+    const clienteId = request.param('id')
+
+    if (!clienteId) {
+      return response.notFound({
+        message: 'Cliente não encontrado ou inexistente.'
+      })
+    }
+
+    try {
+      await db.transaction(async (t) => {
+        await Cliente.query({ client: t })
+          .where('id', clienteId)
+          .update({ ativo: false })
+  
+        await Email.query({ client: t })
+          .where('id_cliente', clienteId)
+          .update({ ativo: false })
+  
+        await Telefone.query({ client: t })
+          .where('id_cliente', clienteId)
+          .update({ ativo: false })
+  
+        await Endereco.query({ client: t })
+          .where('id_cliente', clienteId)
+          .update({ ativo: false })
+      })
+      return response.ok({
+        message: 'Cliente e dados relacionados desativados com sucesso.'
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 }

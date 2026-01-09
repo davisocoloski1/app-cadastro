@@ -1,12 +1,143 @@
-<app-registro-clientes
+<!-- <app-registro-clientes
   [clienteToEdit]="clienteToEdit"
   [isEditing]="true"
 ></app-registro-clientes>
 <app-registro-contato
   [contatoToEdit]="clienteToEdit[0]"
   [isEditing]="true"
+  [userId]="userId"
 ></app-registro-contato>
 <app-registro-endereco
   [enderecoToEdit]="clienteToEdit[0]"
   [isEditing]="true"
-></app-registro-endereco>
+  [userId]="userId"
+></app-registro-endereco> -->
+
+<div class="page-wrapper">
+  <div class="container card shadow-sm clients-card">
+    <div class="card-body">
+      <ng-container *ngFor="let info of clienteToEdit">
+        <div>
+          <h5>Informações primárias de {{ info.nome }}</h5>
+          <div class="list-row list-header">
+            <div class="col name">Nome</div>
+            <div class="col doc">Documento</div>
+            <div class="col origem">Origem</div>
+            <div class="col segmento">Segmento</div>
+            <div class="col status">Status</div>
+            <div class="col actions text-end">Ações</div>
+          </div>
+          <div class="list-row">
+            <div class="col name">{{ info.nome }}</div>
+            <div class="col doc">{{ info.cpfCnpj | masks: 'doc' }}</div>
+            <div class="col origem">{{ info.origem }}</div>
+            <div class="col segmento">{{ info.segmento }}</div>
+            <div class="col status">
+              <span
+                class="badge"
+                [class.badge-active]="info.ativo"
+                [class.badge-inactive]="!info.ativo"
+              >
+                {{ info.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </div>
+        
+            <div class="col actions text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                [routerLink]="['/clientes/visualizar-cliente/editarPrimarias', info.id]"
+              >
+                Editar
+              </button>
+        
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="null"
+              >
+                Desativar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5">
+          <h5>Informações de contato de {{ info.nome }}</h5>
+          <p>Área de e-mail</p>
+          <div class="list-row-email list-header">
+            <div class="col email">E-mail</div>
+            <div class="col tipo">Tipo</div>
+            <div class="col principal">Principal</div>
+            <div class="col status">Status</div>
+            <div class="col actions text-end">Ações</div>
+          </div>
+          <div class="list-row-email" *ngFor="let email of info.emails">
+            <div class="col email">{{ email.email }}</div>
+            <div class="col tipo capitalize">{{ email.tipo }}</div>
+            <div class="col principal">{{ email.principal ? 'Sim' : 'Não' }}</div>
+            <div class="col status">
+              <span
+                class="badge"
+                [class.badge-active]="email.ativo"
+                [class.badge-inactive]="!email.ativo"
+              >
+                {{ email.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </div>
+            <div class="col actions text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                [routerLink]="['/clientes/visualizar-cliente/editarContato', email.idCliente]"
+              >
+                Editar
+              </button>
+        
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="null"
+              >
+                Desativar
+              </button>
+            </div>
+          </div>
+          <p class="mt-5">Área de telefone</p>
+          <div class="list-row-phone list-header">
+            <div class="col telefone">Telefones</div>
+            <div class="col tipo">Tipo</div>
+            <div class="col principal">Principal</div>
+            <div class="col status">Status</div>
+            <div class="col actions text-end">Ações</div>
+          </div>
+          <div class="list-row-phone" *ngFor="let telefone of info.telefones">
+            <div class="col telefone">{{ telefone.numero | masks: 'tel' }}</div>
+            <div class="col tipo capitalize">{{ telefone.tipo }}</div>
+            <div class="col principal">{{ telefone.principal ? 'Sim' : 'Não' }}</div>
+            <div class="col status">
+              <span
+                class="badge"
+                [class.badge-active]="telefone.ativo"
+                [class.badge-inactive]="!telefone.ativo"
+              >
+                {{ telefone.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </div>
+            <div class="col actions text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                [routerLink]="['/clientes/visualizar-cliente/editarContato', telefone.idCliente]"
+              >
+                Editar
+              </button>
+        
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="null"
+              >
+                Desativar
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+</div>

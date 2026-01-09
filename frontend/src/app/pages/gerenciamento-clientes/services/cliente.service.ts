@@ -45,6 +45,10 @@ export class ClienteService {
     return this.http.get(`${this.apiUrl}/clientes/listagem/listarInfoCliente/${id}`)
   }
 
+  desativarCliente(id: number) {
+    return this.http.put(`${this.apiUrl}/clientes/desativar/desativarCliente/${id}`, {})
+  }
+
   // Controle de email e telefone (contato)
   registrarEmail(data: Email, id: number): Observable<Email> {
     return this.http.post<Email>(`${this.apiUrl}/clientes/registro/registrarEmail/${id}`, data)

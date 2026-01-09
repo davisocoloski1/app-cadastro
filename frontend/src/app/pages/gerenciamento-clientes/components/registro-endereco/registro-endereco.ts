@@ -10,7 +10,7 @@ import { StepperService } from '../../services/stepper.service';
   templateUrl: './registro-endereco.html',
   styleUrl: './registro-endereco.scss',
 })
-export class RegistroEndereco implements OnInit, OnDestroy {
+export class RegistroEndereco implements OnInit {
   enderecoForm!: FormGroup
   @Output() preenchido = new EventEmitter<boolean>()
   @Input() userId!: number
@@ -33,32 +33,13 @@ export class RegistroEndereco implements OnInit, OnDestroy {
       estado: ['', [Validators.required]],
       cep: ['', [Validators.required]],
       tipo: ['residencial', [Validators.required]],
-      principal: [true, [Validators.required]]
     })
   }
 
   @Input() isEditing = false
   @Input() set enderecoToEdit(value: any) {
     this._enderecoToEdit = value
-    console.log(value)
-
-    if (this.enderecoForm && value && Object.keys(value).length > 0) {
-      this.enderecoForm.patchValue({
-        logradouro: value.enderecos[0].logradouro,
-        numero: value.enderecos[0].numero,
-        complemento: value.enderecos[0].complemento,
-        bairro: value.enderecos[0].bairro,
-        cidade: value.enderecos[0].cidade,
-        estado: value.enderecos[0].estado,
-        cep: value.enderecos[0].cep,
-        tipo: value.enderecos[0].tipo,
-        principal: value.enderecos[0].principal
-      })
-    }
-  }
-
-  ngOnDestroy(): void {
-    // this.enderecoForm.reset()
+    this.preencherForms(value)
   }
 
   ngOnInit(): void {
@@ -111,6 +92,23 @@ export class RegistroEndereco implements OnInit, OnDestroy {
     this.fieldsBlocked = !this.fieldsBlocked
   }
 
+  toggleBotaoAcao() {
+    this.isEditing = !this.isEditing
+    
+    if (!this.isEditing) {
+      this.enderecoForm.enable()
+
+      this.enderecoForm.reset({
+        tipo: 'residencial',
+        principal: true
+      })
+    } else {
+      this.enderecoForm.disable()
+
+      this.preencherForms(this._enderecoToEdit)
+    }
+  }
+
   limpar() {
     this.enderecoForm.patchValue({
       logradouro: '',
@@ -121,7 +119,28 @@ export class RegistroEndereco implements OnInit, OnDestroy {
       estado: '',
       cep: '',
       tipo: 'residencial',
-      principal: 'yes'
     })
+  }
+
+  private preencherForms(value: any) {
+    if (!value) return
+
+    if (!value.enderecos[0]) {
+      this.errorMsg = 'Informações de endereço incompletas.'
+    }
+
+    if (this.enderecoForm && value && Object.keys(value).length > 0) {
+      this.enderecoForm.patchValue({
+        logradouro: value.enderecos[0]?.logradouro ?? '',
+        numero: value.enderecos[0]?.numero ?? '',
+        complemento: value.enderecos[0]?.complemento ?? '',
+        bairro: value.enderecos[0]?.bairro ?? '',
+        cidade: value.enderecos[0]?.cidade ?? '',
+        estado: value.enderecos[0]?.estado ?? '',
+        cep: value.enderecos[0]?.cep ?? '',
+        tipo: value.enderecos[0]?.tipo ?? 'residencial',
+        principal: value.enderecos[0]?.principal ?? true
+      })
+    }
   }
 }

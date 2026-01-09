@@ -1,5 +1,6 @@
 import Endereco from '#models/endereco'
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 import { rules, schema } from '@adonisjs/validator'
 
 export default class EnderecosController {
@@ -54,9 +55,6 @@ export default class EnderecosController {
         rules.required(),
         rules.maxLength(50)
       ]),
-      principal: schema.boolean([
-        rules.required()
-      ])
     })
 
     const payload = await request.validate({
@@ -64,11 +62,18 @@ export default class EnderecosController {
       messages: {}
     })
 
-    const data = { ...payload, id_cliente: clienteId }
+    const data = { ...payload, id_cliente: clienteId, principal: true }
 
     try {
-      const endereco = await Endereco.create(data)
-      return response.created(endereco)
+      await db.transaction(async (trx) => {
+        await Endereco.query({ client: trx })
+          .where('id_cliente', clienteId)
+          .where('ativo', true)
+          .where('principal', true)
+          .update({ principal: false })
+
+        await Endereco.create(data, { client: trx })
+      })
     } catch (error) {
       return response.status(500).json({
         message: error.detail

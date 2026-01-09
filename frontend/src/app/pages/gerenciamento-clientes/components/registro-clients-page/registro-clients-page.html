@@ -48,7 +48,7 @@
     @if (step === 1) {
       <app-registro-clientes 
       (liberarEmail)="formLiberado = $event" 
-      (preenchido)="clienteFormPreenchido = $event;"
+      (preenchido)="clienteFormPreenchido = $event"
       (clienteBody)="onClienteRegistrado($event)"
       [isEditing]="false"
       [clienteToEdit]="null"></app-registro-clientes>
@@ -56,7 +56,7 @@
 
     @if (step === 2 && idCliente) {
       <app-registro-contato 
-      (preenchido)="contatoFormPreenchido = $event"
+      (preenchido)="onContatoRegistrado($event)"
       [userId]="idCliente"
       [isEditing]="false"
       [contatoToEdit]="null"></app-registro-contato>
@@ -64,7 +64,7 @@
 
     @if (step === 3 && idCliente) {
       <app-registro-endereco 
-      (preenchido)="enderecoFormPreenchido = $event"
+      (preenchido)="onEnderecoPreenchido($event)"
       [userId]="idCliente"></app-registro-endereco>
     }
 

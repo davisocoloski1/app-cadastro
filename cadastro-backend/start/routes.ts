@@ -49,6 +49,10 @@ router.group(() => {
     router.get('/listarInfoCliente/:id', [ClientesController, 'getById'])
 }).prefix('/clientes/listagem').use(middleware.auth())
 
+router.group(() => {
+    router.put('/desativarCliente/:id', [ClientesController, 'deactivate'])
+}).prefix('/clientes/desativar').use(middleware.auth())
+
 // Rotas de validação 
 router.group(() => {
     router.post('/validarCpf', [ValidationsController, 'validarCpf'])
