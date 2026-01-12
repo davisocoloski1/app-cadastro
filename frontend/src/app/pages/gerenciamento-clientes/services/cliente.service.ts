@@ -49,6 +49,10 @@ export class ClienteService {
     return this.http.put(`${this.apiUrl}/clientes/desativar/desativarCliente/${id}`, {})
   }
 
+  desativarParcial(id: number, type: string, targetId: number, status: string) {
+    return this.http.put(`${this.apiUrl}/clientes/desativar/desativarPorTipo/${id}/${type}/${targetId}/${status}`, {})
+  }
+
   // Controle de email e telefone (contato)
   registrarEmail(data: Email, id: number): Observable<Email> {
     return this.http.post<Email>(`${this.apiUrl}/clientes/registro/registrarEmail/${id}`, data)

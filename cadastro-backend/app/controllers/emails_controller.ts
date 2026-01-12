@@ -79,14 +79,4 @@ export default class EmailsController {
       })
     }
   }  
-
-  async destroy({ auth, response, request }: HttpContext) {
-    const user = auth.user
-
-    if (!user) {
-      return response.unauthorized({
-        message: 'Você precisa fazer login para realizar essa ação.'
-      })
-    }
-  }
 }

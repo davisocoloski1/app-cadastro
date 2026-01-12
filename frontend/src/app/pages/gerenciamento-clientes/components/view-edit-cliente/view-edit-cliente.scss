@@ -38,6 +38,11 @@
   padding: 12px 0;
   border-bottom: 1px solid #e5e7eb;
   align-items: center;
+
+  .confirmation-wrapper {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
 }
 
 .list-row-email:last-child {
@@ -50,9 +55,31 @@
   padding: 12px 0;
   border-bottom: 1px solid #e5e7eb;
   align-items: center;
+
+  .confirmation-wrapper {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
 }
 
 .list-row-phone:last-child {
+  border-bottom: none;
+}
+
+.list-row-address {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+  align-items: center;
+
+  .confirmation-wrapper {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+.list-row-address:last-child {
   border-bottom: none;
 }
 

@@ -50,7 +50,8 @@ router.group(() => {
 }).prefix('/clientes/listagem').use(middleware.auth())
 
 router.group(() => {
-    router.put('/desativarCliente/:id', [ClientesController, 'deactivate'])
+    router.put('/desativarCliente/:id', [ClientesController, 'deactivateCliente'])
+    router.put('/desativarPorTipo/:id/:type/:targetId/:status', [ClientesController, 'deactivateByType'])
 }).prefix('/clientes/desativar').use(middleware.auth())
 
 // Rotas de validação 

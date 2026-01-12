@@ -166,7 +166,7 @@ export default class ClientesController {
     return cliente
   }
 
-  async deactivate({ auth, request, response }: HttpContext) {
+  async deactivateCliente({ auth, request, response }: HttpContext) {
     const user = auth.user
 
     if (!user) {
@@ -207,6 +207,70 @@ export default class ClientesController {
     } catch (error) {
       console.log(error)
     }
+  }
 
+  async deactivateByType({ auth, request, response }: HttpContext) {
+    const user = auth.user
+
+    if (!user) {
+      return response.unauthorized({
+        message: 'Acesso não autorizado. Faça login para utilizar nossos serviços.'
+      })
+    }
+
+    const clientId = request.param('id')
+    const type = request.param('type')
+    const targetId = request.param('targetId')
+    const newStatus = request.param('status')
+
+    if (!clientId && !type) {
+      return response.notFound({
+        message: 'Cliente não encontrado ou parâmetro incorreto.'
+      })
+    }
+
+    const cliente = await Cliente.findOrFail(clientId)
+
+    if (!cliente) {
+      return response.notFound({ message: 'Cliente não encontrado.' })
+    }
+
+    if (!cliente.ativo) {
+      return response.badRequest({ message: 'Não é possível alterar informações de um cliente inativo. Reative o cliente primeiro.' })
+    }
+
+    if (newStatus !== 'ativar' && newStatus !== 'desativar') {
+      return response.badRequest({ message: 'O campo "status" deve ser preenchido como "ativar" ou "desativar".'})
+    }
+
+    try {
+      switch (type) {
+        case 'email':
+          return this.toggleStatus(Email, clientId, targetId, newStatus, 'E-mail', response)
+        case 'telefone':
+          return this.toggleStatus(Telefone, clientId, targetId, newStatus, 'Telefone', response)
+        case 'endereco':
+          return this.toggleStatus(Endereco, clientId, targetId, newStatus, 'Endereço', response)
+        default:
+          return response.badRequest({ message: 'Tipo de desativação inválido.' })
+      }
+    } catch (error) {
+      return response.internalServerError({ error: error })
+    }
+  }
+
+  private async toggleStatus(Model: any, clienteId: number, targetId: number, newStatus: string, label: string, response: any) {
+    const row = await Model.query().where('id_cliente', clienteId).where('id', targetId).first()
+
+    if (!row) return response.notFound({ message: `${label} não encontrado.` })
+
+    const status = newStatus === 'ativar'
+    if (row.ativo && status) {
+      return response.conflict({ message: `Esse ${label.toLowerCase()} já está ${status ? 'ativado' : 'desativado'}`})
+    }
+
+    row.ativo = status
+    await row.save()
+    return response.ok({ message: `${label} ${status ? 'ativado' : 'desativado'} com sucesso.` })
   }
 }
