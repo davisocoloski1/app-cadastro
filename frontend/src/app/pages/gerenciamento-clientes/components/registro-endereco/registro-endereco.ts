@@ -12,6 +12,7 @@ import { StepperService } from '../../services/stepper.service';
 })
 export class RegistroEndereco implements OnInit {
   enderecoForm!: FormGroup
+  tempForm!: any
   @Output() preenchido = new EventEmitter<boolean>()
   @Input() userId!: number
   private _enderecoToEdit: any
@@ -40,16 +41,17 @@ export class RegistroEndereco implements OnInit {
   @Input() set enderecoToEdit(value: any) {
     this._enderecoToEdit = value
     this.preencherForms(value)
-  }
 
-  ngOnInit(): void {
     if (this.isEditing) {
       this.enderecoForm.disable()
     }
+  }
 
+  ngOnInit(): void {
     this.enderecoForm.patchValue(this.stepper.value.endereco)
     this.enderecoForm.valueChanges.subscribe(value => { this.stepper.update('endereco', value) })
-  }
+    this.tempForm = this.enderecoForm.value
+  } 
 
   registrar() {
     if (this.enderecoForm.invalid) {
@@ -79,7 +81,36 @@ export class RegistroEndereco implements OnInit {
   }
 
   editar() {
+    if (this.enderecoForm.invalid) {
+      this.errorMsg = 'Todos os campos devem ser preenchidos.'
+      return
+    }
+    
+    const hasChanges = this.tempForm === this.enderecoForm
 
+    if (!hasChanges) {
+      this.errorMsg = 'Nenhuma alteração foi detectada para salvar.';
+      return;
+    }
+
+    this.enderecoForm.patchValue({ cep: this.enderecoForm.value.cep.replace(/\D/g, '') })
+
+    const enderecoData: Endereco = {
+      ...this.enderecoForm.value
+    }
+
+    this.clienteService.editarEndereco(this._enderecoToEdit[0].id, enderecoData).subscribe({
+      next: (res: any) => {
+        this.errorMsg = ''
+        this.successMsg = 'Endereço atualizado'
+        this.preenchido.emit(true)
+      }, error: (err: any) => {
+        console.log(err)
+        this.successMsg = ''
+        this.errorMsg = 'Ocorreu um erro'
+        this.preenchido.emit(false)
+      }
+    })
   }
 
   toggleBloquearCampos() {
@@ -123,23 +154,24 @@ export class RegistroEndereco implements OnInit {
   }
 
   private preencherForms(value: any) {
-    if (!value) return
-
-    if (!value.enderecos[0]) {
+    if (!value || value.length === 0) {
       this.errorMsg = 'Informações de endereço incompletas.'
+      return
     }
 
-    if (this.enderecoForm && value && Object.keys(value).length > 0) {
+    const endereco = value[0]
+
+    if (this.enderecoForm && endereco && Object.keys(endereco).length > 0) {
       this.enderecoForm.patchValue({
-        logradouro: value.enderecos[0]?.logradouro ?? '',
-        numero: value.enderecos[0]?.numero ?? '',
-        complemento: value.enderecos[0]?.complemento ?? '',
-        bairro: value.enderecos[0]?.bairro ?? '',
-        cidade: value.enderecos[0]?.cidade ?? '',
-        estado: value.enderecos[0]?.estado ?? '',
-        cep: value.enderecos[0]?.cep ?? '',
-        tipo: value.enderecos[0]?.tipo ?? 'residencial',
-        principal: value.enderecos[0]?.principal ?? true
+        logradouro: endereco.logradouro ?? '',
+        numero: endereco.numero ?? '',
+        complemento: endereco.complemento ?? '',
+        bairro: endereco.bairro ?? '',
+        cidade: endereco.cidade ?? '',
+        estado: endereco.estado ?? '',
+        cep: endereco.cep ?? '',
+        tipo: endereco.tipo ?? 'residencial',
+        principal: endereco.principal ?? true
       })
     }
   }

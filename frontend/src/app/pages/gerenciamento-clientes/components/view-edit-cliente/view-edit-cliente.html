@@ -110,7 +110,7 @@
             <div class="col actions text-end">
               <button
                 class="btn btn-sm btn-outline-primary me-1"
-                [routerLink]="['/clientes/visualizar-cliente/editarContato', email.idCliente]"
+                (click)="editar(email.idCliente, [email], 'email')"
               >
                 Editar
               </button>
@@ -171,7 +171,7 @@
             <div class="col actions text-end">
               <button
                 class="btn btn-sm btn-outline-primary me-1"
-                [routerLink]="['/clientes/visualizar-cliente/editarContato', telefone.idCliente]"
+                (click)="editar(telefone.idCliente, telefone, 'telefone')"
               >
                 Editar
               </button>
@@ -250,7 +250,7 @@
             <div class="col actions text-end">
               <button
                 class="btn btn-sm btn-outline-primary me-1"
-                [routerLink]="['/clientes/visualizar-cliente/editarContato', endereco.idCliente]"
+                (click)="editar(endereco.idCliente, endereco, 'endereco')"
               >
                 Editar
               </button>

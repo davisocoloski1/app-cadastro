@@ -78,5 +78,34 @@ export default class EmailsController {
         message: error
       })
     }
-  }  
+  }
+
+  async update({ auth, request, response }: HttpContext) {
+    const user = auth.user
+    if (!user) return response.unauthorized({ message: 'Acesso não autorizado, faça login para realizar essa ação.' })
+
+    try {
+      const id = request.param('id')
+      const email = await Email.findOrFail(id)
+      if (!email) return response.notFound({ message: 'E-mail não encontrado ou inexistente.' })
+  
+      const data = request.only([
+        'email',
+        'tipo'
+      ])
+  
+      email.merge(data)
+      await email.save()
+  
+      return response.ok({
+        message: 'E-mail atualizado com sucesso.',
+        data: email
+      })
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Erro ao atualizar e-mail.',
+        error: error
+      })
+    }
+  }
 }

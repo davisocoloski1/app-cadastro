@@ -54,6 +54,12 @@ router.group(() => {
     router.put('/desativarPorTipo/:id/:type/:targetId/:status', [ClientesController, 'deactivateByType'])
 }).prefix('/clientes/desativar').use(middleware.auth())
 
+router.group(() => {
+    router.put('/editar-email/:id', [EmailsController, 'update'])
+    router.put('/editar-telefone/:id', [TelefonesController, 'update'])
+    router.put('/editar-endereco/:id', [EnderecosController, 'update'])
+}).prefix('/clientes/editar').use(middleware.auth())
+
 // Rotas de validação 
 router.group(() => {
     router.post('/validarCpf', [ValidationsController, 'validarCpf'])

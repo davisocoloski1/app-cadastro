@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ClienteService } from '../../services/cliente.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-view-edit-cliente',
@@ -24,6 +24,7 @@ export class ViewEditCliente implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -33,12 +34,10 @@ export class ViewEditCliente implements OnInit {
   desativarParcial(id: number, type: string, targetId: number, status: string) {
     this.clienteService.desativarParcial(id, type, targetId, status).subscribe({
       next: (res: any) => {
-        console.log(res)
         this.enderecoErrorMsg = ''
         this.emailErrorMsg = '' 
         this.telefoneErrorMsg = ''
         const successMessage = res.message
-        console.log(res.message)
 
         setTimeout(() => {
           if (successMessage.includes('E-mail')) {
@@ -82,14 +81,18 @@ export class ViewEditCliente implements OnInit {
     })
   }
 
+  editar(id: number, obj: any, type: string) {
+    this.router.navigate(['/clientes/editar-cliente', type, id], {
+      state: { data: Array.isArray(obj) ? obj : [obj] }
+    })
+  }
+
   private getClientes() {
     const id = Number(this.route.snapshot.paramMap.get('id'))
     this.userId = id
     this.clienteService.getClienteById(id).subscribe({
       next: (res: any) => {
         this.clienteToEdit = res
-        console.log(this.clienteToEdit)
-        console.log(res)
       }, error: (err: any) => {
         console.log(err.error)
       }

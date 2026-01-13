@@ -7,6 +7,7 @@ import { ViewEditCliente } from './components/view-edit-cliente/view-edit-client
 import { RegistroContato } from './components/registro-contato/registro-contato';
 import { RegistroClientes } from './components/registro-clientes/registro-clientes';
 import { RegistroEndereco } from './components/registro-endereco/registro-endereco';
+import { EditClientePage } from './components/edit-cliente-page/edit-cliente-page';
 
 const routes: Routes = [
   {
@@ -25,18 +26,8 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'visualizar-cliente/editarPrimarias/:id',
-    component: RegistroClientes,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'visualizar-cliente/editarEndereco/:id',
-    component: RegistroEndereco,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'visualizar-cliente/editarContato/:id',
-    component: RegistroContato,
+    path: 'editar-cliente/:tipo/:id',
+    component: EditClientePage,
     canActivate: [authGuard]
   }
 ];

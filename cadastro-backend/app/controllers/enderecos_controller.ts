@@ -80,4 +80,39 @@ export default class EnderecosController {
       })
     }
   }
+
+  async update({ auth, request, response }: HttpContext) {
+    const user = auth.user
+    if (!user) return response.unauthorized({ message: 'Acesso não autorizado, faça login para realizar essa ação.' })
+
+    try {
+      const id = request.param('id')
+      const endereco = await Endereco.findOrFail(id)
+      if (!endereco) return response.notFound({ message: 'Endereço não encontrado ou inexistente.' })
+  
+      const data = request.only([
+        'logradouro',
+        'numero',
+        'complemento',
+        'bairro',
+        'cidade',
+        'estado',
+        'cep',
+        'tipo'
+      ])
+  
+      endereco.merge(data)
+      await endereco.save()
+  
+      return response.ok({
+        message: 'Endreço atualizado com sucesso.',
+        data: endereco
+      })
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Erro ao atualizar Endereço.',
+        error: error
+      })
+    }
+  }
 }

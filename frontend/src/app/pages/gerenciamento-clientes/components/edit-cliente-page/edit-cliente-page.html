@@ -1,1 +1,21 @@
-<p>edit-cliente-page works!</p>
+@if (tipo === 'email') {
+  <app-registro-contato
+    [userId]="id"
+    [isEditing]="true"
+    [contatoToEdit]="contatoToEdit"
+    [editType]="'email'"
+  ></app-registro-contato>
+} @else if (tipo === 'endereco') {
+  <app-registro-endereco
+    [userId]="id"
+    [isEditing]="true"
+    [enderecoToEdit]="contatoToEdit"
+  ></app-registro-endereco>
+} @else if (tipo === 'telefone') {
+  <app-registro-contato
+    [userId]="id"
+    [isEditing]="true"
+    [contatoToEdit]="contatoToEdit"
+    [editType]="'telefone'"
+  ></app-registro-contato>
+}

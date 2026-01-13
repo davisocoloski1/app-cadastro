@@ -86,7 +86,7 @@
               Limpar campos
             </button>
       
-            <button class="btn btn-primary" (click)="editar()">
+            <button class="btn btn-primary" (click)="editar()" [disabled]="enderecoForm.pristine || enderecoForm.invalid">
               Salvar
             </button>
           } @else {

@@ -72,4 +72,33 @@ export default class TelefonesController {
       })
     }
   }
+  
+  async update({ auth, request, response }: HttpContext) {
+    const user = auth.user
+    if (!user) return response.unauthorized({ message: 'Acesso não autorizado, faça login para realizar essa ação.' })
+
+    try {
+      const id = request.param('id')
+      const telefone = await Telefone.findOrFail(id)
+      if (!telefone) return response.notFound({ message: 'Telefone não encontrado ou inexistente.' })
+  
+      const data = request.only([
+        'numero',
+        'tipo',
+      ])
+  
+      telefone.merge(data)
+      await telefone.save()
+  
+      return response.ok({
+        message: 'Telefone atualizado com sucesso.',
+        data: telefone
+      })
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Erro ao atualizar telefone.',
+        error: error
+      })
+    }
+  }
 }
