@@ -515,21 +515,28 @@ export default class UsersController {
         rules.required(),
         rules.minLength(6),
         rules.maxLength(20),
+        rules.regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])^[\x21-\x7e]{8,32}$/)
       ]),
       password_confirmation: schema.string({}, [
+        rules.confirmed('password'),
         rules.required(),
-        rules.confirmed('password')
       ])
     })
 
     const data = await request.validate({
       schema: updatePassword,
       messages: {
+        'confirmed': 'As senhas não conferem.',
         'password.required': 'A senha é obrigatória.',
         'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
         'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.',
         'password_confirmation.required': 'A confirmação de senha é obrigatória.',
-        'confirmed': 'As senhas não conferem.'
+        'password.regex': `A senha deve possuir: 
+        - Pelo menos 1 letra maiúscula
+        - Pelo menos 1 letra minúscula
+        - Pelo menos um digito numérico
+        - Pelo menos um caractere especial
+        - Entre 8 e 32 caracteres`,
       }
     })
 
@@ -615,6 +622,7 @@ export default class UsersController {
         rules.required(),
         rules.minLength(6),
         rules.maxLength(20),
+        rules.regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])^[\x21-\x7e]{8,32}$/)
       ]),
       password_confirmation: schema.string({}, [
         rules.required(),
@@ -630,6 +638,12 @@ export default class UsersController {
         'password.minLength': 'A senha deve possuir no mínimo 6 caracteres.',
         'password.maxLength': 'A senha deve possuir no máximo 20 caracteres.',
         'password_confirmation.required': 'A confirmação de senha é obrigatória.',
+        'password.regex': `A senha deve possuir: 
+        - Pelo menos 1 letra maiúscula
+        - Pelo menos 1 letra minúscula
+        - Pelo menos um digito numérico
+        - Pelo menos um caractere especial
+        - Entre 8 e 32 caracteres`,
         'confirmed': 'As senhas não conferem.'
       }
     })

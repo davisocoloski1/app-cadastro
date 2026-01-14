@@ -57,7 +57,6 @@ export class AdminRegistro {
       next: (res) => {
         this.errorMsg = ''
         this.successMsg = 'Usuário criado. E-mail de verificação enviado.'
-        console.log(res);
       },
       error: (err: any) => {
         this.successMsg = ''

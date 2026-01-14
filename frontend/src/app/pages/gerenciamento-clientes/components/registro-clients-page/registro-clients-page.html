@@ -4,7 +4,7 @@
     class="nav-btn left"
     (click)="back()"
     [disabled]="step === 1">
-    ‹
+    &LeftArrow;
   </button>
 
   <div class="wizard-content">
@@ -56,10 +56,11 @@
 
     @if (step === 2 && idCliente) {
       <app-registro-contato 
-      (preenchido)="onContatoRegistrado($event)"
+      (statusContato)="onContatoRegistrado($event)"
       [userId]="idCliente"
       [isEditing]="false"
-      [contatoToEdit]="null"></app-registro-contato>
+      [contatoToEdit]="null"
+      [editType]="'all'"></app-registro-contato>
     }
 
     @if (step === 3 && idCliente) {
@@ -82,8 +83,9 @@
                 (step === 3 && 
                 (!clienteFormPreenchido || 
                 !enderecoFormPreenchido || 
-                !contatoFormPreenchido))">
-    ›
+                !emailFormPreenchido ||
+                !telFormPreenchido))">
+    &RightArrow;
   </button>
 
 </div>

@@ -28,7 +28,6 @@ export class ListagemClientes implements OnInit {
 
   ngOnInit(): void {
     this.listarClientes()
-    console.log(this.clientes)
   }
 
   listarClientes() {
@@ -68,18 +67,21 @@ export class ListagemClientes implements OnInit {
     this.router.navigate(['/clientes/visualizar-cliente', id])
   }
 
-  desativar(id: number) {
-    this.clienteService.desativarCliente(id).subscribe({
+  alternarStatus(id: number, status: boolean) {
+    const newStatus = status ? 'desativar' : 'ativar'
+    this.clienteService.alternarStatusCliente(id, newStatus).subscribe({
       next: (res: any) => {
         this.errorMsg = ''
         this.successMsg = res.message
         
-        setTimeout(() => { this.listarClientes() }, 2000)
-        setTimeout(() => { this.clienteIdToDelete = null }, 2001)
+        setTimeout(() => { 
+          this.listarClientes() 
+          this.clienteIdToDelete = null
+        }, 2000)
       },
       error: (err: any) => {
         this.successMsg = ''
-        this.errorMsg = err.error
+        this.errorMsg = err.error.message || err.error
       }
     })
   }

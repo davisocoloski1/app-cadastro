@@ -1,59 +1,60 @@
-<div class="card bg-secondary text-light shadow-lg delete-card">
-  <div class="card-body">
-
+<div class="card shadow-sm delete-card border-0">
+  <div class="card-body p-4">
     
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="card-title text-danger mb-0">
+      <h2 class="h5 fw-bold text-danger mb-0">
         Deletar conta
       </h2>
 
       <button
         type="button"
-        class="btn btn-sm btn-outline-danger"
+        class="btn btn-sm btn-outline-secondary px-3"
         (click)="cancelar()"
       >
         Cancelar
       </button>
     </div>
 
-    <p class="text-muted mb-4">
-      Esta ação é permanente. Digite sua senha para confirmar.
+    <p class="text-muted small mb-4">
+      Esta ação é permanente e todos os seus dados serão removidos. Digite sua senha para confirmar.
     </p>
 
     <form [formGroup]="deleteForm" novalidate>
 
       <div class="mb-4">
-        <label class="form-label">Senha</label>
+        <label class="form-label fw-bold small">Sua Senha</label>
         <input
           type="password"
           formControlName="password"
-          class="form-control bg-dark text-light border-0 border-bottom"
-          placeholder="Digite sua senha"
+          class="form-control"
+          placeholder="Digite sua senha atual"
         />
       </div>
 
       @if (errorMsg) {
-        <div class="alert alert-danger py-2 my-2">
+        <div class="alert alert-danger border-0 shadow-sm py-2 mb-3">
+          <i class="bi bi-x-circle-fill me-2"></i>
           {{ errorMsg }}
         </div>
       } @else if (successMsg) {
-        <div class="alert alert-success py-2 mb-2">
+        <div class="alert alert-success border-0 shadow-sm py-2 mb-3">
+          <i class="bi bi-check-circle-fill me-2"></i>
           {{ successMsg }}
         </div>
       }
 
       <button
         type="button"
-        class="btn btn-outline-danger w-100"
+        class="btn btn-outline-danger w-100 py-2 fw-bold"
         (click)="deletarUsuario()"
+        [disabled]="isLoading || deleteForm.invalid"
       >
         @if (isLoading) {
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
         }
-        {{ isLoading ? 'Deletando...' : 'Confirmar ação' }}
+        {{ isLoading ? 'Deletando...' : 'Confirmar e Deletar Conta' }}
       </button>
 
     </form>
-
   </div>
 </div>

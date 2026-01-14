@@ -1,7 +1,7 @@
 <header class="admin-sidebar d-flex flex-column p-3 text-white bg-dark vh-100 sticky-top">
   <a class="navbar-brand fw-semibold d-flex align-items-center gap-2 mb-4" routerLink="">
     <span class="admin-mark"></span>
-    Core
+    ClientManager
   </a>
 
   <hr>
@@ -9,20 +9,20 @@
   <nav class="nav-content flex-grow-1">
     <ul class="nav nav-pills flex-column mb-auto gap-2">
       <li class="nav-item">
-        <a class="nav-link text-white admin-link active" routerLink="">Home</a>
+        <a class="nav-link text-white admin-link" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white admin-link" [routerLink]="router1">{{ button1 }}</a>
+        <a class="nav-link text-white admin-link" [routerLink]="router1" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ button1 }}</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white admin-link" routerLink="/clientes/listagem-clientes">
+        <a class="nav-link text-white admin-link" routerLink="/clientes/listagem-clientes" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
           Listagem de Clientes
         </a>
       </li>
       
       @if (isLogged && isAdmin) {
         <li class="nav-item">
-          <a class="nav-link text-white admin-link" routerLink="/users/admin">
+          <a class="nav-link text-white admin-link" routerLink="/users/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
             Listagem de Usuários
           </a>
         </li>

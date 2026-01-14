@@ -26,7 +26,7 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'editar-cliente/:tipo/:id',
+    path: 'editar-cliente/:tipo/:id/:editing',
     component: EditClientePage,
     canActivate: [authGuard]
   }

@@ -51,10 +51,12 @@ router.group(() => {
 
 router.group(() => {
     router.put('/desativarCliente/:id', [ClientesController, 'deactivateCliente'])
+    router.put('/alternarStatus/:id/:status', [ClientesController, 'toggleStatusCliente'])
     router.put('/desativarPorTipo/:id/:type/:targetId/:status', [ClientesController, 'deactivateByType'])
 }).prefix('/clientes/desativar').use(middleware.auth())
 
 router.group(() => {
+    router.put('/editar-cliente/:id', [ClientesController, 'update'])
     router.put('/editar-email/:id', [EmailsController, 'update'])
     router.put('/editar-telefone/:id', [TelefonesController, 'update'])
     router.put('/editar-endereco/:id', [EnderecosController, 'update'])

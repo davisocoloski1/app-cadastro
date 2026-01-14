@@ -8,6 +8,7 @@ import { ConfirmarConta } from './components/confirmar-conta/confirmar-conta';
 import { Login } from './components/login/login';
 import { EsqueciSenha } from './components/recuperar-senha/esqueci-senha/esqueci-senha';
 import { RecuperarSenha } from './components/recuperar-senha/recuperar-senha/recuperar-senha';
+import { NgxMaskDirective } from "ngx-mask";
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { RecuperarSenha } from './components/recuperar-senha/recuperar-senha/rec
   imports: [
     CommonModule,
     AuthRoutingModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+    NgxMaskDirective
+]
 })
 export class AuthModule { }

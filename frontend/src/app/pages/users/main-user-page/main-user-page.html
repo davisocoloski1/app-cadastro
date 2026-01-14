@@ -1,195 +1,124 @@
-
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
-  <div class="card bg-secondary text-light shadow-lg" style="max-width: 640px; width: 100%;">
-
+<div class="page-wrapper d-flex justify-content-center align-items-center py-5">
+  <div class="container card shadow-sm clients-card p-0" style="max-width: 640px;">
     
     @if (stateMsg) {
-      <div class="d-flex justify-content-center mt-3 px-3">
-        <div class="alert alert-info state-alert py-2 mb-0" style="max-width: 640px; width: 100%;">
-          {{ stateMsg }}
+      <div class="px-4 pt-4">
+        <div class="alert alert-info border-0 shadow-sm py-2 mb-0">
+          <i class="bi bi-info-circle-fill me-2"></i>{{ stateMsg }}
         </div>
       </div>
     }
-    <div class="card-body">
-     <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
-        <div>
-          <h1 class="h4 mb-1">
-            Olá, <strong>{{ name }}</strong>
-          </h1>
 
-          <p class="text-muted mb-2">
-            Bem-vindo à área de edição de conta
-          </p>
+    <div class="card-body p-4 p-md-5">
+      <div class="d-flex justify-content-between align-items-start mb-4 gap-3">
+        <div>
+          <h1 class="h4 fw-bold mb-1">
+            Olá, <span class="text-primary">{{ name }}</span>
+          </h1>
+          <p class="text-muted small mb-0">Bem-vindo à área de edição de conta</p>
 
           @if (!isUserConfirmed) {
-            <div class="account-warning-banner mt-3">
-              <div class="d-flex justify-content-between align-items-center gap-3">
-                <span class="account-warning-text">
-                  Sua conta ainda não foi verificada. Algumas funcionalidades podem ficar indisponíveis.
-                </span>
-
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-warning"
-                  (click)="enviarCodigoConfirmacao()"
-                >
-                  @if (verifyLoading) {
-                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <div class="account-warning-banner mt-3 d-flex justify-content-between align-items-center gap-3">
+              <span class="small fw-medium">Sua conta ainda não foi verificada.</span>
+              <button
+                type="button"
+                class="btn btn-sm btn-warning fw-bold px-3"
+                (click)="enviarCodigoConfirmacao()"
+              >
+                @if (verifyLoading) {
+                  <span class="spinner-border spinner-border-sm" role="status"></span>
                 }
-                {{ verifyLoading ? '' : 'Verificar' }}
-                </button>
-              </div>
+                {{ verifyLoading ? '' : 'Verificar agora' }}
+              </button>
             </div>
           }
         </div>
 
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-danger align-self-start"
-          (click)="logout()"
-        >
+        <button type="button" class="btn btn-sm btn-outline-danger px-3 fw-bold" (click)="logout()">
           Sair
         </button>
       </div>
 
-      <hr class="border-secondary" />
+      <hr class="my-4 opacity-10" />
 
       @if (errorMsg) {
-        <div class="d-flex justify-content-center mt-3 px-3">
-          <div
-            class="alert alert-danger state-alert-error py-2 mb-0"
-            style="max-width: 640px; width: 100%;"
-          >
-            {{ errorMsg }}
-          </div>
+        <div class="alert alert-danger border-0 shadow-sm py-2 mb-4">
+          <i class="bi bi-exclamation-octagon-fill me-2"></i>{{ errorMsg }}
         </div>
       }
 
-      <form [formGroup]="editForm" novalidate class="mt-3">
-
-        <div class="mb-3">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <label class="form-label mb-0">Seu nome</label>
-
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-light"
-              (click)="toggleName()"
-            >
+      <form [formGroup]="editForm" novalidate>
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label fw-bold small mb-0">Seu nome</label>
+            <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 small fw-bold" (click)="toggleName()">
               {{ nameDisabled ? 'Editar' : 'Bloquear' }}
             </button>
           </div>
-
-          <div class="input-group">
-            <input
-              type="text"
-              formControlName="name"
-              class="form-control bg-dark text-light border-0 border-bottom"
-              placeholder="Seu nome"
-            />
-          </div>
+          <input type="text" formControlName="name" class="form-control" placeholder="Seu nome" />
         </div>
 
-        <div class="mb-3">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <label class="form-label mb-0">Seu e-mail</label>
-
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-light"
-              (click)="toggleEmail()"
-            >
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label fw-bold small mb-0">Seu e-mail</label>
+            <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 small fw-bold" (click)="toggleEmail()">
               {{ emailDisabled ? 'Editar' : 'Bloquear' }}
             </button>
           </div>
-
-          <input
-            type="email"
-            formControlName="email"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="Seu e-mail"
-          />
+          <input type="email" formControlName="email" class="form-control" placeholder="Seu e-mail" />
         </div>
 
-        
         <div class="mb-4">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <label class="form-label mb-0">Seu telefone</label>
-            
-            <button
-            type="button"
-            class="btn btn-sm btn-outline-light"
-            (click)="toggleTelefone()"
-            >
-            {{ telefoneDisabled ? 'Editar' : 'Bloquear' }}
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label fw-bold small mb-0">Seu telefone</label>
+            <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 small fw-bold" (click)="toggleTelefone()">
+              {{ telefoneDisabled ? 'Editar' : 'Bloquear' }}
+            </button>
+          </div>
+          <input type="tel" formControlName="telefone" class="form-control" placeholder="Seu telefone" />
+        </div>
+
+        <div class="mb-4 p-3 bg-light rounded-3 border">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label fw-bold small mb-0">Segurança</label>
+            <span class="text-muted smaller">Alteração protegida</span>
+          </div>
+          <button type="button" class="btn btn-white border w-100 fw-bold shadow-sm" (click)="alterarSenhaRouter()">
+            Alterar senha de acesso
           </button>
         </div>
-        
-        <input
-        type="tel"
-        formControlName="telefone"
-        class="form-control bg-dark text-light border-0 border-bottom"
-        placeholder="Seu telefone"
-        />
-      </div>
 
-      <div class="mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-          <label class="form-label mb-0">Senha</label>
-          <span class="text-muted" style="font-size: 0.85rem;">Por segurança, altere em outra tela</span>
+        <div class="d-flex gap-3 pt-2">
+          <button type="button" class="btn btn-light border flex-fill fw-bold" (click)="getUser()">
+            Reverter
+          </button>
+          <button type="button" class="btn btn-primary flex-fill fw-bold" (click)="salvarAlteracoes()">
+            @if (saveLoading) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            }
+            {{ saveLoading ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
         </div>
-
-        <button
-          type="button"
-          class="btn btn-outline-light w-100"
-          (click)="alterarSenhaRouter()"
-        >
-          Alterar senha
-        </button>
-      </div>
-
-      <div class="d-flex gap-2 mb-3">
-        <button
-          type="button"
-          class="btn btn-outline-light flex-fill"
-          (click)="getUser()"
-        >
-          Reverter
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-primary flex-fill"
-          (click)="salvarAlteracoes()"
-        >
-          @if (saveLoading) {
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        }
-        {{ saveLoading ? 'Salvando...' : 'Salvar' }}
-        </button>
-      </div>
       </form>
 
-      <div class="mt-4 pt-3 border-top border-secondary">
-        <div class="d-flex justify-content-between align-items-center">
+      <div class="mt-5 pt-4 border-top">
+        <div class="d-flex justify-content-between align-items-center bg-danger-subtle p-3 rounded-3 border border-danger-subtle">
           <div>
-            <h2 class="h6 mb-1 text-danger">Deletar conta</h2>
-            <p class="mb-0 text-muted" style="font-size: 0.85rem;">
-              Esta ação é permanente e não poderá ser desfeita.
+            <h2 class="h6 fw-bold mb-1 text-danger">Deletar conta</h2>
+            <p class="mb-0 text-muted smaller">
+              Esta ação removerá permanentemente todos os seus dados.
             </p>
           </div>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-danger"
-            (click)="toggleDeleteCard()"
-          >
-            Deletar conta
+          <button type="button" class="btn btn-sm btn-danger px-3 fw-bold shadow-sm" (click)="toggleDeleteCard()" [disabled]="showDeleteCard">
+            Deletar
           </button>
         </div>
       </div>
 
       @if (showDeleteCard) {
-        <app-deletar-user-card (hideCard)="showDeleteCard = $event"></app-deletar-user-card>
+        <div class="mt-4">
+          <app-deletar-user-card (hideCard)="showDeleteCard = $event"></app-deletar-user-card>
+        </div>
       }
     </div>
   </div>

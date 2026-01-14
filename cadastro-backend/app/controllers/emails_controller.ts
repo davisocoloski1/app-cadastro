@@ -102,6 +102,12 @@ export default class EmailsController {
         data: email
       })
     } catch (error) {
+      if (error.code === '23505') {
+        return response.conflict({
+          message: 'Este e-mail já está em uso.'
+        })
+      }
+      
       return response.internalServerError({
         message: 'Erro ao atualizar e-mail.',
         error: error

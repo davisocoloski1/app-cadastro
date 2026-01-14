@@ -1,132 +1,96 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
-  <div class="card bg-secondary text-light shadow-lg" style="max-width: 900px; width: 100%;">
-    <div class="card-body">
-      <div class="d-flex">
+<div class="page-wrapper flex-column">
+  <div class="container card shadow-sm clients-card p-0" style="max-width: 1000px;">
+    <div class="card-body p-4">
+      
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h4 fw-bold mb-1">Usuários</h1>
+          <p class="text-muted mb-0 small">Gerencie os acessos e permissões dos usuários do sistema.</p>
+        </div>
+        <button type="button" class="btn btn-light border px-3" routerLink="">
+          <i class="bi bi-arrow-left me-2"></i>Voltar
+        </button>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mb-4 bg-light p-3 rounded-3 border">
+        <div class="d-flex flex-grow-1 gap-2">
+          <input
+            type="text"
+            [placeholder]="searchBarPlaceholder"
+            [formControl]="searchBar"
+            class="form-control"
+            style="max-width: 400px;"
+          />
+          <button class="btn btn-primary px-4" (click)="searchUser()">
+            Buscar
+          </button>
+        </div>
         <button
           type="button"
-          class="btn btn-outline-info btn-register-user ms-auto"
-          routerLink=""
+          class="btn btn-success px-3"
+          routerLink="/users/admin/registro"
         >
-          Voltar
+          <i class="bi bi-person-plus-fill me-2"></i>Registrar usuário
         </button>
       </div>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h1 class="h4 mb-1">
-            Usuários
-          </h1>
-          <p class="text-muted mb-0">Lista de usuários cadastrados no sistema.</p>
-        </div>
-        <input
-        type="text"
-        [placeholder]="searchBarPlaceholder"
-        [formControl]="searchBar"
-        class="search-input"
-        />
-        
-        <button class="search-btn" (click)="searchUser()">
-          Buscar
-        </button>
-        <button
-        type="button"
-        class="btn btn-outline-info btn-register-user"
-        routerLink="/users/admin/registro"
-        >
-        Registrar usuário
-      </button>
-    </div>
 
-      <hr class="border-secondary" />
-
-      <div class="users-list mt-3">
-        <div class="users-row users-header">
-          <div class="col name">Nome</div>
-          <div class="col email">E-mail</div>
-          <div class="col confirmed">Confirmado</div>
-          <div class="col permission">Permissão</div>
-          <div class="col actions">Ações</div>
-        </div>
-
-        <div class="users-row" *ngFor="let user of users; trackBy: trackById">
-          <div class="col name">{{ user.name }}</div>
-          <div class="col email">{{ user.email }}</div>
-
-          <div class="col confirmed">
-            <span
-              class="badge"
-              [class.badge-success]="user.confirmed"
-              [class.badge-danger]="!user.confirmed"
-            >
-              {{ user.confirmed ? 'Sim' : 'Não' }}
-            </span>
-          </div>
-
-          <div class="col permission">
-            <span
-              class="badge"
-              [class.badge-admin]="user.permission === 'admin'"
-              [class.badge-user]="user.permission === 'user'"
-            >
-              {{ user.permission }}
-            </span>
-          </div>
-
-          <div class="col actions">
-            <button
-              type="button"
-              class="btn-action btn-edit"
-              (click)="getOneUser(user)"
-            >
-              ✎
-            </button>
-
-            <button
-              *ngIf="user.id !== loggedUser.id"
-              type="button"
-              class="btn-action btn-delete"
-              (click)="userToDelete = user"
-            >
-              🗑
-            </button>
-          </div>
-        </div>
-
-        @if (userToDelete) {
-          <div class="delete-confirmation mt-3">
-            <p>
-              Tem certeza de que deseja deletar o usuário
-              <strong>{{ userToDelete.name }}</strong>?
-            </p>
-
-            <div class="d-flex gap-2">
-              <button
-                class="btn btn-danger"
-                (click)="delete(userToDelete)"
-              >
-                Deletar
-              </button>
-
-              <button
-                class="btn btn-outline-light"
-                (click)="userToDelete = null"
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        }
-        @if (successMsg) {
-        <div class="alert alert-success py-2 mt-2 mb-0">
-          {{ successMsg }}
-        </div>
-        }
-
-        @if (errorMsg) {
-          <div class="alert alert-danger py-2 mt-2 mb-0">
-            {{ errorMsg }}
-          </div>
-        } 
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="border-0 px-3 py-3">Nome</th>
+              <th class="border-0 py-3">E-mail</th>
+              <th class="border-0 py-3 text-center">Confirmado</th>
+              <th class="border-0 py-3 text-center">Permissão</th>
+              <th class="border-0 py-3 text-end px-3">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users; trackBy: trackById">
+              <td class="px-3 fw-bold">{{ user.name }}</td>
+              <td class="text-muted small">{{ user.email }}</td>
+              <td class="text-center">
+                <span class="badge" [ngClass]="user.confirmed ? 'badge-active' : 'badge-inactive'">
+                  {{ user.confirmed ? 'Sim' : 'Não' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="badge border fw-bold" 
+                      [ngClass]="user.permission === 'admin' ? 'text-primary border-primary' : 'text-secondary border-secondary'">
+                  {{ user.permission | uppercase }}
+                </span>
+              </td>
+              <td class="text-end px-3">
+                <div class="d-flex justify-content-end gap-2">
+                  <button class="btn btn-sm btn-outline-primary shadow-sm px-3" (click)="getOneUser(user)">
+                    <i class="bi bi-pencil-square me-1"></i> Editar
+                  </button>
+                  <button 
+                    *ngIf="user.id !== loggedUser.id"
+                    class="btn btn-sm btn-outline-danger shadow-sm px-3" 
+                    (click)="userToDelete = user"
+                  >
+                    <i class="bi bi-trash3-fill me-1"></i> Deletar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+
+      @if (userToDelete) {
+        <div class="alert alert-warning mt-4 border-0 shadow-sm d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+            <span>Deseja realmente deletar <strong>{{ userToDelete.name }}</strong>?</span>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-danger btn-sm px-3" (click)="delete(userToDelete)">Confirmar</button>
+            <button class="btn btn-light btn-sm border px-3" (click)="userToDelete = null">Cancelar</button>
+          </div>
+        </div>
+      }
 
     </div>
   </div>

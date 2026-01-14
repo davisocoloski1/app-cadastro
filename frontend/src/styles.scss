@@ -1,6 +1,7 @@
 
 .address-card,
 .client-card,
+.auth-card,
 .contact-card {
   border-radius: 14px;
   border: 1px solid #e6e6e6;
@@ -9,6 +10,7 @@
 
 .address-card .card-title,
 .client-card .card-title,
+.auth-card .card-title,
 .contact-card .card-title {
   font-weight: 600;
 }
@@ -17,6 +19,8 @@
 .address-card .form-select,
 .client-card .form-control,
 .client-card .form-select,
+.auth-card .form-control,
+.auth-card .form-select,
 .contact-card .form-control,
 .contact-card .form-select {
   border-radius: 10px;
@@ -29,6 +33,8 @@
 .address-card .form-select:focus,
 .client-card .form-control:focus,
 .client-card .form-select:focus,
+.auth-card .form-control:focus,
+.auth-card .form-select:focus,
 .contact-card .form-control:focus,
 .contact-card .form-select:focus {
   border-color: #4f46e5;
@@ -38,6 +44,7 @@
 
 .address-card button.btn,
 .client-card button.btn,
+.auth-card button.btn,
 .contact-card button.btn {
   border-radius: 10px;
   padding: 0.55rem 1.1rem;
@@ -45,6 +52,7 @@
 
 .address-card .btn-primary,
 .client-card .btn-primary,
+.auth-card .btn-primary,
 .contact-card .btn-primary {
   background: linear-gradient(135deg, #4f46e5, #6366f1);
   border: none;
@@ -52,12 +60,14 @@
 
 .address-card .btn-primary:hover,
 .client-card .btn-primary:hover,
+.auth-card .btn-primary:hover,
 .contact-card .btn-primary:hover {
   filter: brightness(1.08);
 }
 
 .address-card .btn-outline-secondary:hover,
 .client-card .btn-outline-secondary:hover,
+.auth-card .btn-outline-secondary:hover,
 .contact-card .btn-outline-secondary:hover {
   background-color: #f8f9fa;
 }

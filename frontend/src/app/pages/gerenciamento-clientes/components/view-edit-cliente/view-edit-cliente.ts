@@ -17,9 +17,12 @@ export class ViewEditCliente implements OnInit {
   telefoneErrorMsg = ''
   enderecoSuccessMsg = ''
   enderecoErrorMsg = ''
+  clienteSuccessMsg = ''
+  clienteErrorMsg = ''
   emailIdToDelete: number | null = null
   telefoneIdToDelete: number | null = null
   enderecoIdToDelete: number | null = null
+  clienteIdToDelete: number | null = null
   
   constructor(
     private clienteService: ClienteService,
@@ -29,6 +32,33 @@ export class ViewEditCliente implements OnInit {
 
   ngOnInit(): void {
     this.getClientes()
+  }
+
+  alternarStatus(id: number, status: boolean) {
+    const newStatus = status ? 'desativar' : 'ativar'
+    this.clienteService.alternarStatusCliente(id, newStatus).subscribe({
+      next: (res: any) => {
+        this.clienteErrorMsg = ''
+        this.clienteSuccessMsg = res.message
+        
+        setTimeout(() => { 
+          this.getClientes() 
+          this.clienteIdToDelete = null
+        }, 2000)
+
+        setTimeout(() => {
+          this.clienteSuccessMsg = ''
+          this.clienteErrorMsg = ''
+        }, 6000)
+      },
+      error: (err: any) => {
+        this.clienteSuccessMsg = ''
+        this.clienteErrorMsg = err.error.message || err.error
+        setTimeout(() => {
+          this.clienteErrorMsg = ''
+        }, 6000)
+      }
+    })
   }
 
   desativarParcial(id: number, type: string, targetId: number, status: string) {
@@ -81,8 +111,8 @@ export class ViewEditCliente implements OnInit {
     })
   }
 
-  editar(id: number, obj: any, type: string) {
-    this.router.navigate(['/clientes/editar-cliente', type, id], {
+  editar(id: number, obj: any, type: string, editing: boolean) {
+    this.router.navigate(['/clientes/editar-cliente', type, id, editing], {
       state: { data: Array.isArray(obj) ? obj : [obj] }
     })
   }

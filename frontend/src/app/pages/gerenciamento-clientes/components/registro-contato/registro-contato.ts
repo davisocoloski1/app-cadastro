@@ -4,6 +4,8 @@ import { ClienteService } from '../../services/cliente.service';
 import { Email } from '../../models/email';
 import { Telefone } from '../../models/telefone';
 import { StepperService } from '../../services/stepper.service';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-registro-contato',
@@ -16,12 +18,14 @@ export class RegistroContato implements OnInit {
   telefoneForm!: FormGroup
   tempEmailForm!: any
   tempoTelefoneForm!: any
-  @Output() preenchido = new EventEmitter<boolean>()
+  @Output() statusContato = new EventEmitter<{email: boolean, tel: boolean}>();
   @Output() modoChange = new EventEmitter<'edit' | 'create'>()
   @Input() userId!: number
   @Input() editType: string | null = null
   private _contatoToEdit: any
   fieldsBlocked = true
+  emailOk = false
+  telOk = false
   telefoneErrorMsg = ''
   telefoneSuccessMsg = ''
   emailErrorMsg = ''
@@ -30,7 +34,9 @@ export class RegistroContato implements OnInit {
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
-    private stepper: StepperService
+    private stepper: StepperService,
+    private route: ActivatedRoute,
+    private location: Location
   ) {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required]],
@@ -61,149 +67,142 @@ export class RegistroContato implements OnInit {
 
   ngOnInit(): void {
     this.telefoneForm.patchValue(this.stepper.value.telefone)
-
     this.emailForm.patchValue(this.stepper.value.email)
+
+    this.tempEmailForm = JSON.stringify(this.emailForm.value)
+    this.tempoTelefoneForm = JSON.stringify(this.telefoneForm.value)
+
     this.telefoneForm.valueChanges.subscribe(value => { this.stepper.update('telefone', value) })
     this.emailForm.valueChanges.subscribe(value => { this.stepper.update('email', value) })
-
-    this.tempEmailForm = this.emailForm.value
-    this.tempoTelefoneForm = this.telefoneForm.value
   }
 
   registrar() {
-    this.emailErrorMsg = ''
-    this.telefoneErrorMsg = ''
+    this.emailErrorMsg = '';
+    this.telefoneErrorMsg = '';
+    
+    let emailFinalizado = false;
+    let telFinalizado = false;
+
+    const verificarEEmitirStatus = () => {
+      const precisaEmail = (this.editType === 'email' || this.editType === 'all');
+      const precisaTel = (this.editType === 'telefone' || this.editType === 'all');
+
+      const emailOk = precisaEmail ? (this.emailSuccessMsg !== '') : true;
+      const telOk = precisaTel ? (this.telefoneSuccessMsg !== '') : true;
+
+      if (emailFinalizado && telFinalizado) {
+        this.statusContato.emit({ email: emailOk, tel: telOk });
+      }
+    };
 
     if (this.editType === 'email' || this.editType === 'all') {
       if (this.emailForm.invalid) {
-        this.emailErrorMsg = 'O campo de e-mail deve ser preenchido.'
-        this.preenchido.emit(false)
-        return
+        this.emailErrorMsg = 'O campo de e-mail deve ser preenchido.';
+        emailFinalizado = true; // Finalizou com erro
+        verificarEEmitirStatus();
+      } else {
+        const emailData: Email = { ...this.emailForm.value };
+        this.clienteService.registrarEmail(emailData, this.userId).subscribe({
+          next: (res) => {
+            this.emailSuccessMsg = 'Contato registrado';
+            emailFinalizado = true;
+            verificarEEmitirStatus();
+          },
+          error: (err) => {
+            this.tratarErro('email', err);
+            emailFinalizado = true;
+            verificarEEmitirStatus();
+          }
+        });
       }
-
-      const emailData: Email = {
-        ...this.emailForm.value
-      }
-
-      this.clienteService.registrarEmail(emailData, this.userId).subscribe({
-        next: (res: any) => {
-          console.log(res)
-          this.emailErrorMsg = ''
-          this.emailSuccessMsg = 'Contato registrado'
-          this.preenchido.emit(true)
-        },
-        error: (err: any) => {
-          console.log(err)
-          this.emailSuccessMsg = ''
-          if (err.error.errors) this.emailErrorMsg = err.error.errors[0].message
-          else this.emailErrorMsg = 'Ocorreu um erro'
-          this.preenchido.emit(false)
-        }
-      })
+    } else {
+      emailFinalizado = true; 
     }
 
     if (this.editType === 'telefone' || this.editType === 'all') {
       if (this.telefoneForm.invalid) {
-        this.telefoneErrorMsg = 'O campo de telefone deve ser preenchido.'
-        this.preenchido.emit(false)
-        return
+        this.telefoneErrorMsg = 'O campo de telefone deve ser preenchido.';
+        telFinalizado = true;
+        verificarEEmitirStatus();
+      } else {
+        this.telefoneForm.patchValue({ numero: this.telefoneForm.value.numero.replace(/\D/g, '') });
+        const telefoneData: Telefone = { ...this.telefoneForm.value };
+        this.clienteService.registrarTelefone(telefoneData, this.userId).subscribe({
+          next: (res) => {
+            this.telefoneSuccessMsg = 'Contato registrado';
+            this.telOk = true;
+            telFinalizado = true;
+            verificarEEmitirStatus();
+          },
+          error: (err) => {
+            this.tratarErro('telefone', err);
+            telFinalizado = true;
+            verificarEEmitirStatus();
+          }
+        });
       }
-
-      this.telefoneForm.patchValue({ numero: this.telefoneForm.value.numero.replace(/\D/g, '') })
-
-      const telefoneData: Telefone = {
-        ...this.telefoneForm.value
-      }
-
-      this.clienteService.registrarTelefone(telefoneData, this.userId).subscribe({
-        next: (res: any) => {
-          console.log(res)
-          this.telefoneErrorMsg = ''
-          this.telefoneSuccessMsg = 'Contato registrado'
-          this.preenchido.emit(true)
-        },
-        error: (err: any) => {
-          console.log(err)
-          this.telefoneSuccessMsg = ''
-          this.telefoneErrorMsg = 'Ocorreu um erro'
-          this.preenchido.emit(false)
-        }
-      })
+    } else {
+      telFinalizado = true;
     }
   }
 
   editar() {
-    this.emailErrorMsg = ''
-    this.telefoneErrorMsg = ''
+    this.emailErrorMsg = '';
+    this.telefoneErrorMsg = '';
 
-    if (this.editType === 'email' || this.editType === 'all') {
+    if (this.editType === 'email') {
       if (this.emailForm.invalid) {
-        this.emailErrorMsg = 'O campo de e-mail deve ser preenchido.'
-        this.preenchido.emit(false)
-        return
+        this.statusContato.emit({ email: false, tel: true });
+        return;
       }
-
-      const hasChanges = this.tempEmailForm === this.emailForm
-
-      if (!hasChanges) {
-        this.emailErrorMsg = 'Nenhuma alteração foi detectada para salvar.';
+      if (this.tempEmailForm === JSON.stringify(this.emailForm.value)) {
+        this.emailErrorMsg = 'Nenhuma alteração detectada.';
         return;
       }
 
-      const emailData: Email = {
-        ...this.emailForm.value
-      }
-
-      this.clienteService.editarEmail(this._contatoToEdit[0].id, emailData).subscribe({
-        next: (res: any) => {
-          this.emailErrorMsg = ''
-          this.emailSuccessMsg = 'Contato atualizado'
-          this.preenchido.emit(true)
+      this.clienteService.editarEmail(this._contatoToEdit[0].id, this.emailForm.value).subscribe({
+        next: () => {
+          this.emailSuccessMsg = 'Contato atualizado';
+          this.statusContato.emit({ email: true, tel: true });
+          setTimeout(() => this.location.back(), 1500);
         },
-        error: (err: any) => {
-          console.log(err)
-          this.emailSuccessMsg = ''
-          if (err.error.errors) this.emailErrorMsg = err.error.errors[0].message
-          else this.emailErrorMsg = 'Ocorreu um erro'
-          this.preenchido.emit(false)
+        error: (err) => {
+          this.tratarErro('email', err);
+          this.statusContato.emit({ email: false, tel: true });
         }
-      })
+      });
     }
 
-    if (this.editType === 'telefone' || this.editType === 'all') {
+    if (this.editType === 'telefone') {
       if (this.telefoneForm.invalid) {
-        this.telefoneErrorMsg = 'O campo de telefone deve ser preenchido.'
-        this.preenchido.emit(false)
-        return
+        this.statusContato.emit({ email: true, tel: false });
+        return;
       }
-
-      const hasChanges = this.tempoTelefoneForm === this.telefoneForm
-
-      if (!hasChanges) {
-        this.telefoneErrorMsg = 'Nenhuma alteração foi detectada para salvar.';
+      if (this.tempoTelefoneForm === JSON.stringify(this.telefoneForm.value)) {
+        this.telefoneErrorMsg = 'Nenhuma alteração detectada.';
         return;
       }
 
-      this.telefoneForm.patchValue({ numero: this.telefoneForm.value.numero.replace(/\D/g, '') })
-
-      const telefoneData: Telefone = {
-        ...this.telefoneForm.value
-      }
-
-      this.clienteService.editarTelefone(this._contatoToEdit[0].id, telefoneData).subscribe({
-        next: (res: any) => {
-          this.telefoneErrorMsg = ''
-          this.telefoneSuccessMsg = 'Contato atualizado'
-          this.preenchido.emit(true)
+      this.telefoneForm.patchValue({ numero: this.telefoneForm.value.numero.replace(/\D/g, '') });
+      this.clienteService.editarTelefone(this._contatoToEdit[0].id, this.telefoneForm.value).subscribe({
+        next: () => {
+          this.telefoneSuccessMsg = 'Contato atualizado';
+          this.statusContato.emit({ email: true, tel: true });
+          setTimeout(() => this.location.back(), 1500);
         },
-        error: (err: any) => {
-          console.log(err)
-          this.telefoneSuccessMsg = ''
-          this.telefoneErrorMsg = 'Ocorreu um erro'
-          this.preenchido.emit(false)
+        error: (err) => {
+          this.tratarErro('telefone', err);
+          this.statusContato.emit({ email: true, tel: false });
         }
-      })
+      });
     }
+  }
+
+  // Helper para não repetir código de erro
+  private tratarErro(tipo: 'email' | 'telefone', err: any) {
+    const msg = err.error.message || (err.error.errors ? err.error.errors[0].message : 'Erro desconhecido');
+    if (tipo === 'email') this.emailErrorMsg = msg;
+    else this.telefoneErrorMsg = msg;
   }
 
   toggleBloquearCampos() {
@@ -288,8 +287,6 @@ export class RegistroContato implements OnInit {
       this.telefoneErrorMsg = 'Informações de contato incompletas.'
       return
     }
-
-    console.log('Dados para preenchimento: ', data)
 
     if (this.emailForm && data.hasOwnProperty('email')) {
       this.emailForm.patchValue({

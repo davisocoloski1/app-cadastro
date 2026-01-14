@@ -34,7 +34,14 @@ export default class TelefonesController {
 
     const payload = await request.validate({
       schema: telefoneSchema,
-      messages: {}
+      messages: {
+       'numero.required': 'O campo "Número" é obrigatório.',
+       'numero.regex': 'O campo "Número" deve possuir 11 dígitos numéricos no formato (00) 00000-0000.',
+       'numero.maxLength': 'O campo "Número" deve possuir 11 dígitos numéricos.',
+
+       'tipo.required': 'O campo "Tipo" é obrigatório.',
+       'tipo.maxLength': 'O campo "Tipo" deve possuir no máximo 30 caracteres.'
+      }
     })
 
     const data = { ...payload, id_cliente: clienteId, principal: true }
@@ -95,6 +102,12 @@ export default class TelefonesController {
         data: telefone
       })
     } catch (error) {
+      if (error.code === '23505') {
+        return response.conflict({
+          message: 'Este telefone já está em uso.'
+        })
+      }
+
       return response.internalServerError({
         message: 'Erro ao atualizar telefone.',
         error: error

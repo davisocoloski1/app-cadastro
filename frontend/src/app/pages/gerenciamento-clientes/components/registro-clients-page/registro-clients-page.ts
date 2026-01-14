@@ -10,9 +10,10 @@ import { StepperService } from '../../services/stepper.service';
 })
 export class RegistroClientsPage implements OnInit {
   formLiberado = false
-  clienteFormPreenchido = true
-  contatoFormPreenchido = true
-  enderecoFormPreenchido = true
+  clienteFormPreenchido = false
+  emailFormPreenchido = false
+  telFormPreenchido = false
+  enderecoFormPreenchido = false
   cliente?: Cliente
   idCliente?: number
   stateMsg = ''
@@ -40,10 +41,15 @@ export class RegistroClientsPage implements OnInit {
     setTimeout(() => { this.step++ }, 2000)
   }
 
-  onContatoRegistrado(preenchido: boolean) {
-    this.contatoFormPreenchido = preenchido
+  onContatoRegistrado(event: {email: boolean, tel: boolean}) {
+    this.emailFormPreenchido = event.email;
+    this.telFormPreenchido = event.tel;
     
-    setTimeout(() => { if (preenchido) this.step++ }, 2000)
+    if (this.emailFormPreenchido && this.telFormPreenchido) {
+      setTimeout(() => { 
+        this.step++; 
+      }, 2000);
+    }
   }
 
   onEnderecoPreenchido(preenchido: boolean) {

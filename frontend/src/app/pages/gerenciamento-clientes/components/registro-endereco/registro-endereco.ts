@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClienteService } from '../../services/cliente.service';
 import { Endereco } from '../../models/endereco';
 import { StepperService } from '../../services/stepper.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-registro-endereco',
@@ -23,7 +24,8 @@ export class RegistroEndereco implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private fb: FormBuilder,
-    private stepper: StepperService
+    private stepper: StepperService,
+    private location: Location
   ) {
     this.enderecoForm = this.fb.group({
       logradouro: ['', [Validators.required]],
@@ -50,7 +52,8 @@ export class RegistroEndereco implements OnInit {
   ngOnInit(): void {
     this.enderecoForm.patchValue(this.stepper.value.endereco)
     this.enderecoForm.valueChanges.subscribe(value => { this.stepper.update('endereco', value) })
-    this.tempForm = this.enderecoForm.value
+    
+    this.tempForm = JSON.stringify(this.enderecoForm.value)
   } 
 
   registrar() {
@@ -67,14 +70,17 @@ export class RegistroEndereco implements OnInit {
 
     this.clienteService.registrarEndereco(enderecoData, this.userId).subscribe({
       next: (res: any) => {
-        console.log(res)
         this.errorMsg = ''
         this.successMsg = 'Registro concluido'
         this.preenchido.emit(true)
       }, error: (err: any) => {
         console.log(err)
         this.successMsg = ''
-        this.errorMsg = 'Ocorreu um erro'
+          if (err.error.message) {
+            this.successMsg = err.error.message
+          } else if (err.error.errors) {
+            this.successMsg = err.error.errors[0].message
+          }
         this.preenchido.emit(false)
       }
     })
@@ -86,7 +92,8 @@ export class RegistroEndereco implements OnInit {
       return
     }
     
-    const hasChanges = this.tempForm === this.enderecoForm
+    const currentEnderecoValue = JSON.stringify(this.enderecoForm.value)
+    const hasChanges = this.tempForm !== currentEnderecoValue
 
     if (!hasChanges) {
       this.errorMsg = 'Nenhuma alteração foi detectada para salvar.';
@@ -104,10 +111,18 @@ export class RegistroEndereco implements OnInit {
         this.errorMsg = ''
         this.successMsg = 'Endereço atualizado'
         this.preenchido.emit(true)
+
+        setTimeout(() => {
+          this.location.back()
+        }, 1500)
       }, error: (err: any) => {
         console.log(err)
         this.successMsg = ''
-        this.errorMsg = 'Ocorreu um erro'
+          if (err.error.message) {
+            this.errorMsg = err.error.message
+          } else if (err.error.errors) {
+            this.errorMsg = err.error.errors[0].message
+          }
         this.preenchido.emit(false)
       }
     })

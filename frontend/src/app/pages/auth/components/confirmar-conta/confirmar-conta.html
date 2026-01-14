@@ -1,26 +1,27 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
-  <div class="card bg-secondary text-light shadow-lg" style="max-width: 420px; width: 100%;">
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4">Confirmar conta</h2>
+<div class="page-wrapper d-flex justify-content-center align-items-center">
+  <div class="container card shadow-sm clients-card p-0" style="max-width: 420px;">
+    <div class="card-body p-4 p-md-5">
+      <h2 class="h4 fw-bold text-center mb-4">Confirmar conta</h2>
 
       <form [formGroup]="confirmationForm" novalidate>
-        <div class="mb-3">
-          <label for="code" class="form-label">
-            Digite o código de confirmação <small class="text-muted">(ex: 000000)</small>
+        <div class="mb-4">
+          <label for="code" class="form-label fw-bold small">
+            Código de confirmação <span class="text-muted fw-normal">(ex: 000000)</span>
           </label>
           <input
             id="code"
             type="text"
             formControlName="code"
-            class="form-control bg-dark text-light border-0 border-bottom"
+            class="form-control text-center fs-4 fw-bold"
             placeholder="000000"
+            maxlength="6"
           />
         </div>
 
-        <div class="d-flex gap-2 mb-3">
+        <div class="d-flex gap-2 mb-4">
           <button
             type="button"
-            class="btn btn-primary flex-fill"
+            class="btn btn-primary flex-fill py-2 fw-bold"
             (click)="enviarCodigo()"
           >
             Enviar
@@ -28,7 +29,7 @@
 
           <button
             type="button"
-            class="btn btn-outline-light flex-fill"
+            class="btn btn-outline-primary flex-fill py-2 fw-bold"
             (click)="reenviarCodigo()"
             [disabled]="!canClick"
           >
@@ -37,14 +38,14 @@
         </div>
 
         @if (msg) {
-          <div class="alert alert-success py-2 mb-2">
-            {{ msg }}
+          <div class="alert alert-success border-0 shadow-sm py-2 mb-2 text-center">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ msg }}
           </div>
         }
 
         @if (errorMsg) {
-          <div class="alert alert-danger py-2 mb-0">
-            {{ errorMsg }}
+          <div class="alert alert-danger border-0 shadow-sm py-2 mb-0 text-center">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMsg }}
           </div>
         }
       </form>

@@ -1,119 +1,73 @@
-$bg-input: #020617;
-$bg-input-hover: #0f172a;
-$border-input: #1f2937;
-$border-input-focus: #38bdf8;
-$text-primary: #e5e7eb;
-$text-secondary: #9ca3af;
-$accent: #38bdf8;
-$accent-hover: #0ea5e9;
-
 .admin-registro {
-  color: $text-primary;
-
-  .text-muted {
-    color: $text-secondary !important;
-  }
-
-  .admin-badge {
-    color: $accent !important;
-    border-color: rgba($accent, 0.4) !important;
-    background-color: rgba(15, 23, 42, 0.35) !important;
-    letter-spacing: 0.05em;
+  .badge-active {
+    background: #d1fae5;
+    color: #065f46;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    font-size: 0.7rem;
-    padding: 0.35rem 0.7rem;
+    letter-spacing: 0.05em;
   }
 
-  .admin-hint {
+  .form-label {
     font-size: 0.85rem;
+    color: #374151;
   }
 
-  .admin-help {
-    font-size: 0.85rem;
-  }
-
-  .admin-input,
-  .admin-select {
-    background-color: $bg-input !important;
-    border-radius: 0.5rem;
-    border: 1px solid $border-input !important;
-    color: $text-primary !important;
+  .form-control, .form-select {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
     font-size: 0.95rem;
-    padding: 0.55rem 0.8rem;
-    outline: none;
-    transition:
-      border-color 0.15s ease,
-      box-shadow 0.15s ease,
-      background-color 0.15s ease,
-      transform 0.05s ease;
-
-    &::placeholder {
-      color: $text-secondary;
-      opacity: 0.7;
-    }
-
-    &:hover {
-      background-color: $bg-input-hover !important;
-      border-color: $border-input-focus !important;
-    }
+    transition: all 0.2s ease;
 
     &:focus {
-      background-color: $bg-input-hover !important;
-      border-color: $border-input-focus !important;
-      box-shadow: 0 0 0 1px rgba($accent, 0.4);
-      transform: translateY(-1px);
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #9ca3af;
     }
   }
 
-  // Ajuste de altura do select pra ficar igual input
-  .admin-select {
-    padding-right: 2.25rem;
+  .btn-primary {
+    background-color: #0d6efd;
+    border: none;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+    }
+    
+    &:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
   }
 
-  // Deixar opção "none" mais discreta quando estiver selecionada
-  select.admin-select:has(option[value="none"]:checked) {
-    color: rgba($text-secondary, 0.9) !important;
+  .alert {
+    border-radius: 10px;
+    font-size: 0.9rem;
   }
 
-  hr.border-secondary {
-    border-color: rgba(148, 163, 184, 0.25) !important;
+  .alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
   }
-}
 
-.alert {
-  border-radius: 0.6rem;
-  border-width: 1px;
-  padding-left: 0.85rem;
-  padding-right: 0.85rem;
-  font-size: 0.9rem;
-}
+  .alert-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+  }
 
-.alert-danger {
-  background-color: rgba(127, 29, 29, 0.25);
-  border-color: rgba(248, 113, 113, 0.7);
-  color: #fecaca;
-}
+  hr {
+    opacity: 0.1;
+  }
 
-.alert-success {
-  margin-top: 10px;
-  background-color: rgba(22, 163, 74, 0.15);
-  border-color: rgba(22, 163, 74, 0.6);
-  color: #bbf7d0;
-  border-radius: 0.6rem;
-  border-width: 1px;
-  padding-left: 0.85rem;
-  padding-right: 0.85rem;
-  font-size: 0.9rem;
-  box-shadow:
-    0 0 12px rgba(22, 163, 74, 0.25),
-    inset 0 0 4px rgba(22, 163, 74, 0.3);
-  transition: all 0.15s ease;
-
-  &:hover {
-    background-color: rgba(22, 163, 74, 0.2);
-    border-color: rgba(22, 163, 74, 0.75);
-    box-shadow:
-      0 0 16px rgba(22, 163, 74, 0.35),
-      inset 0 0 6px rgba(22, 163, 74, 0.4);
+  .text-muted {
+    color: #6b7280 !important;
   }
 }

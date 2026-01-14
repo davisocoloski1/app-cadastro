@@ -59,10 +59,10 @@ export class RegistroClientes implements OnInit, OnDestroy {
   ngOnInit(): void {    
     if (this.isEditing) {
       this.clientForm.disable()
+    } else {
+      this.clientForm.patchValue(this.stepper.value.cliente)
+      this.clientForm.valueChanges.subscribe(value => { this.stepper.update('cliente', value) })
     }
-
-    this.clientForm.patchValue(this.stepper.value.cliente)
-    this.clientForm.valueChanges.subscribe(value => { this.stepper.update('cliente', value) })
   }
 
   registrar() {
@@ -75,8 +75,6 @@ export class RegistroClientes implements OnInit, OnDestroy {
       ...this.clientForm.value,
       cpf_cnpj: this.clientForm.value.cpf_cnpj.replace(/\D/g, '')
     }
-
-    console.log(data)
 
     const isCnpj = data.cpf_cnpj.length > 11
     const tipo = isCnpj ? 'cnpj' : 'cpf'
@@ -107,7 +105,33 @@ export class RegistroClientes implements OnInit, OnDestroy {
   }
 
   editar() {
+    if (this.clientForm.invalid) {
+      this.errorMsg = 'Todos os campos devem ser preenchidos.'
+      return
+    }
 
+    const data: Cliente = {
+      ...this.clientForm.value,
+    }
+
+    const clienteId = this.clienteToEdit[0].id
+
+    this.clienteService.editarCliente(clienteId, data).subscribe({
+      next: (res: any) => {
+        this.errorMsg = ''
+        this.successMsg = res.message
+      },
+      error: (err: any) => {
+        this.successMsg = ''
+        if (err.error.errors) {
+          this.errorMsg = err.error.errors[0].message
+        } else if (err.error.message) {
+          this.errorMsg = err.error.message
+        } else {
+          console.log(err)
+        }
+      }
+    })
   }
 
   toggleBloquearCampos() {

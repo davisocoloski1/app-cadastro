@@ -102,6 +102,38 @@ export default class ClientesController {
     return clientes
   }
 
+  async update({ auth, request, response }: HttpContext) {
+    const user = auth.user
+
+    if (!user) {
+      return response.unauthorized({ message: 'Acesso não autorizado.' })
+    }
+
+    const id = request.param('id')
+    const cliente = await Cliente.findOrFail(id)
+    if (!cliente) return response.notFound({ message: 'Cliente não encontrado ou inexistente' })
+
+    try {
+      const data = request.only([
+        'nome', 'cpf_cnpj', 'origem', 'segmento'
+      ])
+
+      cliente.merge(data)
+      await cliente.save()
+    } catch (error) {
+      if (error.code === '23505') {
+        return response.conflict({
+          message: 'O CPF/CNPJ inserido já está em uso.'
+        })
+      }
+
+      return response.internalServerError({
+        message: 'Erro ao atualizar cliente.',
+        error: error
+      })
+    }
+  }
+
   async searchCliente({ auth, request, response }: HttpContext) {
     const user = auth.user
 
@@ -206,6 +238,73 @@ export default class ClientesController {
       })
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  async toggleStatusCliente({ auth, request, response }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({
+        message: 'Acesso não autorizado. Faça login para utilizar nossos serviços.'
+      })
+    }
+
+    const clienteId = request.param('id')
+    const newStatus = request.param('status')
+
+    if (!clienteId) {
+      return response.notFound({
+        message: 'Cliente não encontrado ou inexistente.'
+      })
+    }
+    
+    if (newStatus !== 'ativar' && newStatus !== 'desativar') {
+      return response.badRequest({ message: 'O campo "status" deve ser preenchido como "ativar" ou "desativar".'})
+    }
+    
+    const status = newStatus === 'ativar'
+
+    try {
+      await db.transaction(async (t) => {
+        const cliente = await Cliente.query({ client: t }).where('id', clienteId).firstOrFail()
+        
+        if (cliente.ativo === status) {
+          throw new Error(`O cliente já está ${status ? 'ativo' : 'inativo'}.`)
+        }
+
+        cliente.ativo = status
+        await cliente.save()
+  
+        // When reactivating, we only reactivate the main client entity.
+        // Emails, phones, addresses that were individually deactivated should remain so.
+        // if (status === true) {
+        //   return
+        // }
+
+        await Email.query({ client: t })
+          .where('id_cliente', clienteId)
+          .update({ ativo: status })
+  
+        await Telefone.query({ client: t })
+          .where('id_cliente', clienteId)
+          .update({ ativo: status })
+  
+        await Endereco.query({ client: t })
+          .where('id_cliente', clienteId)
+          .update({ ativo: status })
+      })
+
+      return response.ok({
+        message: `Cliente e dados relacionados ${status ? 'ativados' : 'desativados'} com sucesso.`
+      })
+    } catch (error) {
+      if (error.message.includes('ativo') || error.message.includes('inativo')) {
+        return response.conflict({ message: error.message })
+      }
+      return response.internalServerError({
+        message: 'Ocorreu um erro ao atualizar o status do cliente.',
+        error: error
+      })
     }
   }
 

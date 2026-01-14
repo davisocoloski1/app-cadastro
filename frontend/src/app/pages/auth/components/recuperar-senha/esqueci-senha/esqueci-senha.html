@@ -1,55 +1,48 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
-  <div class="card bg-secondary text-light shadow-lg" style="max-width: 480px; width: 100%;">
-    <div class="card-body">
-
-      <h2 class="card-title text-center mb-2">
-        Recuperar conta
-      </h2>
-
-      <p class="text-muted text-center mb-4">
-        Digite seu e-mail para receber o código de confirmação
+<div class="page-wrapper d-flex justify-content-center align-items-center">
+  <div class="container card shadow-sm auth-card p-0" style="max-width: 460px;">
+    <div class="card-body p-4 p-md-5">
+      <h2 class="h4 fw-bold text-center mb-2">Recuperar conta</h2>
+      <p class="text-muted text-center mb-4 small">
+        Digite seu e-mail para receber o código de confirmação e redefinir sua senha.
       </p>
 
       <form [formGroup]="esqueciSenhaForm" novalidate>
-
         <div class="mb-4">
-          <label class="form-label">E-mail</label>
+          <label class="form-label fw-bold small">E-mail de recuperação</label>
           <input
             type="email"
             formControlName="email"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="E-mail"
+            class="form-control"
+            placeholder="seu@email.com"
           />
         </div>
 
         @if (errorMsg) {
-          <div class="alert alert-danger py-2 my-2">
-            {{ errorMsg }}
+          <div class="alert alert-danger border-0 shadow-sm py-2 mb-3">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMsg }}
           </div>
         } @else if (successMsg) {
-          <div class="alert alert-success py-2 mb-2">
-            {{ successMsg }}
+          <div class="alert alert-success border-0 shadow-sm py-2 mb-3">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ successMsg }}
           </div>
         }
 
         <div class="mb-3">
           <button
             type="button"
-            class="btn btn-primary w-100"
+            class="btn btn-primary w-100 py-2 fw-bold"
             (click)="enviarEmailRecuperacao()"
           >
             Enviar código
           </button>
         </div>
 
-        <div class="text-center mt-2">
-          <a routerLink="/auth/login" class="register-link">
-            Voltar para o login
+        <div class="text-center mt-4">
+          <a routerLink="/auth/login" class="btn-link-back small fw-bold text-decoration-none">
+            <i class="bi bi-arrow-left me-1"></i> Voltar para o login
           </a>
         </div>
-
       </form>
-
     </div>
   </div>
 </div>

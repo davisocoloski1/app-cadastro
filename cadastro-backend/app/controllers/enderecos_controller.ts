@@ -59,7 +59,33 @@ export default class EnderecosController {
 
     const payload = await request.validate({
       schema: enderecoSchema,
-      messages: {}
+      messages: {
+        'logradouro.required': 'O campo "Logradouro" é obrigatório.',
+        'logradouro.maxLength': 'O campo "Logradouro" deve possuir no máximo 100 caracteres.',
+
+        'numero.required': 'O campo "Número" é obrigatório.',
+        'numero.maxLength': 'O campo "Número" deve possuir no máximo 20 caracteres.',
+        'numero.regex': 'O campo "Número" deve ser composto apenas por dígitos numéricos.',
+
+        'complemento.maxLength': 'O campo "Complemento" deve possuir no máximo 100 caracteres.',
+        'complemento.required': 'O campo "Complemento" é obrigatório.',
+
+        'bairro.maxLength': 'O campo "Bairro" deve possuir no máximo 100 caracteres.',
+        'bairro.required': 'O campo "Bairro" é obrigatório.',
+
+        'cidade.maxLength': 'O campo "Cidade" deve possuir no máximo 100 caracteres.',
+        'cidade.required': 'O campo "Cidade" é obrigatório.',
+
+        'estado.maxLength': 'O campo "Estado" deve possuir no máximo 100 caracteres.',
+        'estado.required': 'O campo "Estado" é obrigatório.',
+
+        'cep.maxLength': 'O campo "CEP" deve possuir no máximo 100 caracteres.',
+        'cep.required': 'O campo "CEP" é obrigatório.',
+        'cep.regex': 'O campo "CEP" deve ser composto por 8 dígitos numéricos.',
+
+        'tipo.maxLength': 'O campo "Tipo" deve possuir no máximo 100 caracteres.',
+        'tipo.required': 'O campo "Tipo" é obrigatório',
+      }
     })
 
     const data = { ...payload, id_cliente: clienteId, principal: true }
@@ -109,6 +135,12 @@ export default class EnderecosController {
         data: endereco
       })
     } catch (error) {
+      if (error.code === '23505') {
+        return response.conflict({
+          message: 'Este endereço já está em uso.'
+        })
+      }
+
       return response.internalServerError({
         message: 'Erro ao atualizar Endereço.',
         error: error

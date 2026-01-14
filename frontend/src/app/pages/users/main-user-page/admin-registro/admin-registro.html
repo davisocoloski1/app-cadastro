@@ -1,106 +1,104 @@
-<form [formGroup]="adminRegistroForm" novalidate class="mt-3 admin-registro">
+<form [formGroup]="adminRegistroForm" novalidate class="admin-registro">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <h2 class="h6 mb-1">Registrar usuário</h2>
-      <p class="text-muted mb-0">Crie um novo usuário definindo permissão.</p>
+      <h2 class="h5 fw-bold mb-1">Registrar usuário</h2>
+      <p class="text-muted mb-0 small">Crie um novo usuário definindo a permissão de acesso.</p>
     </div>
 
-    <span class="badge rounded-pill text-bg-dark border border-secondary admin-badge">
+    <span class="badge badge-active rounded-pill px-3">
       Admin
     </span>
   </div>
 
-  <hr class="border-secondary" />
+  <hr class="mb-4" />
 
   @if (errorMsg) {
-    <div class="d-flex justify-content-center mt-3 px-0">
-      <div class="alert alert-danger state-alert-error py-2 mb-0 w-100">
-        {{ errorMsg }}
-      </div>
+    <div class="alert alert-danger mb-4 shadow-sm border-0">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ errorMsg }}
     </div>
   }
 
-  <div class="row g-3 mt-1">
+  <div class="row g-3">
     <div class="col-12">
-      <label class="form-label mb-1">Nome</label>
+      <label class="form-label fw-bold">Nome</label>
       <input
         type="text"
-        placeholder="Nome"
+        placeholder="Digite o nome completo"
         formControlName="name"
-        class="form-control bg-dark text-light border-0 border-bottom admin-input"
+        class="form-control"
       />
     </div>
 
     <div class="col-12">
-      <label class="form-label mb-1">E-mail</label>
+      <label class="form-label fw-bold">E-mail</label>
       <input
         type="email"
-        placeholder="E-mail"
+        placeholder="exemplo@email.com"
         formControlName="email"
-        class="form-control bg-dark text-light border-0 border-bottom admin-input"
+        class="form-control"
       />
     </div>
 
     <div class="col-12">
-      <label class="form-label mb-1">Telefone</label>
+      <label class="form-label fw-bold">Telefone</label>
       <input
         type="tel"
-        placeholder="55XX9XXXXXXXX"
+        placeholder="(00) 00000-0000"
         formControlName="telefone"
-        class="form-control bg-dark text-light border-0 border-bottom admin-input"
+        class="form-control"
       />
     </div>
 
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center mb-1">
-        <label class="form-label mb-0">Senha</label>
-        <span class="text-muted admin-hint">Gerada automaticamente</span>
+        <label class="form-label fw-bold mb-0">Senha</label>
+        <span class="text-muted small">Gerada automaticamente</span>
       </div>
-
       <input
         type="password"
-        placeholder="Senha"
+        placeholder="••••••••"
         formControlName="password"
-        class="form-control bg-dark text-light border-0 border-bottom admin-input"
+        class="form-control"
       />
     </div>
 
     <div class="col-12">
-      <label class="form-label mb-1">Permissão</label>
-
+      <label class="form-label fw-bold">Permissão</label>
       <select
         formControlName="permission"
-        class="form-select bg-dark text-light border-0 border-bottom admin-select"
+        class="form-select"
       >
         <option value="none">Selecione uma opção</option>
-        <option value="user">Usuário</option>
+        <option value="user">Usuário Comum</option>
         <option value="admin">Administrador</option>
       </select>
-
-      <small class="text-muted d-block mt-2 admin-help">
-        “Administrador” tem acesso total às ações do painel.
+      <small class="text-muted d-block mt-2">
+        <i class="bi bi-info-circle me-1"></i>
+        Administradores possuem acesso total às configurações do painel.
       </small>
     </div>
 
     @if (successMsg) {
-    <div class="d-flex justify-content-center mt-3 px-0">
-      <div class="alert alert-success py-2 mb-0 w-100">
-        {{ successMsg }}
+      <div class="col-12 mt-3">
+        <div class="alert alert-success shadow-sm border-0 text-center">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          {{ successMsg }}
+        </div>
       </div>
-    </div>
-  }
+    }
 
-    <div class="col-12 pt-2">
+    <div class="col-12 pt-3">
       <button
         type="button"
-        class="btn btn-primary w-100"
+        class="btn btn-primary w-100 py-2 fw-bold"
         (click)="registrarUsuario()"
-        [disabled]="adminRegistroForm.invalid"
+        [disabled]="adminRegistroForm.invalid || isLoading"
       >
-      @if (isLoading) {
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        @if (isLoading) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
         }
-        {{ isLoading ? 'Registrando...' : 'Registrar usuário' }}
+        {{ isLoading ? 'Registrando...' : 'Finalizar Cadastro' }}
       </button>
     </div>
   </div>

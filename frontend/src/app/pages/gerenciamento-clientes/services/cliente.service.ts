@@ -49,8 +49,16 @@ export class ClienteService {
     return this.http.put(`${this.apiUrl}/clientes/desativar/desativarCliente/${id}`, {})
   }
 
+  alternarStatusCliente(id: number, status: string) {
+    return this.http.put(`${this.apiUrl}/clientes/desativar/alternarStatus/${id}/${status}`, {})
+  }
+
   desativarParcial(id: number, type: string, targetId: number, status: string) {
     return this.http.put(`${this.apiUrl}/clientes/desativar/desativarPorTipo/${id}/${type}/${targetId}/${status}`, {})
+  }
+
+  editarCliente(id: number, data: Cliente): Observable<Cliente> {
+    return this.http.put<Cliente>(`${this.apiUrl}/clientes/editar/editar-cliente/${id}`, data)
   }
 
   // Controle de email e telefone (contato)

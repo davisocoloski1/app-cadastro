@@ -1,50 +1,53 @@
-<div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
-  <div class="card bg-secondary text-light shadow-lg" style="max-width: 480px; width: 100%;">
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4">Alterar senha</h2>
+<div class="page-wrapper d-flex justify-content-center align-items-center">
+  <div class="container card shadow-sm clients-card p-0" style="max-width: 480px;">
+    <div class="card-body p-4 p-md-5">
+      <h2 class="h4 fw-bold text-center mb-4">Alterar senha</h2>
 
       @if (stateMsg) {
-        <div class="alert alert-info state-alert py-2 mb-4">
+        <div class="alert alert-info border-0 shadow-sm py-2 mb-4">
+          <i class="bi bi-info-circle-fill me-2"></i>
           {{ stateMsg }}
         </div>
       }
 
       @if (successMsg) {
-        <div class="alert alert-info state-alert py-2 mb-4">
+        <div class="alert alert-success border-0 shadow-sm py-2 mb-4">
+          <i class="bi bi-check-circle-fill me-2"></i>
           {{ successMsg }}
         </div>
       }
 
       <form [formGroup]="passwordConfirmation" novalidate>
         <div class="mb-3">
-          <label class="form-label">Digite sua senha</label>
+          <label class="form-label fw-bold">Nova senha</label>
           <input
             type="password"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="Digite sua senha"
+            class="form-control"
+            placeholder="Digite a nova senha"
             formControlName="password"
           />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Confirme sua senha</label>
+        <div class="mb-4">
+          <label class="form-label fw-bold">Confirme a senha</label>
           <input
             type="password"
-            class="form-control bg-dark text-light border-0 border-bottom"
-            placeholder="Confirme sua senha"
+            class="form-control"
+            placeholder="Repita a nova senha"
             formControlName="password_confirmation"
           />
         </div>
 
         <button
           type="button"
-          class="btn btn-primary w-100 mt-2"
+          class="btn btn-primary w-100 py-2 fw-bold"
           (click)="alterarSenha()"
+          [disabled]="isLoading || passwordConfirmation.invalid"
         >
           @if (isLoading) {
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        }
-        {{ isLoading ? 'Salvando...' : 'Confirmar' }}
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isLoading ? 'Salvando...' : 'Confirmar Alteração' }}
         </button>
       </form>
     </div>

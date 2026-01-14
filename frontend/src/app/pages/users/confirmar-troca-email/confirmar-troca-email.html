@@ -1,35 +1,40 @@
-<main class="min-vh-100 d-flex align-items-center">
+<main class="page-wrapper d-flex align-items-center justify-content-center">
   <div class="container py-5">
-    <section class="text-center mx-auto" style="max-width: 720px;">
-      <div class="d-inline-flex align-items-center gap-2 mb-3">
-        <span class="badge rounded-pill">Sistema de Autenticação</span>
+    <section class="text-center mx-auto" style="max-width: 600px;">
+      
+      <div class="success-icon-wrapper mb-4">
+        <i class="bi bi-check-circle-fill text-success"></i>
       </div>
 
-      <h1 class="mb-3">
+      <div class="d-inline-flex align-items-center gap-2 mb-3">
+        <span class="badge badge-system">Sistema de Autenticação</span>
+      </div>
+
+      <h1 class="fw-bold mb-3 display-6">
         E-mail alterado <br />
-        <span>com sucesso</span>
+        <span class="text-primary">com sucesso!</span>
       </h1>
 
-      <p class="mx-auto mb-4" style="max-width: 560px;">
-        Sua alteração foi confirmada. Agora você já pode continuar usando o sistema normalmente.
+      <p class="mx-auto mb-5 fs-5 text-muted">
+        Sua alteração foi confirmada. Agora você já pode continuar utilizando todos os recursos do sistema normalmente.
       </p>
 
-      <div class="d-flex justify-content-center gap-2 flex-wrap mb-5">
-        <button type="button" class="btn btn-primary" routerLink="">
-          Voltar para o início
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <button type="button" class="btn btn-primary px-5 py-2 fw-bold shadow-sm" routerLink="">
+          Ir para o Início
         </button>
       </div>
     </section>
   </div>
 </main>
 
-<footer class="py-4">
+<footer class="footer-light py-4 border-top">
   <div class="container d-flex justify-content-between align-items-center gap-3 flex-wrap">
     <div class="d-flex align-items-center gap-2">
-      <span class="badge rounded-pill">●</span>
-      <strong>AuthSystem</strong>
+      <span class="dot-indicator text-primary">●</span>
+      <strong class="text-dark">AuthSystem</strong>
     </div>
 
-    <p class="mb-0">Sistema de autenticação seguro e completo.</p>
+    <p class="mb-0 small text-muted">Sistema de autenticação seguro e completo.</p>
   </div>
 </footer>

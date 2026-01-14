@@ -88,13 +88,7 @@
       }
     }
 
-    <div class="d-flex justify-content-between align-items-center mt-4">
-      <div class="d-flex gap-2">
-        <button (click)="toggleBotaoAcao()" class="btn btn-primary">
-         {{ isEditing ? 'Adicionar forma de contato' : 'Editar contato atual'}}
-        </button>
-      </div>
-
+    <div class="d-flex justify-content-end mt-4">
       <div class="d-flex gap-2">
         @if (isEditing) {
           <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
@@ -105,7 +99,7 @@
             Limpar campos
           </button>
     
-          <button class="btn btn-primary" (click)="editar()" [disabled]="(emailForm.pristine || telefoneForm.pristine) || (emailForm.invalid || telefoneForm.invalid)">
+          <button class="btn btn-primary" (click)="editar()">
             Salvar
           </button>
         } @else {
@@ -113,7 +107,7 @@
             Limpar campos
           </button>
     
-          <button class="btn btn-primary" (click)="registrar()" [disabled]="(emailForm.pristine || telefoneForm.pristine) || (emailForm.invalid || telefoneForm.invalid)">
+          <button class="btn btn-primary" (click)="registrar()">
             Registrar
           </button>
         }
