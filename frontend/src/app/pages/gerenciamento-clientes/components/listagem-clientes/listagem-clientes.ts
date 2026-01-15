@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class ListagemClientes implements OnInit {
   clientes: any = []
 
-  clienteToDelete: Cliente | null = null
+  clienteIdToDelete: number | null = null
 
   successMsg = ''
   errorMsg = ''
@@ -68,11 +68,19 @@ export class ListagemClientes implements OnInit {
     this.router.navigate(['/clientes/visualizar-cliente', id])
   }
 
-  confirmarExclusao(cliente: Cliente) {
-
-  }
-
-  deletar(cliente: Cliente) {
-
+  desativar(id: number) {
+    this.clienteService.desativarCliente(id).subscribe({
+      next: (res: any) => {
+        this.errorMsg = ''
+        this.successMsg = res.message
+        
+        setTimeout(() => { this.listarClientes() }, 2000)
+        setTimeout(() => { this.clienteIdToDelete = null }, 2001)
+      },
+      error: (err: any) => {
+        this.successMsg = ''
+        this.errorMsg = err.error
+      }
+    })
   }
 }

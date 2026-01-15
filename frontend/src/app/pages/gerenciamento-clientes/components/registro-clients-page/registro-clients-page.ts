@@ -39,4 +39,16 @@ export class RegistroClientsPage implements OnInit {
 
     setTimeout(() => { this.step++ }, 2000)
   }
+
+  onContatoRegistrado(preenchido: boolean) {
+    this.contatoFormPreenchido = preenchido
+    
+    setTimeout(() => { if (preenchido) this.step++ }, 2000)
+  }
+
+  onEnderecoPreenchido(preenchido: boolean) {
+    this.enderecoFormPreenchido = preenchido
+    
+    setTimeout(() => { if (preenchido) this.step++ }, 2000)
+  }
 }

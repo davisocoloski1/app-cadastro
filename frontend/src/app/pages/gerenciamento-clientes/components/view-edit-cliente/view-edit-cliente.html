@@ -1,12 +1,291 @@
-<app-registro-clientes
+<!-- <app-registro-clientes
   [clienteToEdit]="clienteToEdit"
   [isEditing]="true"
 ></app-registro-clientes>
 <app-registro-contato
   [contatoToEdit]="clienteToEdit[0]"
   [isEditing]="true"
+  [userId]="userId"
 ></app-registro-contato>
 <app-registro-endereco
   [enderecoToEdit]="clienteToEdit[0]"
   [isEditing]="true"
-></app-registro-endereco>
+  [userId]="userId"
+></app-registro-endereco> -->
+
+<div class="page-wrapper">
+  <div class="container card shadow-sm clients-card">
+    <div class="card-body">
+      <ng-container *ngFor="let info of clienteToEdit">
+        @if (!info.ativo) {
+          <div class="alert alert-danger">
+            Este cliente se encontra <strong>inativo</strong>. As informações podem ser editadas, mas os status se manterão como inativos até que o cliente seja reativado.
+          </div>
+        }
+        <div>
+          <h5>Informações primárias de {{ info.nome }}</h5>
+          <div class="list-row list-header">
+            <div class="col name">Nome</div>
+            <div class="col doc">Documento</div>
+            <div class="col origem">Origem</div>
+            <div class="col segmento">Segmento</div>
+            <div class="col status">Status</div>
+            <div class="col actions text-end">Ações</div>
+          </div>
+          <div class="list-row">
+            <div class="col name">{{ info.nome }}</div>
+            <div class="col doc">{{ info.cpfCnpj | masks: 'doc' }}</div>
+            <div class="col origem">{{ info.origem }}</div>
+            <div class="col segmento">{{ info.segmento }}</div>
+            <div class="col status">
+              <span
+                class="badge"
+                [class.badge-active]="info.ativo"
+                [class.badge-inactive]="!info.ativo"
+              >
+                {{ info.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </div>
+        
+            <div class="col actions text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                [routerLink]="['/clientes/visualizar-cliente/editarPrimarias', info.id]"
+              >
+                Editar
+              </button>
+        
+              <button
+                class="btn btn-sm"
+                [class.btn-outline-danger]="info.ativo"
+                [class.btn-outline-success]="!info.ativo"
+                (click)="null"
+              >
+                {{ info.ativo ? 'Desativar' : 'Reativar'}}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5">
+          <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+              <h1 class="h4 mb-1">Área de e-mail</h1>
+              <p class="text-muted mb-0">
+                Edite as informações de email de {{ info.nome }}
+              </p>
+            </div>
+
+            <!-- alterar routerLink -->
+            <button
+              class="btn btn-primary col-md-2"
+              routerLink="/clientes/registro"
+            >
+              Adicionar forma de contato
+            </button>
+          </div>
+
+          @if (emailErrorMsg) { <div class="alert alert-danger">{{ emailErrorMsg }}</div> }
+          @if (emailSuccessMsg) { <div class="alert alert-success">{{ emailSuccessMsg }}</div> }
+
+          <div class="list-row-email list-header">
+            <div class="col email">E-mail</div>
+            <div class="col tipo">Tipo</div>
+            <div class="col principal">Principal</div>
+            <div class="col status">Status</div>
+            <div class="col actions text-end">Ações</div>
+          </div>
+          <div class="list-row-email" *ngFor="let email of info.emails">
+            <div class="col email">{{ email.email }}</div>
+            <div class="col tipo capitalize">{{ email.tipo }}</div>
+            <div class="col principal">{{ email.principal ? 'Sim' : 'Não' }}</div>
+            <div class="col status">
+              <span
+                class="badge"
+                [class.badge-active]="email.ativo"
+                [class.badge-inactive]="!email.ativo"
+              >
+                {{ email.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </div>
+            <div class="col actions text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                (click)="editar(email.idCliente, [email], 'email')"
+              >
+                Editar
+              </button>
+        
+              <button
+                class="btn btn-sm"
+                [class.btn-outline-danger]="email.ativo"
+                [class.btn-outline-success]="!email.ativo"
+                [disabled]="emailIdToDelete || !info.ativo"
+                (click)="emailIdToDelete = email.id"
+              >
+                {{ email.ativo ? 'Desativar' : 'Reativar' }}
+              </button>
+            </div>
+            @if (emailIdToDelete === email.id) {
+              <div class="confirmation-wrapper w-100 mt-2 mb-3"> 
+                <div class="alert alert-warning d-flex justify-content-between align-items-center px-4 py-3 border-0 shadow-sm">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                    <span class="fw-medium">
+                      Tem certeza de que deseja <span>{{ email.ativo? 'desativar' : 'ativar' }}</span> e-mail <strong>{{ email.email }}</strong>?
+                    </span>
+                  </div>
+      
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-danger px-4" (click)="desativarParcial(email.idCliente, 'email', email.id, email.ativo ? 'desativar' : 'ativar')">Confirmar</button>
+                    <button class="btn btn-primary px-4 border" (click)="emailIdToDelete = null">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <p class="mt-5">Área de telefone</p>
+
+          @if (telefoneErrorMsg) { <div class="alert alert-danger">{{ telefoneErrorMsg }}</div> }
+          @if (telefoneSuccessMsg) { <div class="alert alert-success">{{ telefoneSuccessMsg }}</div> }
+
+          <div class="list-row-phone list-header">
+            <div class="col telefone">Telefones</div>
+            <div class="col tipo">Tipo</div>
+            <div class="col principal">Principal</div>
+            <div class="col status">Status</div>
+            <div class="col actions text-end">Ações</div>
+          </div>
+          <div class="list-row-phone" *ngFor="let telefone of info.telefones">
+            <div class="col telefone">{{ telefone.numero | masks: 'tel' }}</div>
+            <div class="col tipo capitalize">{{ telefone.tipo }}</div>
+            <div class="col principal">{{ telefone.principal ? 'Sim' : 'Não' }}</div>
+            <div class="col status">
+              <span
+                class="badge"
+                [class.badge-active]="telefone.ativo"
+                [class.badge-inactive]="!telefone.ativo"
+              >
+                {{ telefone.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </div>
+            <div class="col actions text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                (click)="editar(telefone.idCliente, telefone, 'telefone')"
+              >
+                Editar
+              </button>
+        
+              <button
+                class="btn btn-sm"
+                [class.btn-outline-danger]="telefone.ativo"
+                [class.btn-outline-success]="!telefone.ativo"
+                [disabled]="telefoneIdToDelete || !info.ativo"
+                (click)="telefoneIdToDelete = telefone.id"
+              >
+                {{ telefone.ativo ? 'Desativar' : 'Reativar' }}
+              </button>
+            </div>
+            @if (telefoneIdToDelete === telefone.id) {
+              <div class="confirmation-wrapper w-100 mt-2 mb-3"> 
+                <div class="alert alert-warning d-flex justify-content-between align-items-center px-4 py-3 border-0 shadow-sm">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                    <span class="fw-medium">
+                      Tem certeza de que deseja <span>{{ telefone.ativo? 'desativar' : 'ativar' }}</span> o número de telefone <strong>{{ telefone.numero  | masks: 'tel' }}</strong>?
+                    </span>
+                  </div>
+      
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-danger px-4" (click)="desativarParcial(telefone.idCliente, 'telefone', telefone.id, telefone.ativo ? 'desativar' : 'ativar')">Confirmar</button>
+                    <button class="btn btn-primary px-4 border" (click)="telefoneIdToDelete = null">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="d-flex justify-content-between align-items-start mb-4 mt-5">
+            <div>
+              <h1 class="h4 mb-1">Área de endereço</h1>
+              <p class="text-muted mb-0">
+                Edite as informações de endereço de {{ info.nome }}
+              </p>
+            </div>
+
+            <!-- alterar routerLink -->
+            <button
+              class="btn btn-primary col-md-2"
+              routerLink="/clientes/registro"
+            >
+              Adicionar novo endereço
+            </button>
+          </div>
+
+          @if (enderecoErrorMsg) { <div class="alert alert-danger">{{ enderecoErrorMsg }}</div> }
+          @if (enderecoSuccessMsg) { <div class="alert alert-success">{{ enderecoSuccessMsg }}</div> }
+
+          <div class="list-row-address list-header">
+            <div class="col logradouro">Logradouro</div>
+            <div class="col cep">CEP</div>
+            <div class="col tipo">Tipo</div>
+            <div class="col principal">Principal</div>
+            <div class="col status">Status</div>
+            <div class="col actions text-end">Ações</div>
+          </div>
+          <div class="list-row-address" *ngFor="let endereco of info.enderecos">
+            <div class="col logradouro">{{ endereco.logradouro }} - {{ endereco.numero }} - {{ endereco.complemento }}</div>
+            <div class="col cep">{{ endereco.cep | masks: 'cep' }}</div>
+            <div class="col tipo capitalize">{{ endereco.tipo }}</div>
+            <div class="col principal">{{ endereco.principal ? 'Sim' : 'Não' }}</div>
+            <div class="col status">
+              <span
+                class="badge"
+                [class.badge-active]="endereco.ativo"
+                [class.badge-inactive]="!endereco.ativo"
+              >
+                {{ endereco.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </div>
+            <div class="col actions text-end">
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                (click)="editar(endereco.idCliente, endereco, 'endereco')"
+              >
+                Editar
+              </button>
+    
+              <button
+                class="btn btn-sm"
+                [class.btn-outline-danger]="endereco.ativo"
+                [class.btn-outline-success]="!endereco.ativo"
+                [disabled]="enderecoIdToDelete || !info.ativo"
+                (click)="enderecoIdToDelete = endereco.id"
+              >
+                {{ endereco.ativo ? 'Desativar' : 'Reativar' }}
+              </button>
+            </div>
+            @if (enderecoIdToDelete === endereco.id) {
+              <div class="confirmation-wrapper w-100 mt-2 mb-3"> 
+                <div class="alert alert-warning d-flex justify-content-between align-items-center px-4 py-3 border-0 shadow-sm">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                    <span class="fw-medium">
+                      Tem certeza de que deseja <span>{{ endereco.ativo? 'desativar' : 'ativar' }}</span> o endereço de CEP <strong>{{ endereco.cep  | masks: 'cep' }}</strong>?
+                    </span>
+                  </div>
+      
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-danger px-4" (click)="desativarParcial(endereco.idCliente, 'endereco', endereco.id, endereco.ativo ? 'desativar' : 'ativar')">Confirmar</button>
+                    <button class="btn btn-primary px-4 border" (click)="enderecoIdToDelete = null">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+</div>

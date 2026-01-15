@@ -35,17 +35,13 @@
         <input type="text" class="form-control" placeholder="Cidade" formControlName="cidade">
       </div>
 
-      <div class="col-md-3">
+      <div class="col-md-6">
         <label class="form-label">Estado</label>
         <input type="text" class="form-control" placeholder="Estado" formControlName="estado">
       </div>
 
-      <div class="col-md-3">
-        <label class="form-label">CEP</label>
-        <input type="text" class="form-control" placeholder="00000-000" mask="00000-000" formControlName="cep">
-      </div>
-
-      <div class="col-md-6">
+      
+      <div class="col-md-8">
         <label class="form-label">Tipo</label>
         <select class="form-select" formControlName="tipo">
           <option value="residencial" selected>Residencial</option>
@@ -55,13 +51,10 @@
           <option value="correspondencia">Correspondência</option>
         </select>
       </div>
-
-      <div class="col-md-6">
-        <label class="form-label">Principal</label>
-        <select class="form-select" formControlName="principal">
-          <option [value]="true" selected>Sim</option>
-          <option [value]="false">Não</option>
-        </select>
+      
+      <div class="col-md-4">
+        <label class="form-label">CEP</label>
+        <input type="text" class="form-control" placeholder="00000-000" mask="00000-000" formControlName="cep">
       </div>
 
       @if (successMsg) {
@@ -76,29 +69,37 @@
         </div>
       }
 
-      <div class="col-12 d-flex justify-content-end gap-2 mt-3">
-        @if (isEditing) {
-          <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
-            {{ fieldsBlocked ? 'Desbloquear campos' : 'Bloquear campos' }}
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="d-flex gap-2">
+          <button (click)="toggleBotaoAcao()" class="btn btn-primary">
+          {{ isEditing ? 'Adicionar novo endereço' : 'Editar endereço atual'}}
           </button>
+        </div>
 
-          <button class="btn btn-outline-danger" (click)="limpar()">
-            Limpar campos
-          </button>
+        <div class="d-flex gap-2">
+          @if (isEditing) {
+            <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
+                {{ fieldsBlocked ? 'Desbloquear campos' : 'Bloquear campos' }}
+            </button>
     
-          <button class="btn btn-primary" (click)="editar()">
-            Editar
-          </button>
-        } @else {
-          <button type="button" class="btn btn-outline-secondary" (click)="limpar()">
-            Limpar Campos
-          </button>
-  
-          <button type="submit" class="btn btn-primary" (click)="registrar()">
-            Registrar
-          </button>
-        }
+            <button class="btn btn-outline-danger" (click)="limpar()">
+              Limpar campos
+            </button>
+      
+            <button class="btn btn-primary" (click)="editar()" [disabled]="enderecoForm.pristine || enderecoForm.invalid">
+              Salvar
+            </button>
+          } @else {
+            <button class="btn btn-outline-secondary" (click)="limpar()">
+              Limpar campos
+            </button>
+      
+            <button class="btn btn-primary" (click)="registrar()">
+              Registrar
+            </button>
+          }
       </div>
+    </div>
 
     </form>
   </div>

@@ -46,6 +46,12 @@
   border-radius: 10px;
 }
 
+.confirmation-wrapper {
+  display: block;
+  clear: both;
+  width: 100%;
+}
+
 @media (max-width: 768px) {
   .list-row {
     grid-template-columns: 1.5fr 1.5fr 1fr 1fr;

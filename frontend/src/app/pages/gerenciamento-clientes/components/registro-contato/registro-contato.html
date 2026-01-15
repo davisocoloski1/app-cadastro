@@ -5,122 +5,119 @@
       {{ isEditing ? 'Editar informações de contato' : 'Informações de contato' }}
     </h5>
 
-    <p class="text-muted text-center mb-4">
-      {{ isEditing ? 'Edite as informações de e-mail e telefone do cliente' : 'Preencha os dados de contato do cliente' }}
-    </p>
-
-    <form [formGroup]="emailForm" class="row g-3" novalidate>
-
-      <div class="col-md-6">
-        <label class="form-label">E-mail do cliente</label>
-        <input
-          type="email"
-          formControlName="email"
-          class="form-control"
-          placeholder="email@exemplo.com"
-        />
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Tipo</label>
-        <select formControlName="tipo" class="form-select">
-          <option value="pessoal">Pessoal</option>
-          <option value="profissional">Profissional</option>
-          <option value="comercial">Comercial</option>
-          <option value="outro">Outro</option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Principal</label>
-        <select formControlName="principal" class="form-select">
-          <option [value]="true">Sim</option>
-          <option [value]="false">Não</option>
-        </select>
-      </div>
-    </form>
-
-    @if (emailSuccessMsg) {
-      <div class="alert alert-success py-2 mt-3 mb-0">
-        {{ emailSuccessMsg }}
-      </div>
+    @if (editType === 'email' || editType === 'all') {
+      <p class="text-muted text-center mb-4">
+        {{ isEditing ? 'Edite as informações de e-mail e telefone do cliente' : 'Preencha os dados de contato do cliente' }}
+      </p>
+  
+      <form [formGroup]="emailForm" class="row g-3" novalidate>
+  
+        <div class="col-md-6">
+          <label class="form-label">E-mail do cliente</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="form-control"
+            placeholder="email@exemplo.com"
+          />
+        </div>
+  
+        <div class="col-md-6">
+          <label class="form-label">Tipo</label>
+          <select formControlName="tipo" class="form-select">
+            <option value="pessoal">Pessoal</option>
+            <option value="profissional">Profissional</option>
+            <option value="comercial">Comercial</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+      </form>
+  
+      @if (emailSuccessMsg) {
+        <div class="alert alert-success py-2 mt-3 mb-0">
+          {{ emailSuccessMsg }}
+        </div>
+      }
+  
+      @if (emailErrorMsg) {
+        <div class="alert alert-danger py-2 mt-3 mb-0">
+          {{ emailErrorMsg }}
+        </div>
+      }
     }
 
-    @if (emailErrorMsg) {
-      <div class="alert alert-danger py-2 mt-3 mb-0">
-        {{ emailErrorMsg }}
-      </div>
-    }
 
     <hr class="my-4">
 
-    <form [formGroup]="telefoneForm" class="row g-3" novalidate>
-
-      <div class="col-md-6">
-        <label class="form-label">Telefone do cliente</label>
-        <input
-          type="text"
-          formControlName="numero"
-          class="form-control"
-          placeholder="(00) 0 0000-0000"
-          mask="(00) 00000-0000"
-        />
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Tipo</label>
-        <select formControlName="tipo" class="form-select">
-          <option value="celular">Celular</option>
-          <option value="residencial">Residencial</option>
-          <option value="comercial">Comercial</option>
-          <option value="recado">Recado</option>
-          <option value="outro">Outro</option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Principal</label>
-        <select formControlName="principal" class="form-select">
-          <option [value]="true">Sim</option>
-          <option [value]="false">Não</option>
-        </select>
-      </div>
-    </form>
-
-    @if (telefoneSuccessMsg) {
-      <div class="alert alert-success py-2 mt-3 mb-0">
-        {{ telefoneSuccessMsg }}
-      </div>
-    }
-
-    @if (telefoneErrorMsg) {
-      <div class="alert alert-danger py-2 mt-3 mb-0">
-        {{ telefoneErrorMsg }}
-      </div>
-    }
-
-    <div class="d-flex justify-content-end gap-2 mt-4">
-      @if (isEditing) {
-        <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
-            {{ fieldsBlocked ? 'Desbloquear campos' : 'Bloquear campos' }}
-        </button>
-
-        <button class="btn btn-outline-danger" (click)="limpar()">
-          Limpar campos
-        </button>
+    @if (editType === 'telefone' || editType === 'all') {
+      <form [formGroup]="telefoneForm" class="row g-3" novalidate>
   
-        <button class="btn btn-primary" (click)="editar()">
-          Editar
-        </button>
-      } @else {
-        <button class="btn btn-outline-secondary" (click)="limpar()">
-          Limpar campos
-        </button>
+        <div class="col-md-6">
+          <label class="form-label">Telefone do cliente</label>
+          <input
+            type="text"
+            formControlName="numero"
+            class="form-control"
+            placeholder="(00) 0 0000-0000"
+            mask="(00) 00000-0000"
+          />
+        </div>
   
-        <button class="btn btn-primary" (click)="registrar()">
-          Registrar
-        </button>
+        <div class="col-md-6">
+          <label class="form-label">Tipo</label>
+          <select formControlName="tipo" class="form-select">
+            <option value="celular">Celular</option>
+            <option value="residencial">Residencial</option>
+            <option value="comercial">Comercial</option>
+            <option value="recado">Recado</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+      </form>
+  
+      @if (telefoneSuccessMsg) {
+        <div class="alert alert-success py-2 mt-3 mb-0">
+          {{ telefoneSuccessMsg }}
+        </div>
       }
+  
+      @if (telefoneErrorMsg) {
+        <div class="alert alert-danger py-2 mt-3 mb-0">
+          {{ telefoneErrorMsg }}
+        </div>
+      }
+    }
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <div class="d-flex gap-2">
+        <button (click)="toggleBotaoAcao()" class="btn btn-primary">
+         {{ isEditing ? 'Adicionar forma de contato' : 'Editar contato atual'}}
+        </button>
+      </div>
+
+      <div class="d-flex gap-2">
+        @if (isEditing) {
+          <button type="button" class="btn btn-outline-secondary" (click)="toggleBloquearCampos()">
+              {{ fieldsBlocked ? 'Desbloquear campos' : 'Bloquear campos' }}
+          </button>
+  
+          <button class="btn btn-outline-danger" (click)="limpar()">
+            Limpar campos
+          </button>
+    
+          <button class="btn btn-primary" (click)="editar()" [disabled]="(emailForm.pristine || telefoneForm.pristine) || (emailForm.invalid || telefoneForm.invalid)">
+            Salvar
+          </button>
+        } @else {
+          <button class="btn btn-outline-secondary" (click)="limpar()">
+            Limpar campos
+          </button>
+    
+          <button class="btn btn-primary" (click)="registrar()" [disabled]="(emailForm.pristine || telefoneForm.pristine) || (emailForm.invalid || telefoneForm.invalid)">
+            Registrar
+          </button>
+        }
+      </div>
     </div>
 
   </div>

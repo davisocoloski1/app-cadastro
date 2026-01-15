@@ -1,5 +1,6 @@
 import Email from '#models/email'
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 import { rules, schema } from '@adonisjs/validator'
 
 export default class EmailsController {
@@ -29,9 +30,6 @@ export default class EmailsController {
         rules.required(),
         rules.maxLength(50)
       ]),
-      principal: schema.boolean([
-        rules.required()
-      ])
     })
 
     const payload = await request.validate({
@@ -43,12 +41,10 @@ export default class EmailsController {
 
         'tipo.required': 'O campo "tipo" deve ser preenchido.',
         'tipo.maxLength': 'O campo "tipo" deve possuir no máximo 50 caracteres',
-
-        'principal.required': 'O campo "principal" deve ser preenchido',
       }
     })
 
-    const data = { ...payload, id_cliente: clienteId }
+    const data = { ...payload, id_cliente: clienteId, principal: true }
 
     try {
       const existingEmail = await Email.query()
@@ -68,16 +64,48 @@ export default class EmailsController {
     }
 
     try {
-      const email = Email.create(data)
-      // await Email.query()
-      // .whereIn('cliente_id', clienteId)
-      // .update({ principal: false })
+      await db.transaction(async (trx) => {
+        await Email.query({ client: trx })
+          .where('id_cliente', clienteId)
+          .where('ativo', true)
+          .where('principal', true)
+          .update({ principal: false })
 
-      return response.created(email)
+        await Email.create(data, { client: trx })
+      })
     } catch (error) {
       return response.status(500).json({
         message: error
       })
     }
-  }  
+  }
+
+  async update({ auth, request, response }: HttpContext) {
+    const user = auth.user
+    if (!user) return response.unauthorized({ message: 'Acesso não autorizado, faça login para realizar essa ação.' })
+
+    try {
+      const id = request.param('id')
+      const email = await Email.findOrFail(id)
+      if (!email) return response.notFound({ message: 'E-mail não encontrado ou inexistente.' })
+  
+      const data = request.only([
+        'email',
+        'tipo'
+      ])
+  
+      email.merge(data)
+      await email.save()
+  
+      return response.ok({
+        message: 'E-mail atualizado com sucesso.',
+        data: email
+      })
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Erro ao atualizar e-mail.',
+        error: error
+      })
+    }
+  }
 }

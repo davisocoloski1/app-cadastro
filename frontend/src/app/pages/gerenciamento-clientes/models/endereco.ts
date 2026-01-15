@@ -8,5 +8,5 @@ export interface Endereco {
   estado: string;
   cep: string;
   tipo: string;
-  principal: boolean;
+  principal?: boolean;
 }
