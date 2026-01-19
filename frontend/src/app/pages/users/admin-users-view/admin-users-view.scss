@@ -33,13 +33,12 @@
   transition: all 0.2s ease;
 }
 
-/* Correção de Contraste no Hover */
 .btn-outline-primary {
   color: #0d6efd;
   border-color: #0d6efd;
   &:hover {
     background-color: #0d6efd;
-    color: #ffffff !important; /* Força o texto branco */
+    color: #ffffff !important; 
     transform: translateY(-1px);
   }
 }
@@ -49,7 +48,7 @@
   border-color: #dc3545;
   &:hover {
     background-color: #dc3545;
-    color: #ffffff !important; /* Força o texto branco */
+    color: #ffffff !important; 
     transform: translateY(-1px);
   }
 }

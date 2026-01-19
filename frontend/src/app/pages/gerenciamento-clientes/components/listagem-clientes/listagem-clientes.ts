@@ -18,6 +18,7 @@ export class ListagemClientes implements OnInit {
 
   successMsg = ''
   errorMsg = ''
+  emptyMsg = ''
   searchBar = new FormControl('')
   searchPlaceholder = 'Buscar por nome, CPF/CNPJ, e-mail ou telefone'
 
@@ -34,6 +35,10 @@ export class ListagemClientes implements OnInit {
     this.clienteService.indexClientes().subscribe({
       next: (res: any) => {
         this.clientes = res
+
+        if (this.clientes.length === 0) {
+          this.emptyMsg = 'Nenhum cliente registrado.'
+        }
       }
     })
   }

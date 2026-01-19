@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ClienteService } from '../../services/cliente.service';
 import { Cliente } from '../../models/cliente';
 import { StepperService } from '../../services/stepper.service';
@@ -11,7 +10,7 @@ import { StepperService } from '../../services/stepper.service';
   templateUrl: './registro-clientes.html',
   styleUrl: './registro-clientes.scss',
 })
-export class RegistroClientes implements OnInit, OnDestroy {
+export class RegistroClientes implements OnInit {
   clientForm!: FormGroup
   errorMsg = ''
   successMsg = ''
@@ -51,10 +50,6 @@ export class RegistroClientes implements OnInit, OnDestroy {
   get clienteToEdit() {
     return this._clienteToEdit
   }
-  
-  ngOnDestroy(): void {
-    // this.clientForm.reset()
-  }
 
   ngOnInit(): void {    
     if (this.isEditing) {
@@ -84,7 +79,6 @@ export class RegistroClientes implements OnInit, OnDestroy {
         next: (res: any) => {
           this.errorMsg = ''
           this.successMsg = 'Cliente registrado. Finalize as informações no formulário abaixo.'
-          console.log(res)
           this.liberarEmail.emit(true)
           this.preenchido.emit(true)
           this.clienteBody.emit(res)

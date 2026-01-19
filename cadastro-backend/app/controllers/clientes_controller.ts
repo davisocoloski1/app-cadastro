@@ -275,8 +275,6 @@ export default class ClientesController {
         cliente.ativo = status
         await cliente.save()
   
-        // When reactivating, we only reactivate the main client entity.
-        // Emails, phones, addresses that were individually deactivated should remain so.
         // if (status === true) {
         //   return
         // }

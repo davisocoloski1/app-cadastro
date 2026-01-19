@@ -20,7 +20,7 @@
         </a>
       </li>
       
-      @if (isLogged && isAdmin) {
+      @if ((loggedIn$ | async) && isAdmin) {
         <li class="nav-item">
           <a class="nav-link text-white admin-link" routerLink="/users/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
             Listagem de Usuários
@@ -33,7 +33,7 @@
   <hr>
 
   <div class="auth-actions d-grid gap-2">
-    @if (isLogged) {
+    @if (loggedIn$ | async) {
       <a class="btn btn-outline-info btn-sm" [routerLink]="router2" (click)="logout()">{{ button2 }}</a>
     } @else {
       <a class="btn btn-outline-info btn-sm" [routerLink]="router2">{{ button2 }}</a>

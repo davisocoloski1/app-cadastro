@@ -11,6 +11,7 @@ import { AdminRegistroPage } from './admin-registro-page/admin-registro-page';
 import { AdminUsersView } from './admin-users-view/admin-users-view';
 import { AdminEditUser } from './admin-edit-user/admin-edit-user';
 import { ConfirmarTrocaEmail } from './confirmar-troca-email/confirmar-troca-email';
+import { NgxMaskDirective } from "ngx-mask";
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { ConfirmarTrocaEmail } from './confirmar-troca-email/confirmar-troca-ema
   imports: [
     CommonModule,
     UsersRoutingModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+    NgxMaskDirective
+]
 })
 export class UsersModule { }

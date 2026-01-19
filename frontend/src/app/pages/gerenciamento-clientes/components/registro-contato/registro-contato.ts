@@ -98,7 +98,7 @@ export class RegistroContato implements OnInit {
     if (this.editType === 'email' || this.editType === 'all') {
       if (this.emailForm.invalid) {
         this.emailErrorMsg = 'O campo de e-mail deve ser preenchido.';
-        emailFinalizado = true; // Finalizou com erro
+        emailFinalizado = true; 
         verificarEEmitirStatus();
       } else {
         const emailData: Email = { ...this.emailForm.value };
@@ -198,7 +198,6 @@ export class RegistroContato implements OnInit {
     }
   }
 
-  // Helper para não repetir código de erro
   private tratarErro(tipo: 'email' | 'telefone', err: any) {
     const msg = err.error.message || (err.error.errors ? err.error.errors[0].message : 'Erro desconhecido');
     if (tipo === 'email') this.emailErrorMsg = msg;
@@ -233,7 +232,7 @@ export class RegistroContato implements OnInit {
           tipo: 'celular',
           principal: true
         })
-      } else { // editType is 'all' or null
+      } else { 
         this.emailForm.enable()
         this.telefoneForm.enable()
 
@@ -251,7 +250,7 @@ export class RegistroContato implements OnInit {
         this.emailForm.disable()
       } else if (this.editType === 'telefone') {
         this.telefoneForm.disable()
-      } else { // editType is 'all' or null
+      } else {
         this.emailForm.disable()
         this.telefoneForm.disable()
       }
@@ -268,7 +267,7 @@ export class RegistroContato implements OnInit {
       this.telefoneForm.patchValue({
         numero: '',
       })
-    } else { // editType is 'all' or null
+    } else {
       this.emailForm.patchValue({
         email: '',
       })

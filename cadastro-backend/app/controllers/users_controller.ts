@@ -105,7 +105,7 @@ export default class UsersController {
       ]),
       telefone: schema.string({}, [
         rules.required(),
-        rules.regex(/^55\d{11}$/)
+        rules.regex(/^[1-9]{2}9\d{8}$/)
       ]),
       password: schema.string({}, [
         rules.required(),
@@ -128,7 +128,7 @@ export default class UsersController {
         'email.email': 'O e-mail digitado é inválido.',
         'email.required': 'O campo "E-mail" deve ser preenchido.',
 
-        'telefone.regex': 'O formado do telefone está incorreto. Exemplo correto: 55XX9XXXXXXXX.',
+        'telefone.regex': 'O formado do telefone está incorreto. Exemplo correto: XX9XXXXXXXX.',
         'telefone.required': 'O campo "Telefone" deve ser preenchido.',
 
         'password.required': 'O campo "Senha" deve ser preenchido.',

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RegistroService } from '../../services/registro.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,51 +11,58 @@ import { RegistroService } from '../../services/registro.service';
   styleUrl: './login.scss',
 })
 export class Login implements OnInit {
-  loginForm!: FormGroup
-  mostrar: boolean = false
-  errorMsg = ''
-  successMsg = ''
+  loginForm!: FormGroup;
+  mostrar: boolean = false;
+  errorMsg = '';
+  successMsg = '';
 
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private registroService: RegistroService
+    private registroService: RegistroService,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required]],
-      password: ['', [Validators.required]]
-    })
+      password: ['', [Validators.required]],
+    });
   }
 
   ngOnInit(): void {
-    this.errorMsg = history.state.msg ?? null
+    this.errorMsg = history.state.msg ?? null;
   }
 
   mostrarSenha() {
-    this.mostrar = !this.mostrar
+    this.mostrar = !this.mostrar;
   }
 
   login() {
-    this.registroService.login({ email: this.loginForm.value.email, password: this.loginForm.value.password }).subscribe({
-      next: (res: any) => {
-        localStorage.setItem('token', res.token)
-        localStorage.setItem('expiresAt', res.expiresAt)
-        this.errorMsg = ''
-        this.successMsg = 'Login realizado.'
-        
-        setTimeout(() => {
-          this.router.navigate(['/users/me'])
-          window.location.reload()
-        }, 1000)
-      }, error: (err: any) => {
-        this.successMsg = ''
-        console.log(err)
-        if (err.error.message) {
-          this.errorMsg = err.error.message
-        } else {
-          this.errorMsg = err.error
-        }
-      }
-    })
+    this.registroService
+      .login({
+        email: this.loginForm.value.email,
+        password: this.loginForm.value.password,
+      })
+      .subscribe({
+        next: (res: any) => {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('expiresAt', res.expiresAt);
+          this.authService.login();
+          this.errorMsg = '';
+          this.successMsg = 'Login realizado.';
+
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 1000);
+        },
+        error: (err: any) => {
+          this.successMsg = '';
+          console.log(err);
+          if (err.error.message) {
+            this.errorMsg = err.error.message;
+          } else {
+            this.errorMsg = err.error;
+          }
+        },
+      });
   }
 }

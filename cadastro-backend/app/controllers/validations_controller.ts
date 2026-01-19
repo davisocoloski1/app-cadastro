@@ -3,7 +3,15 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class ValidationsController {
   async validarCpf({ request, response }: HttpContext) {
     const cpf = request.input('cpf') || ''
-    const cpfLimpo = cpf.replace(/\D/g, '').split('')
+    const cpfLimpo: string[] = cpf.replace(/\D/g, '').split('')
+    
+    const digitosIguais = cpfLimpo.every((item) => item === cpfLimpo[0])
+
+    if (digitosIguais) {
+      return response.badRequest({
+        message: 'CPF inválido.'
+      })
+    }
     
     let soma1 = 0
     for (let i = 0, peso = 10; peso >= 2; peso--, i++) {
@@ -33,6 +41,14 @@ export default class ValidationsController {
   async validarCpnj({ request, response }: HttpContext) {
     const cnpj = request.input('cnpj') || ''
     const cnpjLimpo = cnpj.replace(/[^A-Z0-9]/g, '')
+
+    const digitosIguais = cnpjLimpo === cnpjLimpo[0].repeat(14)
+
+    if (digitosIguais) {
+      return response.badRequest({
+        message: 'CNPJ inválido.'
+      })
+    }
 
     let soma1 = 0
     for (let i = 0, peso = 5; i < cnpjLimpo.length - 2 ; peso--, i++) {
